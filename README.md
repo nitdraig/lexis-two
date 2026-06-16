@@ -233,6 +233,21 @@ The public orchestrator — a generalized pattern extracted from the private Lex
 
 ---
 
+### v0.5 — Specxis (Spec-Driven Development)
+
+Lightweight SDD layer for complex features — inspired by OpenSpec and Spec Kit,
+built for the Lexis philosophy.
+
+- [ ] `.specxis/` folder convention documented
+- [ ] Commands: specxis-new, specxis-plan, specxis-implement, specxis-review, specxis-close, specxis-debt
+- [ ] Skills: specxis, specxis-plan, specxis-review, specxis-close
+- [ ] `scripts/specxis-init.js` — creates .specxis/ structure in any project
+- [ ] `templates/specxis/` — proposal, spec, and tasks templates
+- [ ] `docs/specxis.md` — when to use SDD vs direct implementation
+- [ ] Integration guide for Lexis-One private config
+
+---
+
 ### v1.0 — Community & Growth
 
 When the ecosystem is stable and has adoption.

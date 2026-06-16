@@ -55,7 +55,7 @@ function writeMode(mode) {
   fs.writeFileSync(statePath, mode);
 }
 
-export default async ({ client } = {}) => {
+function createServerHooks({ client } = {}) {
   const log = (level, message) => {
     try {
       client &&
@@ -83,4 +83,11 @@ export default async ({ client } = {}) => {
       log("info", "lexis-two " + mode);
     },
   };
+}
+
+// OpenCode v1 plugin shape: default export is { server(), tui() }.
+export default {
+  async server(input) {
+    return createServerHooks(input);
+  },
 };

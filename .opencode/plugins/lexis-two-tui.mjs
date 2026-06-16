@@ -1,8 +1,9 @@
 // lexis-two — OpenCode TUI plugin (no-op)
 //
-// This is a dummy TUI entry point to satisfy OpenCode's TUI plugin loader
-// and prevent installation/runtime load failures in the TUI interface.
+// Satisfies OpenCode's TUI target loader. No TUI UI is needed for lexis-two.
 
-export default async () => {
-  return {};
+export default {
+  async tui() {
+    return {};
+  },
 };

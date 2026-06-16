@@ -18,10 +18,11 @@ process.env.XDG_CONFIG_HOME = tmp;
 delete process.env.LEXIS_TWO_DEFAULT_MODE;
 const statePath = path.join(tmp, 'opencode', '.lexis-two-active');
 
-let loadPlugin;
+let loadServer;
 test.before(async () => {
   const url = pathToFileURL(path.join(__dirname, '..', '.opencode', 'plugins', 'lexis-two.mjs'));
-  loadPlugin = (await import(url)).default;
+  const mod = await import(url);
+  loadServer = mod.default.server;
 });
 
 function transform(hooks) {
@@ -31,7 +32,7 @@ function transform(hooks) {
 
 test('system.transform injects the ruleset at the default mode (full)', async () => {
   try { fs.unlinkSync(statePath); } catch (e) {}
-  const hooks = await loadPlugin({});
+  const hooks = await loadServer({});
   const system = await transform(hooks);
   assert.equal(system.length, 1);
   assert.match(system[0], /LEXIS-TWO MODE ACTIVE — level: full/);
@@ -39,7 +40,7 @@ test('system.transform injects the ruleset at the default mode (full)', async ()
 });
 
 test('command.execute.before persists /lexis-two ultra, transform follows it', async () => {
-  const hooks = await loadPlugin({});
+  const hooks = await loadServer({});
   await hooks['command.execute.before']({ command: 'lexis-two', arguments: 'ultra', sessionID: 's' });
   assert.equal(fs.readFileSync(statePath, 'utf8'), 'ultra');
   const system = await transform(hooks);
@@ -47,7 +48,7 @@ test('command.execute.before persists /lexis-two ultra, transform follows it', a
 });
 
 test('/lexis-two off persists off and transform injects nothing', async () => {
-  const hooks = await loadPlugin({});
+  const hooks = await loadServer({});
   await hooks['command.execute.before']({ command: 'lexis-two', arguments: 'off', sessionID: 's' });
   assert.equal(fs.readFileSync(statePath, 'utf8'), 'off');
   const system = await transform(hooks);
@@ -56,7 +57,7 @@ test('/lexis-two off persists off and transform injects nothing', async () => {
 
 test('unrelated commands do not touch the flag', async () => {
   try { fs.unlinkSync(statePath); } catch (e) {}
-  const hooks = await loadPlugin({});
+  const hooks = await loadServer({});
   await hooks['command.execute.before']({ command: 'commit', arguments: 'x', sessionID: 's' });
   assert.equal(fs.existsSync(statePath), false);
 });

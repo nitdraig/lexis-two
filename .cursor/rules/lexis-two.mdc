@@ -145,7 +145,7 @@ Use these tags to mark intentional decisions for future reference:
 // lexis: simplified — revisit when pagination requirements are confirmed
 ```
 
-Running `/lexis-debt` will scan the codebase and surface all `lexis:` comments as a prioritized list.
+Running `/lexis debt` (or `/lexis d`) will scan the codebase and surface all `lexis:` comments as a prioritized list.
 
 ---
 

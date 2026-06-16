@@ -1,0 +1,3 @@
+name = "specxis"
+description = "Manage the Specxis Spec-Driven Development lifecycle (new, plan, implement, review, close, debt, status)"
+skill = "../skills/specxis/SKILL.md"

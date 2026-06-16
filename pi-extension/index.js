@@ -78,22 +78,56 @@ export default function lexisExtension(pi) {
     pi.sendUserMessage(message);
   };
 
-  pi.registerCommand("lexis-two", {
-    description: "Set or report Lexis-Two mode",
+  pi.registerCommand("lexis", {
+    description: "Manage Lexis senior dev mode, intensity levels, and quality/security tools",
     handler: async (args, ctx) => {
-      const parsed = parseLexisCommand(args, configuredDefaultMode);
-
-      if (parsed.type === "status") {
-        ctx?.ui?.notify?.(`Lexis-Two: current ${currentMode} • default ${configuredDefaultMode}`, "info");
+      const parsedArgs = String(args || "").trim();
+      if (!parsedArgs) {
+        ctx?.ui?.notify?.(`Lexis: current ${currentMode} • default ${configuredDefaultMode}`, "info");
+        sendAlias("/skill:lexis-two-help", "", ctx);
         return;
       }
+
+      const [subcommand, ...rest] = parsedArgs.toLowerCase().split(/\s+/);
+      const restArgs = rest.join(" ");
+
+      if (subcommand === "status") {
+        ctx?.ui?.notify?.(`Lexis: current ${currentMode} • default ${configuredDefaultMode}`, "info");
+        return;
+      }
+      if (subcommand === "plan" || subcommand === "p") {
+        sendAlias("/skill:lexis-two-plan", restArgs, ctx);
+        return;
+      }
+      if (subcommand === "review" || subcommand === "r") {
+        sendAlias("/skill:lexis-two-review", restArgs, ctx);
+        return;
+      }
+      if (subcommand === "audit" || subcommand === "a") {
+        sendAlias("/skill:lexis-two-audit", restArgs, ctx);
+        return;
+      }
+      if (subcommand === "debt" || subcommand === "d") {
+        sendAlias("/skill:lexis-two-debt", restArgs, ctx);
+        return;
+      }
+      if (subcommand === "security" || subcommand === "s") {
+        sendAlias("/skill:lexis-two-security", restArgs, ctx);
+        return;
+      }
+      if (subcommand === "help" || subcommand === "h") {
+        sendAlias("/skill:lexis-two-help", restArgs, ctx);
+        return;
+      }
+
+      const parsed = parseLexisCommand(parsedArgs, configuredDefaultMode);
 
       if (parsed.type === "set-default") {
         const written = writeDefaultMode(parsed.mode);
         if (written) {
           configuredDefaultMode = getDefaultMode();
           const message = configuredDefaultMode === written
-            ? `Default Lexis-Two mode set to ${written}.`
+            ? `Default Lexis mode set to ${written}.`
             : `Saved default ${written}, but env override keeps default at ${configuredDefaultMode}.`;
           ctx?.ui?.notify?.(message, "info");
         }
@@ -105,38 +139,66 @@ export default function lexisExtension(pi) {
         return;
       }
 
-      ctx?.ui?.notify?.("Unknown or unsupported /lexis-two mode.", "warning");
+      ctx?.ui?.notify?.(`Unknown /lexis subcommand or mode: ${subcommand}. Type '/lexis help' for options.`, "warning");
     },
   });
 
+  pi.registerCommand("lexis-two", {
+    description: "Set or report Lexis-Two mode (alias for /lexis)",
+    handler: async (args, ctx) => {
+      const parsedArgs = String(args || "").trim();
+      const [subcommand] = parsedArgs.toLowerCase().split(/\s+/);
+      const validSubcommands = ["status", "plan", "p", "review", "r", "audit", "a", "debt", "d", "security", "s", "help", "h"];
+      
+      if (validSubcommands.includes(subcommand)) {
+        ctx?.ui?.notify?.(`[Deprecated] Use '/lexis ${parsedArgs}' instead.`, "warning");
+      }
+      
+      // Delegate to handleLexis logic via registering command
+      return pi.commands["lexis"].handler(args, ctx);
+    },
+  });
+
+  pi.registerCommand("specxis", {
+    description: "Manage the Specxis Spec-Driven Development lifecycle (new, plan, implement, review, close, debt, status)",
+    handler: (args, ctx) => sendAlias("/skill:specxis", args, ctx),
+  });
+
+  const makeDeprecatedHandler = (subcommand) => {
+    return (args, ctx) => {
+      ctx?.ui?.notify?.(`[Deprecated] Use '/lexis ${subcommand}' instead.`, "warning");
+      sendAlias(`/skill:lexis-two-${subcommand}`, args, ctx);
+    };
+  };
+
   pi.registerCommand("lexis-two-review", {
-    description: "Run /skill:lexis-two-review",
-    handler: (_args, ctx) => sendAlias("/skill:lexis-two-review", "", ctx),
+    description: "[Deprecated] Use /lexis review instead",
+    handler: makeDeprecatedHandler("review"),
   });
 
   pi.registerCommand("lexis-two-audit", {
-    description: "Run /skill:lexis-two-audit",
-    handler: (_args, ctx) => sendAlias("/skill:lexis-two-audit", "", ctx),
+    description: "[Deprecated] Use /lexis audit instead",
+    handler: makeDeprecatedHandler("audit"),
   });
 
   pi.registerCommand("lexis-two-debt", {
-    description: "Run /skill:lexis-two-debt",
-    handler: (_args, ctx) => sendAlias("/skill:lexis-two-debt", "", ctx),
+    description: "[Deprecated] Use /lexis debt instead",
+    handler: makeDeprecatedHandler("debt"),
   });
 
   pi.registerCommand("lexis-two-plan", {
-    description: "Run /skill:lexis-two-plan",
-    handler: (_args, ctx) => sendAlias("/skill:lexis-two-plan", "", ctx),
+    description: "[Deprecated] Use /lexis plan instead",
+    handler: makeDeprecatedHandler("plan"),
   });
 
   pi.registerCommand("lexis-two-security", {
-    description: "Run /skill:lexis-two-security",
-    handler: (_args, ctx) => sendAlias("/skill:lexis-two-security", "", ctx),
+    description: "[Deprecated] Use /lexis security instead",
+    handler: makeDeprecatedHandler("security"),
   });
 
   pi.registerCommand("lexis-two-help", {
-    description: "Run /skill:lexis-two-help",
-    handler: (_args, ctx) => sendAlias("/skill:lexis-two-help", "", ctx),
+    description: "[Deprecated] Use /lexis help instead",
+    handler: makeDeprecatedHandler("help"),
   });
 
   pi.on("input", async (event) => {

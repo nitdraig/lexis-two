@@ -77,13 +77,10 @@ export default {
     subtitle:
       "On hosts with command adapters today: OpenCode, Gemini CLI, and pi. Claude Code and Copilot plugin land in v0.3.",
     items: [
-      { name: "/lexis-two", desc: "Mode: lite, full, ultra, off" },
-      { name: "/lexis-two-review", desc: "Review the diff for over-engineering" },
-      { name: "/lexis-two-audit", desc: "Full repo audit -- what to delete" },
-      { name: "/lexis-two-debt", desc: "Harvest // lexis: comments" },
-      { name: "/lexis-two-plan", desc: "Plan before writing code" },
-      { name: "/lexis-two-security", desc: "Security audit (Node/TS stack default)" },
-      { name: "/lexis-two-help", desc: "Quick reference card" },
+      { name: "/lexis", desc: "Unified command (status, plan, review, audit, debt, security, help, mode)" },
+      { name: "/lexis p, r, a, d, s", desc: "Short aliases (plan, review, audit, debt, security)" },
+      { name: "/specxis", desc: "Spec-Driven Development lifecycle (v0.5)" },
+      { name: "/specxis new, plan, implement", desc: "Specxis subcommands to guide development" },
     ],
   },
   install: {

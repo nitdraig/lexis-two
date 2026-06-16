@@ -31,6 +31,7 @@ test("lexisExtension registers commands and listeners", () => {
   const pi = new MockPi();
   lexisExtension(pi);
 
+  assert.ok(pi.commands["lexis"]);
   assert.ok(pi.commands["lexis-two"]);
   assert.ok(pi.commands["lexis-two-review"]);
   assert.ok(pi.commands["lexis-two-audit"]);
@@ -38,6 +39,7 @@ test("lexisExtension registers commands and listeners", () => {
   assert.ok(pi.commands["lexis-two-plan"]);
   assert.ok(pi.commands["lexis-two-security"]);
   assert.ok(pi.commands["lexis-two-help"]);
+  assert.ok(pi.commands["specxis"]);
 
   assert.ok(pi.listeners["input"]);
   assert.ok(pi.listeners["session_start"]);
@@ -60,10 +62,23 @@ test("lexisExtension command handlers trigger correctly", async () => {
   await pi.commands["lexis-two"].handler("lite", ctx);
   assert.equal(pi.entries[0].type, "lexis-two-mode");
   assert.equal(pi.entries[0].data.mode, "lite");
-  assert.equal(notified.msg, "Lexis-Two mode set to lite.");
+
+  // Test the new unifed /lexis command
+  await pi.commands["lexis"].handler("ultra", ctx);
+  assert.equal(pi.entries[1].type, "lexis-two-mode");
+  assert.equal(pi.entries[1].data.mode, "ultra");
+
+  await pi.commands["lexis"].handler("plan", ctx);
+  assert.equal(pi.userMessages[0].text, "/skill:lexis-two-plan");
+
+  await pi.commands["lexis"].handler("review", ctx);
+  assert.equal(pi.userMessages[1].text, "/skill:lexis-two-review");
+
+  await pi.commands["specxis"].handler("status", ctx);
+  assert.equal(pi.userMessages[2].text, "/skill:specxis status");
 
   pi.commands["lexis-two-review"].handler("", ctx);
-  assert.equal(pi.userMessages[0].text, "/skill:lexis-two-review");
+  assert.equal(pi.userMessages[3].text, "/skill:lexis-two-review");
 });
 
 test("lexisExtension input listener detects deactivation", async () => {

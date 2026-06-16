@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
   <!--  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png"> -->
-    <img src="assets/logo.png" width="220" alt="Lexis-two">
+    <img src="https://github.com/nitdraig/lexis-two/assets/logo.png" width="220" alt="Lexis-two">
   </picture>
 </p>
 
@@ -89,7 +89,8 @@ To enable the slash commands globally in any project:
 
 ```bash
 mkdir -p ~/.config/opencode/commands
-cp .opencode/command/lexis-two*.md ~/.config/opencode/commands/
+cp .opencode/command/lexis*.md ~/.config/opencode/commands/
+cp .opencode/command/specxis*.md ~/.config/opencode/commands/
 ```
 
 ### OpenCode (Local development / manual)
@@ -129,15 +130,36 @@ More hosts (Windsurf, Gemini CLI, pi, Copilot): see [docs/portability.md](./docs
 
 ## Commands
 
-Once installed, these slash commands are available in OpenCode:
+Once installed, these unifed slash commands are available in OpenCode, Gemini CLI, and pi:
 
-| Command               | What it does                                                          |
-| --------------------- | --------------------------------------------------------------------- |
-| `/lexis-two-review`   | Reviews recent changes against AGENTS.md rules                        |
-| `/lexis-two-audit`    | Full codebase audit — over-engineering, deps, structure               |
-| `/lexis-two-debt`     | Surfaces all `// lexis:` comments as prioritized debt list            |
-| `/lexis-two-plan`     | Plans a feature using the minimalist decision hierarchy before coding |
-| `/lexis-two-security` | Security audit focused on your stack (Node.js, MongoDB, Next.js)      |
+### 1. `/lexis` — Core Lexis Commands
+Manage Lexis senior dev mode, intensity levels, and quality/security tools under a single unifed command.
+
+| Subcommand | Shortcut | What it does |
+| ---------- | -------- | ------------ |
+| `/lexis status` | `/lexis` | Shows current mode (lite/full/ultra/off) and default configuration. |
+| `/lexis lite` / `full` / `ultra` / `off` | - | Switches the intensity level of the ruleset. |
+| `/lexis plan` | `/lexis p` | Plans a feature using the minimalist decision hierarchy before coding. |
+| `/lexis review` | `/lexis r` | Reviews recent changes against `AGENTS.md` rules for over-engineering. |
+| `/lexis audit` | `/lexis a` | Full codebase audit — over-engineering, deps, structure. |
+| `/lexis debt` | `/lexis d` | Surfaces all `// lexis:` comments as a prioritized debt list. |
+| `/lexis security` | `/lexis s` | Security audit focused on your stack (Node.js, MongoDB, Next.js). |
+| `/lexis help` | `/lexis h` | Shows the quick reference card. |
+
+*(Note: The old individual commands like `/lexis-two-review` are fully supported for backward compatibility but will display a deprecation warning guiding you to use `/lexis` instead.)*
+
+### 2. `/specxis` — Spec-Driven Development (v0.5)
+Manage the complete Specxis SDD lifecycle for complex features.
+
+| Subcommand | What it does |
+| ---------- | ------------ |
+| `/specxis` or `/specxis status` | Shows active specs, tasks progress, and debt. |
+| `/specxis new <slug>` | Creates a new spec folder and `proposal.md` applying the lazy check. |
+| `/specxis plan <slug>` | Generates `spec.md` and `tasks.md` from `proposal.md`. |
+| `/specxis implement <slug>` | Implements the next unchecked task in the active spec. |
+| `/specxis review <slug>` | Reviews the implementation against `spec.md` and `AGENTS.md`. |
+| `/specxis close <slug>` | Archives the completed spec and syncs its debt to `.specxis/debt.md`. |
+| `/specxis debt` | Sincroniza todos los comentarios `// lexis:` del código de forma portable. |
 
 ---
 
@@ -166,7 +188,7 @@ Lexis marks intentional simplifications with inline comments:
 // lexis: tech debt — revisit when auth module is stable
 ```
 
-Run `/lexis-two-debt` to collect and prioritize all tagged items across the codebase.
+Run `/lexis debt` (or `/lexis d`) to collect and prioritize all tagged items across the codebase.
 
 ---
 
@@ -250,17 +272,17 @@ The public orchestrator — a generalized pattern extracted from the private Lex
 
 ---
 
-### v0.5 — Specxis (Spec-Driven Development)
+### v0.5 — Specxis (Spec-Driven Development) ✅
 
 Lightweight SDD layer for complex features — inspired by OpenSpec and Spec Kit,
 built for the Lexis philosophy.
 
-- [ ] `.specxis/` folder convention documented
-- [ ] Commands: specxis-new, specxis-plan, specxis-implement, specxis-review, specxis-close, specxis-debt
-- [ ] Skills: specxis, specxis-plan, specxis-review, specxis-close
-- [ ] `scripts/specxis-init.js` — creates .specxis/ structure in any project
-- [ ] `templates/specxis/` — proposal, spec, and tasks templates
-- [ ] `docs/specxis.md` — when to use SDD vs direct implementation
+- [x] `.specxis/` folder convention documented
+- [x] Commands: specxis-new, specxis-plan, specxis-implement, specxis-review, specxis-close, specxis-debt
+- [x] Skills: specxis, specxis-plan, specxis-review, specxis-close
+- [x] `scripts/specxis-init.js` — creates .specxis/ structure in any project
+- [x] `templates/specxis/` — proposal, spec, and tasks templates
+- [x] `docs/specxis.md` — when to use SDD vs direct implementation
 - [ ] Integration guide for Lexis-One private config
 
 ---

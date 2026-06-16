@@ -16,9 +16,11 @@
     ".opencode/plugins/lexis-two.mjs",
     ".opencode/plugins/lexis-two-tui.mjs",
     ".opencode/command/",
+    "commands/",
     "hooks/",
     "skills/",
-    "scripts/opencode-wrapper-postinstall.mjs"
+    "templates/",
+    "scripts/"
   ],
   "keywords": [
     "pi-package",

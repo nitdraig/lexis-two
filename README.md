@@ -23,6 +23,8 @@
   <sub>Median of 10 runs across Haiku, Sonnet, and Opus. <a href="benchmarks/">Reproduce it yourself.</a></sub>
 </p>
 
+---
+
 Built on top of [OpenCode](https://opencode.ai) and [Cursor](https://cursor.sh).
 Forked and extended from [ponytail](https://github.com/DietrichGebert/ponytail) by DietrichGebert (MIT).
 
@@ -100,7 +102,7 @@ cp ~/lexis-two/.cursor/rules/lexis-two.mdc .cursor/rules/lexis-two.mdc
 Or globally:
 
 ```bash
-`cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc`
+cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc
 ```
 
 ---
@@ -148,43 +150,6 @@ Run `/lexis-two-debt` to collect and prioritize all tagged items across the code
 
 ---
 
-## Adapting Lexis-Two to Any Stack
-
-Lexis-Two is highly portable and can be adapted to any programming language, framework, or database stack. To customize it for your team's stack, follow these three steps:
-
-### 1. Update the Steering Rules (`AGENTS.md`)
-
-The canonical source of truth for your agent's behavior is `AGENTS.md`. Open it and replace the **Stack-Specific Shortcuts** section with rules tailored to your technology.
-
-- **For Python / Django / FastAPI**: Enforce standard library features (like `functools.lru_cache` or `dataclasses`), native type hints, and built-in SQLite/PostgreSQL patterns.
-- **For Rust**: Enforce standard library traits, `Option`/`Result` patterns, and specific crate guidelines (e.g., `tokio` for async, `serde` for serialization).
-- **For Go**: Enforce built-in concurrency primitives (channels, goroutines), standard library HTTP routing, and table-driven testing.
-
-Once you update `AGENTS.md`, run the integrity check script to automatically synchronize all static rule copies for IDE hosts:
-
-```bash
-node scripts/check-rule-copies.js
-```
-
-_(If it fails, copy the updated body of `AGENTS.md` into `.cursor/rules/lexis-two.mdc`, `.windsurf/rules/lexis-two.md`, `.clinerules/lexis-two.md`, and `.kiro/steering/lexis-two.md`, preserving their frontmatter)._
-
-### 2. Customize Portable Skills (`skills/`)
-
-Each portable skill in `skills/` can be adapted to run your stack's specific CLI tools:
-
-- **Security Audit (`skills/lexis-two-security/SKILL.md`)**: Change the automated commands to match your stack. For example, use `cargo audit` for Rust, `pip-audit` for Python, or `gosec` for Go instead of `npm audit`.
-- **Codebase Audit (`skills/lexis-two-audit/SKILL.md`)**: Change `depcheck` or linter commands to tools like `pylint`, `clippy`, or `golangci-lint`.
-- **Technical Debt (`skills/lexis-two-debt/SKILL.md`)**: Adjust file extensions in the `grep` command to match your language (e.g., `--include="*.py"` or `--include="*.rs"`).
-
-### 3. Update Host Commands (`commands/` and `.opencode/`)
-
-If you change the commands or tools in the skills, make sure to update:
-
-- The description and prompt fields in the Gemini CLI TOML files (`commands/*.toml`).
-- The description and instructions in the OpenCode Markdown commands (`.opencode/command/*.md`).
-
----
-
 ## Complementary Repos
 
 | Repo                                               | What it adds                                                        |
@@ -195,12 +160,92 @@ If you change the commands or tools in the skills, make sure to update:
 
 ## Roadmap
 
-- [x] v0.1 — Core AGENTS.md + plugin + commands + modes
-- [ ] v0.2 — Agent ecosystem documentation + project AGENTS.md template
-- [x] v0.3 — Lexis-Two: next evolution beyond IDE/CLI agents
-- [ ] v0.4 — Lexis-Core: orchestrator agent for complex multi-agent workflows
+### Component Relationship
+
+```
+Lexis-One (private) ──extracts the best──▶ Lexis-Two (public)
+     │                                           │
+     │ personal configuration                    │ portable ecosystem
+     │ specific prompts & flow                   │ generalized rules
+     │ providers & API keys                      │ skills & commands
+     │ private working style                     │ multi-host adapters
+     └───────────────────────────────────────────┘
+                          │
+                    Lexis-Core (future)
+                    public orchestrator
+```
 
 ---
+
+### v0.1 — Foundation ✅
+
+Core portable ecosystem.
+
+- [x] `AGENTS.md` — ecosystem rules and lazy decision hierarchy
+- [x] OpenCode plugin (`lexis-two.mjs`) with lite / full / ultra modes
+- [x] Commands: `lexis-two-review`, `lexis-two-audit`, `lexis-two-debt`, `lexis-two-plan`, `lexis-two-security`
+- [x] Portable skills for all hosts
+- [x] Adapters: Cursor, Windsurf, Cline, GitHub Copilot, Kiro, Gemini CLI
+- [x] MIT license with ponytail attribution
+
+---
+
+### v0.2 — Developer Experience
+
+Make it easy to adopt Lexis in any new project.
+
+- [ ] `AGENTS.template.md` — project-level AGENTS.md template with commented sections (stack, design tokens, glossary, conventions)
+- [ ] `docs/setup.md` — detailed installation guide per host
+- [ ] `docs/modes.md` — when to use lite / full / ultra and how to create custom modes
+- [ ] `npx lexis-two install` — setup script that detects the host (cursor, windsurf, opencode…) and copies the right files
+- [ ] README improvements with real `// lexis:` comment examples showing before/after simplifications
+
+---
+
+### v0.3 — Multi-host Maturity
+
+Full, verified support across all major hosts.
+
+- [ ] Claude Code adapter (`.claude-plugin/` + `hooks/`)
+- [ ] Codex adapter (`.codex-plugin/plugin.json` + `hooks/hooks.json`)
+- [ ] pi adapter (`pi-extension/`)
+- [ ] Verified skills working in Gemini CLI, Codex, and pi
+- [ ] `examples/` — real before/after cases with `// lexis:` comments across the stack (Next.js, Express, MongoDB, PostgreSQL)
+- [ ] `docs/contributing.md` — how to add a new adapter or skill
+
+---
+
+### v0.4 — Lexis-Core (Public Orchestrator)
+
+The public orchestrator — a generalized pattern extracted from the private Lexis-One ecosystem.
+
+- [ ] Public documentation of the multi-agent role architecture (without exposing private config)
+- [ ] Guide: how to build a multi-agent ecosystem using Lexis-Two as the base
+- [ ] `lexis-core` as a reference agent in the docs — prompts and patterns, not private implementation
+- [ ] Guide: "How to build your own private Lexis-One on top of Lexis-Two"
+- [ ] `opencode.json` template with the full agent ecosystem (no keys, placeholders only)
+
+---
+
+### v1.0 — Community & Growth
+
+When the ecosystem is stable and has adoption.
+
+- [ ] GitHub Actions CI: validates that adapters stay in sync when `AGENTS.md` changes
+- [ ] Strict semantic versioning + automated changelog
+- [ ] Community-verified skill registry
+- [ ] Migration guides between versions
+
+---
+
+### Future — Lexis Platform
+
+The commercial evolution. Defined once v1.0 has traction.
+
+- [ ] Web app to configure your Lexis ecosystem visually
+- [ ] Skill and adapter marketplace
+- [ ] Lexis-One as a Service — your private configuration in the cloud
+- [ ] Public Lexis-Core API for integration into any workflow
 
 ## Contributing
 

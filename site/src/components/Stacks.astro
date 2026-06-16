@@ -1,0 +1,33 @@
+---
+interface Props {
+  stacks: {
+    title: string;
+    subtitle: string;
+    items: readonly {
+      name: string;
+      desc: string;
+    }[];
+  };
+}
+
+const { stacks } = Astro.props;
+---
+
+<section id="stacks">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>{stacks.title}</h2>
+      <p>{stacks.subtitle}</p>
+    </div>
+    <div class="stacks-grid">
+      {
+        stacks.items.map((stack) => (
+          <div class="stack-card">
+            <h3>{stack.name}</h3>
+            <p>{stack.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

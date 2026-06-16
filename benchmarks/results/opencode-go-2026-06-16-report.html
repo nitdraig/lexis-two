@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lexis-Two benchmark — OpenCode Go (2026-06-16)</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0b0d0c;
+      --panel: #121614;
+      --border: #1e2420;
+      --text: #e8ece9;
+      --muted: #8a948d;
+      --accent: #7cba8a;
+      --baseline: #c97a7a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem 3rem; }
+    h1 { font-size: 1.75rem; margin: 0 0 0.25rem; }
+    .sub { color: var(--muted); margin-bottom: 2rem; font-size: 0.95rem; }
+    .grid {
+      display: grid;
+      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem 1rem 0.5rem;
+    }
+    .card h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 0 0 0.75rem;
+    }
+    .card canvas { max-height: 280px; }
+    .wide { grid-column: 1 / -1; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    th, td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+    }
+    th:first-child, td:first-child { text-align: left; }
+    th { color: var(--muted); font-weight: 600; }
+    .good { color: var(--accent); }
+    footer { margin-top: 2rem; color: var(--muted); font-size: 0.8rem; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Lexis-Two × OpenCode Go</h1>
+    <p class="sub">
+      Source: <code>opencode-go-2026-06-16.json</code> · 3 runs/cell · median LOC ·
+      arms: baseline, lexis-two
+    </p>
+
+    <div class="grid">
+      <div class="card wide">
+        <h2>Total code LOC (median, 5 tasks)</h2>
+        <canvas id="chart-total-loc"></canvas>
+      </div>
+      <div class="card">
+        <h2>LOC reduction vs baseline</h2>
+        <canvas id="chart-reduction"></canvas>
+      </div>
+      <div class="card">
+        <h2>Wall time (median total seconds)</h2>
+        <canvas id="chart-time"></canvas>
+      </div>
+      <div class="card wide">
+        <h2>LOC by task — lexis-two arm</h2>
+        <canvas id="chart-by-task"></canvas>
+      </div>
+      <div class="card wide">
+        <h2>Summary table</h2>
+        <table id="summary-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Baseline LOC</th>
+              <th>Lexis-Two LOC</th>
+              <th>Reduction</th>
+              <th>Correct (lexis)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer>
+      Regenerate: <code>node benchmarks/render-opencode-go-report.js</code>
+    </footer>
+  </div>
+
+  <script>
+    const DATA = {"date":"2026-06-16","repeat":3,"models":[{"id":"kimi-k2.6","locByArmTask":{"baseline":{"email":56,"debounce":71,"csv-sum":19,"countdown":366,"rate-limit":49},"lexis-two":{"email":10,"debounce":5,"csv-sum":4,"countdown":16,"rate-limit":14}},"timeByArmTask":{"baseline":{"email":12.973,"debounce":14.098,"csv-sum":5.08,"countdown":21.987,"rate-limit":16.836},"lexis-two":{"email":16.23,"debounce":8.363,"csv-sum":9.846,"countdown":18.389,"rate-limit":16.189}},"correctByArm":{"baseline":{"pass":11,"total":15},"lexis-two":{"pass":10,"total":15}},"totals":{"baselineLoc":561,"lexisLoc":49,"reductionPct":91,"baselineTimeSec":71,"lexisTimeSec":69}},{"id":"deepseek-v4-pro","locByArmTask":{"baseline":{"email":60,"debounce":39,"csv-sum":26,"countdown":90,"rate-limit":66},"lexis-two":{"email":7,"debounce":7,"csv-sum":4,"countdown":10,"rate-limit":18}},"timeByArmTask":{"baseline":{"email":35.051,"debounce":14.509,"csv-sum":13.422,"countdown":46.762,"rate-limit":32.401},"lexis-two":{"email":27.456,"debounce":16.982,"csv-sum":24.931,"countdown":36.191,"rate-limit":39.952}},"correctByArm":{"baseline":{"pass":13,"total":15},"lexis-two":{"pass":12,"total":15}},"totals":{"baselineLoc":281,"lexisLoc":46,"reductionPct":84,"baselineTimeSec":142.1,"lexisTimeSec":145.5}},{"id":"qwen3.7-max","locByArmTask":{"baseline":{"email":34,"debounce":44,"csv-sum":17,"countdown":128,"rate-limit":47},"lexis-two":{"email":7,"debounce":5,"csv-sum":3,"countdown":10,"rate-limit":13}},"timeByArmTask":{"baseline":{"email":43.542,"debounce":17.58,"csv-sum":25.876,"countdown":32.586,"rate-limit":41.602},"lexis-two":{"email":39.323,"debounce":28.275,"csv-sum":23.769,"countdown":28.775,"rate-limit":40.786}},"correctByArm":{"baseline":{"pass":14,"total":15},"lexis-two":{"pass":11,"total":15}},"totals":{"baselineLoc":270,"lexisLoc":38,"reductionPct":86,"baselineTimeSec":161.2,"lexisTimeSec":160.9}},{"id":"minimax-m3","locByArmTask":{"baseline":{"email":62,"debounce":58,"csv-sum":43,"countdown":117,"rate-limit":76},"lexis-two":{"email":12,"debounce":6,"csv-sum":2,"countdown":13,"rate-limit":14}},"timeByArmTask":{"baseline":{"email":18.398,"debounce":14.916,"csv-sum":10.237,"countdown":19.516,"rate-limit":22.131},"lexis-two":{"email":8.002,"debounce":2.393,"csv-sum":2.423,"countdown":2.753,"rate-limit":4.209}},"correctByArm":{"baseline":{"pass":12,"total":15},"lexis-two":{"pass":9,"total":15}},"totals":{"baselineLoc":356,"lexisLoc":47,"reductionPct":87,"baselineTimeSec":85.2,"lexisTimeSec":19.8}}],"tasks":["email","debounce","csv-sum","countdown","rate-limit"],"arms":["baseline","lexis-two"]};
+    const labels = DATA.models.map((m) => m.id.replace('kimi-k2.6','Kimi K2.6').replace('deepseek-v4-pro','DeepSeek V4').replace('qwen3.7-max','Qwen3.7 Max').replace('minimax-m3','MiniMax M3'));
+
+    Chart.defaults.color = '#8a948d';
+    Chart.defaults.borderColor = '#1e2420';
+    Chart.defaults.font.family = 'system-ui, sans-serif';
+
+    new Chart(document.getElementById('chart-total-loc'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'baseline',
+            data: DATA.models.map((m) => m.totals.baselineLoc),
+            backgroundColor: '#c97a7a',
+          },
+          {
+            label: 'lexis-two',
+            data: DATA.models.map((m) => m.totals.lexisLoc),
+            backgroundColor: '#7cba8a',
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } },
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'lines of code' } } },
+      },
+    });
+
+    new Chart(document.getElementById('chart-reduction'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: '% less code',
+          data: DATA.models.map((m) => m.totals.reductionPct),
+          backgroundColor: '#7cba8a',
+        }],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, max: 100, ticks: { callback: (v) => v + '%' } },
+        },
+      },
+    });
+
+    new Chart(document.getElementById('chart-time'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'baseline',
+            data: DATA.models.map((m) => m.totals.baselineTimeSec),
+            backgroundColor: '#c97a7a',
+          },
+          {
+            label: 'lexis-two',
+            data: DATA.models.map((m) => m.totals.lexisTimeSec),
+            backgroundColor: '#7cba8a',
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } },
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'seconds' } } },
+      },
+    });
+
+    const taskLabels = DATA.tasks;
+    const taskColors = ['#7cba8a', '#5a9a6a', '#9fd4a8', '#4a7356', '#3d5f48'];
+    new Chart(document.getElementById('chart-by-task'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: taskLabels.map((taskId, i) => ({
+          label: taskId,
+          data: DATA.models.map((m) => m.locByArmTask['lexis-two'][taskId]),
+          backgroundColor: taskColors[i % taskColors.length],
+        })),
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } },
+        scales: {
+          x: { stacked: false },
+          y: { beginAtZero: true, title: { display: true, text: 'LOC (lexis-two)' } },
+        },
+      },
+    });
+
+    const tbody = document.querySelector('#summary-table tbody');
+    for (const m of DATA.models) {
+      const c = m.correctByArm['lexis-two'];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${m.id}</td>
+        <td>${m.totals.baselineLoc}</td>
+        <td class="good">${m.totals.lexisLoc}</td>
+        <td class="good">${m.totals.reductionPct}%</td>
+        <td>${c.pass}/${c.total}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  </script>
+</body>
+</html>

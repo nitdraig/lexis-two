@@ -1,7 +1,7 @@
 {
   "name": "lexis-two",
   "version": "0.1.0",
-  "description": "Lazy senior dev mode for AI agents. The best code is the code you never wrote.",
+  "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
   "keywords": [
     "pi-package",
     "pi",
@@ -10,7 +10,11 @@
   ],
   "license": "MIT",
   "scripts": {
-    "test": "node --test tests/*.test.js && npm test --prefix pi-extension"
+    "test": "node --test tests/*.test.js && npm test --prefix pi-extension",
+    "benchmark:opencode-go": "node benchmarks/benchmark-opencode-go.js --repeat 3 --write-md",
+    "benchmark:report": "node benchmarks/render-opencode-go-report.js",
+    "site:dev": "npm run dev --prefix site",
+    "site:build": "npm run build --prefix site"
   },
   "pi": {
     "extensions": [

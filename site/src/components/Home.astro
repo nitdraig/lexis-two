@@ -1,0 +1,46 @@
+---
+import type { Locale } from "../i18n/index.js";
+import { getDictionary } from "../i18n/index.js";
+import Header from "./Header.astro";
+import Hero from "./Hero.astro";
+import Philosophy from "./Philosophy.astro";
+import Example from "./Example.astro";
+import Hosts from "./Hosts.astro";
+import Commands from "./Commands.astro";
+import Install from "./Install.astro";
+import Adapt from "./Adapt.astro";
+import Stacks from "./Stacks.astro";
+import Suggested from "./Suggested.astro";
+import Benchmarks from "./Benchmarks.astro";
+import Ecosystem from "./Ecosystem.astro";
+import Footer from "./Footer.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getDictionary(locale);
+---
+
+<Header locale={locale} nav={t.nav} />
+
+<main id="main">
+  <Hero locale={locale} hero={t.hero} />
+  <Philosophy philosophy={t.philosophy} />
+  <Example example={t.example} />
+  <Hosts hosts={t.hosts} />
+  <Commands commands={t.commands} />
+  <Install install={t.install} />
+  <Adapt adapt={t.adapt} />
+  <Stacks stacks={t.stacks} />
+  <Suggested suggested={t.suggested} />
+  <Benchmarks benchmarks={t.benchmarks} />
+  <Ecosystem ecosystem={t.ecosystem} />
+</main>
+
+<Footer footer={t.footer} />
+
+<style is:global>
+  @import "../styles/global.css";
+</style>

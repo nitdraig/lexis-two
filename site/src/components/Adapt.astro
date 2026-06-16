@@ -1,0 +1,33 @@
+---
+interface Props {
+  adapt: {
+    title: string;
+    subtitle: string;
+    cards: readonly {
+      title: string;
+      desc: string;
+    }[];
+  };
+}
+
+const { adapt } = Astro.props;
+---
+
+<section id="adapt">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>{adapt.title}</h2>
+      <p>{adapt.subtitle}</p>
+    </div>
+    <div class="adapt-list">
+      {
+        adapt.cards.map((card) => (
+          <article class="adapt-card">
+            <h3>{card.title}</h3>
+            <p set:html={card.desc} />
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

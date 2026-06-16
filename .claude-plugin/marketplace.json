@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "lexis-two",
-  "description": "Lazy senior dev mode for AI agents. The best code is the code you never wrote.",
+  "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
   "owner": {
     "name": "Agustin Avellaneda",
     "url": "https://github.com/nitdraig"
@@ -9,9 +9,21 @@
   "plugins": [
     {
       "name": "lexis-two",
-      "description": "Forces the laziest solution that works. YAGNI, stdlib first, one line over fifty.",
+      "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
       "source": "./",
       "category": "productivity"
+    }
+  ],
+  "suggestions": [
+    {
+      "name": "my-cursor-skills",
+      "url": "https://github.com/nitdraig/my-cursor-skills",
+      "description": "Cursor skills collection to review for complementary features"
+    },
+    {
+      "name": "ponytail",
+      "url": "https://github.com/DietrichGebert/ponytail",
+      "description": "Base project from which lexis-two was forked and extended"
     }
   ]
 }

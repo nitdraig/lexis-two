@@ -1,0 +1,87 @@
+---
+import type { Locale } from "../i18n/index.js";
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+
+interface Props {
+  locale: Locale;
+  nav: {
+    philosophy: string;
+    example: string;
+    hosts: string;
+    commands: string;
+    install: string;
+    benchmarks: string;
+    github: string;
+    skipLink: string;
+  };
+}
+
+const { locale, nav } = Astro.props;
+---
+
+<a class="skip-link" href="#main">{nav.skipLink}</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#">
+      <img src="/assets/logo.png" width="220" height="48" alt="Lexis-Two" />
+      <span class="brand-text">Lexis-Two</span>
+    </a>
+    <button
+      type="button"
+      class="nav-toggle"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      aria-label="Open menu"
+    >
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+    </button>
+    <nav id="site-nav" class="nav" aria-label="Primary">
+      <a href="#philosophy">{nav.philosophy}</a>
+      <a href="#example">{nav.example}</a>
+      <a href="#hosts">{nav.hosts}</a>
+      <a href="#commands">{nav.commands}</a>
+      <a href="#install">{nav.install}</a>
+      <a href="#benchmarks">{nav.benchmarks}</a>
+      <a href="https://github.com/nitdraig/lexis-two">{nav.github}</a>
+      <LanguageSwitcher locale={locale} />
+    </nav>
+  </div>
+</header>
+
+<script>
+  (function () {
+    var header = document.querySelector(".site-header");
+    var toggle = document.querySelector(".nav-toggle");
+    var nav = document.getElementById("site-nav");
+    if (!header || !toggle || !nav) return;
+
+    function setNavOpen(open: boolean) {
+      header!.classList.toggle("is-nav-open", open);
+      toggle!.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle!.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    }
+
+    toggle!.addEventListener("click", function () {
+      setNavOpen(!header!.classList.contains("is-nav-open"));
+    });
+
+    nav!.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        setNavOpen(false);
+      });
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") setNavOpen(false);
+    });
+
+    window
+      .matchMedia("(min-width: 768px)")
+      .addEventListener("change", function (event) {
+        if (event.matches) setNavOpen(false);
+      });
+  })();
+</script>

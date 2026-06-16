@@ -1,0 +1,33 @@
+---
+interface Props {
+  commands: {
+    title: string;
+    subtitle: string;
+    items: readonly {
+      name: string;
+      desc: string;
+    }[];
+  };
+}
+
+const { commands } = Astro.props;
+---
+
+<section id="commands">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>{commands.title}</h2>
+      <p>{commands.subtitle}</p>
+    </div>
+    <div class="cmd-grid">
+      {
+        commands.items.map((cmd) => (
+          <div class="cmd-card">
+            <code>{cmd.name}</code>
+            <p>{cmd.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

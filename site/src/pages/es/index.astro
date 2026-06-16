@@ -1,0 +1,10 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Home from "../../components/Home.astro";
+
+const locale = "es" as const;
+---
+
+<Layout locale={locale} canonicalPath="/es/">
+  <Home locale={locale} />
+</Layout>

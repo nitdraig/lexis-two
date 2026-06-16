@@ -1,0 +1,28 @@
+---
+interface Props {
+  footer: {
+    license: string;
+    forked: string;
+    built: string;
+  };
+}
+
+const { footer } = Astro.props;
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>
+      <a href="https://github.com/nitdraig/lexis-two"
+        >github.com/nitdraig/lexis-two</a
+      >
+      · {footer.license}
+    </p>
+    <p>
+      {footer.forked}
+      <a href="https://github.com/nitdraig">@nitdraig</a>.
+    </p>
+    <p set:html={footer.built} />
+    <p>Powered by <a href="https://excelso.xyz">Excelso</a></p>
+  </div>
+</footer>

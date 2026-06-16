@@ -1,26 +1,25 @@
 <p align="center">
   <picture>
   <!--  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png"> -->
-    <img src="assets/logo.png" width="220" alt="Lexis-two, the lazy senior dev">
+    <img src="assets/logo.png" width="220" alt="Lexis-two">
   </picture>
 </p>
 
 <h1 align="center">Lexis-two</h1>
 
 <p align="center">
-  <em>The AI agent ecosystem that thinks like the laziest senior dev in the room.</em>
+  <em>The simple way to obtain the best code.</em><br>
+  <small>Portable rules, skills, and slash commands for AI agents. The simple way to get the best code. With lowest tokens usage.</small>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/nitdraig/ponytail?style=flat-square&color=111111&label=stars" alt="Stars">
-  <img src="https://img.shields.io/github/v/release/nitdraig/ponytail?style=flat-square&color=111111&label=release" alt="Release">
-  <img src="https://img.shields.io/badge/works%20with-13%20agents-111111?style=flat-square" alt="Works with 13 agents">
+  <img src="https://img.shields.io/github/stars/nitdraig/lexis-two?style=flat-square&color=111111&label=stars" alt="Stars">
+  <img src="https://img.shields.io/github/v/release/nitdraig/lexis-two?style=flat-square&color=111111&label=release" alt="Release">
   <img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license">
 </p>
 
 <p align="center">
-  <strong>80-94% less code &middot; 3-6&times; faster &middot; 47-77% cheaper</strong><br>
-  <sub>Median of 10 runs across Haiku, Sonnet, and Opus. <a href="benchmarks/">Reproduce it yourself.</a></sub>
+  <sub>Benchmark harness inherited from <a href="benchmarks/">ponytail</a>; Lexis-Two-specific runs pending.</sub>
 </p>
 
 ---
@@ -105,6 +104,10 @@ Or globally:
 cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc
 ```
 
+More hosts (Windsurf, Gemini CLI, pi, Copilot): see [docs/portability.md](./docs/portability.md).
+
+**Site:** [lexis-two.excelso.xyz](https://lexis-two.excelso.xyz) (GitHub Pages — [setup guide](./docs/site.md)).
+
 ---
 
 ## Commands
@@ -116,7 +119,7 @@ Once installed, these slash commands are available in OpenCode:
 | `/lexis-two-review`   | Reviews recent changes against AGENTS.md rules                   |
 | `/lexis-two-audit`    | Full codebase audit — over-engineering, deps, structure          |
 | `/lexis-two-debt`     | Surfaces all `// lexis:` comments as prioritized debt list       |
-| `/lexis-two-plan`     | Plans a feature using the lazy decision hierarchy before coding  |
+| `/lexis-two-plan`     | Plans a feature using the minimalist decision hierarchy before coding  |
 | `/lexis-two-security` | Security audit focused on your stack (Node.js, MongoDB, Next.js) |
 
 ---
@@ -181,11 +184,11 @@ Lexis-One (private) ──extracts the best──▶ Lexis-Two (public)
 
 Core portable ecosystem.
 
-- [x] `AGENTS.md` — ecosystem rules and lazy decision hierarchy
+- [x] `AGENTS.md` — ecosystem rules and minimalist decision hierarchy
 - [x] OpenCode plugin (`lexis-two.mjs`) with lite / full / ultra modes
 - [x] Commands: `lexis-two-review`, `lexis-two-audit`, `lexis-two-debt`, `lexis-two-plan`, `lexis-two-security`
 - [x] Portable skills for all hosts
-- [x] Adapters: Cursor, Windsurf, Cline, GitHub Copilot, Kiro, Gemini CLI
+- [x] Adapters: Cursor, Windsurf, Cline, Kiro, Gemini CLI, OpenCode; Copilot repo rules (`.github/copilot-instructions.md`)
 - [x] MIT license with ponytail attribution
 
 ---
@@ -195,6 +198,8 @@ Core portable ecosystem.
 Make it easy to adopt Lexis in any new project.
 
 - [ ] `AGENTS.template.md` — project-level AGENTS.md template with commented sections (stack, design tokens, glossary, conventions)
+- [x] `docs/portability.md` — hosts, commands, skills, install paths
+- [x] `docs/site.md` — GitHub Pages + `lexis-two.excelso.xyz`
 - [ ] `docs/setup.md` — detailed installation guide per host
 - [ ] `docs/modes.md` — when to use lite / full / ultra and how to create custom modes
 - [ ] `npx lexis-two install` — setup script that detects the host (cursor, windsurf, opencode…) and copies the right files
@@ -206,7 +211,8 @@ Make it easy to adopt Lexis in any new project.
 
 Full, verified support across all major hosts.
 
-- [ ] Claude Code adapter (`.claude-plugin/` + `hooks/`)
+- [ ] Claude Code adapter (`.claude-plugin/` + `hooks/`) — scaffold in repo
+- [ ] GitHub Copilot IDE plugin (`.github/plugin/`) — scaffold in repo
 - [ ] Codex adapter (`.codex-plugin/plugin.json` + `hooks/hooks.json`)
 - [ ] pi adapter (`pi-extension/`)
 - [ ] Verified skills working in Gemini CLI, Codex, and pi

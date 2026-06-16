@@ -1,0 +1,39 @@
+---
+interface Props {
+  suggested: {
+    title: string;
+    subtitle: string;
+    items: readonly {
+      name: string;
+      url: string;
+      desc: string;
+    }[];
+  };
+}
+
+const { suggested } = Astro.props;
+---
+
+<section id="suggested">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>{suggested.title}</h2>
+      <p>{suggested.subtitle}</p>
+    </div>
+    <div class="suggested-list">
+      {
+        suggested.items.map((item) => (
+          <a
+            href={item.url}
+            class="suggested-card"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <h3>{item.name}</h3>
+            <p>{item.desc}</p>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>

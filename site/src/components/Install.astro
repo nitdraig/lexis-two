@@ -1,0 +1,117 @@
+---
+interface Props {
+  install: {
+    title: string;
+    subtitle: string;
+    tabOpencode: string;
+    tabCursor: string;
+    tabClone: string;
+  };
+}
+
+const { install } = Astro.props;
+---
+
+<section id="install">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>{install.title}</h2>
+      <p>{install.subtitle}</p>
+    </div>
+    <div
+      class="install-tabs"
+      role="tablist"
+      aria-label="Install instructions"
+    >
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        aria-selected="true"
+        aria-controls="tab-opencode"
+        id="tab-btn-opencode"
+      >
+        {install.tabOpencode}
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        aria-selected="false"
+        aria-controls="tab-cursor"
+        id="tab-btn-cursor"
+      >
+        {install.tabCursor}
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        aria-selected="false"
+        aria-controls="tab-clone"
+        id="tab-btn-clone"
+      >
+        {install.tabClone}
+      </button>
+    </div>
+    <div
+      id="tab-opencode"
+      class="tab-panel active"
+      role="tabpanel"
+      aria-labelledby="tab-btn-opencode"
+    >
+      <pre><code set:html={`git clone https://github.com/nitdraig/lexis-two.git ~/lexis-two
+
+# opencode.json
+{
+  "plugin": ["~/lexis-two/.opencode/plugins/lexis-two.mjs"],
+  "instructions": ["~/lexis-two/AGENTS.md"]
+}`} /></pre>
+    </div>
+    <div
+      id="tab-cursor"
+      class="tab-panel"
+      role="tabpanel"
+      aria-labelledby="tab-btn-cursor"
+      hidden
+    >
+      <pre><code>git clone https://github.com/nitdraig/lexis-two.git ~/lexis-two
+cp ~/lexis-two/.cursor/rules/lexis-two.mdc .cursor/rules/lexis-two.mdc
+
+# Or globally:
+cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc</code></pre>
+    </div>
+    <div
+      id="tab-clone"
+      class="tab-panel"
+      role="tabpanel"
+      aria-labelledby="tab-btn-clone"
+      hidden
+    >
+      <pre><code set:html={`git clone https://github.com/nitdraig/lexis-two.git ~/lexis-two
+
+# More hosts: docs/portability.md in the repo
+# Default mode: LEXIS_TWO_DEFAULT_MODE=full
+# Or ~/.config/lexis-two/config.json → { "defaultMode": "full" }`} /></pre>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll(".tab-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var target = btn.getAttribute("aria-controls");
+      document.querySelectorAll(".tab-btn").forEach(function (b) {
+        b.setAttribute("aria-selected", "false");
+      });
+      document.querySelectorAll(".tab-panel").forEach(function (p) {
+        p.classList.remove("active");
+        p.hidden = true;
+      });
+      btn.setAttribute("aria-selected", "true");
+      var panel = document.getElementById(target!);
+      panel!.classList.add("active");
+      panel!.hidden = false;
+    });
+  });
+</script>

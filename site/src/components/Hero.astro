@@ -1,0 +1,58 @@
+---
+import type { Locale } from "../i18n/index.js";
+
+interface Props {
+  locale: Locale;
+  hero: {
+    badge: string;
+    title: string;
+    tagline: string;
+    benchmark: string;
+    ctaBenchmark: string;
+    benchmarkLink: string;
+    benchmarkCode: string;
+    ctaGitHub: string;
+    ctaInstall: string;
+    ctaDocs: string;
+  };
+}
+
+const { locale, hero } = Astro.props;
+---
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-content">
+      <img src="/assets/logo.png" width="220" height="48" alt="Lexis-Two" />
+      <p class="hero-badge">{hero.badge}</p>
+      <h1>{hero.title}</h1>
+    </div>
+    <p class="tagline">{hero.tagline}</p>
+    <p class="benchmark-note">
+      {hero.benchmark}
+      <a href="#benchmarks">{hero.ctaBenchmark}</a>
+      ·
+      <a href="https://github.com/nitdraig/lexis-two/blob/main/benchmarks/README.md#opencode-go">
+        {hero.benchmarkLink}
+      </a>
+      (<code>{hero.benchmarkCode}</code>).
+    </p>
+    <div class="cta-row">
+      <a
+        class="btn btn-primary"
+        href="https://github.com/nitdraig/lexis-two"
+        rel="noopener noreferrer"
+      >
+        {hero.ctaGitHub}
+      </a>
+      <a class="btn btn-ghost" href="#install">{hero.ctaInstall}</a>
+      <a class="btn btn-ghost" href="#benchmarks">{hero.ctaBenchmark}</a>
+      <a
+        class="btn btn-ghost"
+        href="https://github.com/nitdraig/lexis-two/blob/main/docs/portability.md"
+      >
+        {hero.ctaDocs}
+      </a>
+    </div>
+  </div>
+</section>

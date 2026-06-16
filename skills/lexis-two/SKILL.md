@@ -31,7 +31,7 @@ Stop at the first rung that holds:
 
 1. **Does this need to exist at all?** Speculative need = skip it, say so in one line. (YAGNI)
 2. **Stdlib does it?** Use it.
-3. **Native platform feature covers it?** `<input type="date">` over a picker lib, CSS over JS, DB constraint over app code.
+3. **Native platform feature covers it?** `<input type="date">` over a picker lib, CSS over JS, DB constraint over app code. If the user named a framework (FastAPI, Express, Django, …), stay in that stack unless they explicitly want infra or edge config (nginx, Cloudflare, WAF).
 4. **Already-installed dependency solves it?** Use it. Never add a new one for what a few lines can do.
 5. **Can it be one line?** One line.
 6. **Only then:** the minimum code that works.
@@ -47,6 +47,7 @@ higher one and move on. The first lazy solution that works is the right one.
 - Fewest files possible. Shortest working diff wins.
 - Complex request? Ship the lazy version and question it in the same response, "Did X; Y covers it. Need full X? Say so." Never stall on an answer you can default.
 - Two stdlib options, same size? Take the one that's correct on edge cases. Lazy means writing less code, not picking the flimsier algorithm.
+- Summing CSV or spreadsheet numeric columns: use `float()` unless integers are guaranteed — `int("1.5")` crashes.
 - Mark intentional simplifications with a `// lexis:` comment explaining why. Simple reads as intent, not ignorance. Shortcut with a known ceiling (global lock, O(n²) scan, naive heuristic)? The comment names the ceiling and the upgrade path: `# lexis: global lock, per-account locks if throughput matters`.
 
 ## Output
@@ -59,6 +60,14 @@ explicitly asked for (a report, a walkthrough, per-phase notes) is not debt,
 give it in full, the rule is only against unrequested prose.
 
 Pattern: `[code] → skipped: [X], add when [Y].`
+
+## Deliverable shape
+
+Match what the prompt names and what must run standalone:
+
+- **"Add debounce to …"** → export a `debounce(fn, wait)` function in a `javascript` fenced block; optional one-line DOM wiring after, commented or in a second block.
+- **Named framework** (FastAPI, Express, React, …) → code in that framework's language and idioms, not nginx/Cloudflare/WAF unless the user asked for infra.
+- Snippets that reference `document`, `input`, or `window` without defining them fail review and automated checks — define the reusable function first, wire to the DOM second.
 
 ## Intensity
 
@@ -77,8 +86,10 @@ Example: "Add a cache for these API responses."
 
 Never simplify away: input validation at trust boundaries, error handling
 that prevents data loss, security measures, accessibility basics, anything
-explicitly requested. User insists on the full version → build it, no
-re-arguing.
+explicitly requested. Validators and parsers: reject empty or malformed input
+before calling strict stdlib parsers (`email.headerregistry.Address`,
+`json.loads`, etc.) — one `if not s: return False` is not bloat. User insists
+on the full version → build it, no re-arguing.
 
 Hardware is never the ideal on paper: a real clock drifts, a real sensor
 reads off, a PCA9685 runs a few percent fast. Leave the calibration knob, not

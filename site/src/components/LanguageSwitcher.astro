@@ -1,0 +1,82 @@
+---
+import type { Locale } from "../i18n/index.js";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const otherLocale: Locale = locale === "en" ? "es" : "en";
+const otherLabel = locale === "en" ? "ES" : "EN";
+
+const currentPath = Astro.url.pathname;
+let targetPath: string;
+if (locale === "en") {
+  targetPath = `/es${currentPath}`;
+} else {
+  targetPath = currentPath.replace(/^\/es/, "") || "/";
+}
+---
+
+<a
+  href={targetPath}
+  class="lang-switch"
+  aria-label={locale === "en" ? "Cambiar a espanol" : "Switch to English"}
+  title={locale === "en" ? "Espanol" : "English"}
+>
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M2 12h20" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+  <span>{otherLabel}</span>
+</a>
+
+<style>
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--border-bright);
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    text-decoration: none;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease,
+      background 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .lang-switch:hover {
+    border-color: var(--accent-dim);
+    color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  .lang-switch svg {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 767px) {
+    .lang-switch {
+      margin-left: 0;
+      margin-top: 0.25rem;
+    }
+  }
+</style>

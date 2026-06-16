@@ -32,7 +32,7 @@ def load_arms():
     return {
         "baseline": None,
         "caveman":  (ROOT / "benchmarks/arms/caveman-SKILL.md").read_text(encoding="utf-8"),
-        "ponytail": (ROOT / "skills/ponytail/SKILL.md").read_text(encoding="utf-8"),
+        "lexis-two": (ROOT / "skills/lexis-two/SKILL.md").read_text(encoding="utf-8"),
     }
 
 
@@ -132,7 +132,7 @@ def run(model, repeat, ollama_url):
     print("  LOC vs baseline (median totals)")
     print(f"{'=' * 60}")
     base_total = sum(med_loc["baseline"][t] for t in task_ids)
-    for arm in ("caveman", "ponytail"):
+    for arm in ("caveman", "lexis-two"):
         arm_total = sum(med_loc[arm][t] for t in task_ids)
         pct = (1 - arm_total / base_total) * 100 if base_total else 0
         sign = "less" if pct >= 0 else "more"

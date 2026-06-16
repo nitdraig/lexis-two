@@ -1,0 +1,114 @@
+---
+import type { Locale } from "../i18n/index.js";
+import { getDictionary } from "../i18n/index.js";
+
+interface Props {
+  locale: Locale;
+  canonicalPath: string;
+}
+
+const { locale, canonicalPath } = Astro.props;
+const t = getDictionary(locale);
+
+// lexis: simple i18n path mapping — add when locale count exceeds 2
+const alternateEn = canonicalPath.startsWith("/es")
+  ? canonicalPath.replace(/^\/es/, "") || "/"
+  : canonicalPath;
+const alternateEs = canonicalPath.startsWith("/es")
+  ? canonicalPath
+  : `/es${canonicalPath}`;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Lexis-Two",
+  description: t.meta.description,
+  url: `https://lexis-two.excelso.xyz${canonicalPath}`,
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Cross-platform",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  author: {
+    "@type": "Person",
+    name: "nitdraig",
+    url: "https://github.com/nitdraig",
+  },
+};
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <meta name="theme-color" content="#0b0d0c" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="nitdraig" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta
+      property="og:url"
+      content={`https://lexis-two.excelso.xyz${canonicalPath}`}
+    />
+    <meta
+      property="og:image"
+      content="https://lexis-two.excelso.xyz/assets/lexis-two-nobg.png"
+    />
+    <meta property="og:site_name" content="Lexis-Two" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t.meta.title} />
+    <meta name="twitter:description" content={t.meta.description} />
+    <meta
+      name="twitter:image"
+      content="https://lexis-two.excelso.xyz/assets/lexis-two-nobg.png"
+    />
+
+    <!-- Canonical & hreflang -->
+    <link
+      rel="canonical"
+      href={`https://lexis-two.excelso.xyz${canonicalPath}`}
+    />
+    <link
+      rel="alternate"
+      hreflang="en"
+      href={`https://lexis-two.excelso.xyz${alternateEn}`}
+    />
+    <link
+      rel="alternate"
+      hreflang="es"
+      href={`https://lexis-two.excelso.xyz${alternateEs}`}
+    />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={`https://lexis-two.excelso.xyz${alternateEn}`}
+    />
+
+    <!-- Structured data -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData)}
+    />
+
+    <link rel="icon" href="/assets/logo.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

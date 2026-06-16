@@ -1,0 +1,77 @@
+---
+interface Props {
+  example: {
+    title: string;
+    subtitle: string;
+    without: string;
+    with: string;
+    withoutFoot: string;
+    withFoot: string;
+    copy: string;
+    copied: string;
+  };
+}
+
+const { example } = Astro.props;
+---
+
+<section id="example">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>{example.title}</h2>
+      <p set:html={example.subtitle} />
+    </div>
+    <div class="compare">
+      <article class="panel">
+        <div class="panel-head bad">{example.without}</div>
+        <div class="panel-body">
+          <pre><code set:html={`function quickSort(arr, compareFn = (a, b) => a - b) {
+  if (arr.length <= 1) return arr;
+  const pivot = arr[Math.floor(arr.length / 2)];
+  const left = [], right = [], equal = [];
+  for (const item of arr) {
+    const cmp = compareFn(item, pivot);
+    if (cmp < 0) left.push(item);
+    else if (cmp > 0) right.push(item);
+    else equal.push(item);
+  }
+  return [...quickSort(left), ...equal, ...quickSort(right)];
+}`} /></pre>
+        </div>
+        <p class="panel-foot">{example.withoutFoot}</p>
+      </article>
+      <article class="panel">
+        <div class="panel-head good">{example.with}</div>
+        <div class="panel-body">
+          <button data-copied={example.copied}
+            type="button"
+            class="copy-btn"
+            data-copy="// lexis: this exists
+numbers.sort((a, b) => a - b)"
+          >
+            {example.copy}
+          </button>
+          <pre><code>// lexis: this exists
+numbers.sort((a, b) =&gt; a - b)</code></pre>
+        </div>
+        <p class="panel-foot"><strong set:html={example.withFoot} /></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll(".copy-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var text = btn.getAttribute("data-copy");
+      navigator.clipboard.writeText(text!).then(function () {
+        var prev = btn.textContent;
+        var copiedText = btn.getAttribute("data-copied") || "Copied";
+        btn.textContent = copiedText;
+        setTimeout(function () {
+          btn.textContent = prev;
+        }, 1500);
+      });
+    });
+  });
+</script>

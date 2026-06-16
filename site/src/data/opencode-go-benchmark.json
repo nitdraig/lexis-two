@@ -1,0 +1,230 @@
+{
+  "source": "opencode-go-2026-06-16.json",
+  "date": "2026-06-16",
+  "repeat": 3,
+  "models": [
+    {
+      "id": "kimi-k2.6",
+      "label": "Kimi K2.6",
+      "locByArmTask": {
+        "baseline": {
+          "email": 46,
+          "debounce": 63,
+          "csv-sum": 18,
+          "countdown": 413,
+          "rate-limit": 62
+        },
+        "lexis-two": {
+          "email": 13,
+          "debounce": 10,
+          "csv-sum": 4,
+          "countdown": 13,
+          "rate-limit": 23
+        }
+      },
+      "timeByArmTask": {
+        "baseline": {
+          "email": 14.996,
+          "debounce": 6.997,
+          "csv-sum": 5.53,
+          "countdown": 22.661,
+          "rate-limit": 9.316
+        },
+        "lexis-two": {
+          "email": 7.944,
+          "debounce": 7.106,
+          "csv-sum": 5.982,
+          "countdown": 13.821,
+          "rate-limit": 18.117
+        }
+      },
+      "correctByArm": {
+        "baseline": {
+          "pass": 12,
+          "total": 15
+        },
+        "lexis-two": {
+          "pass": 12,
+          "total": 15
+        }
+      },
+      "totals": {
+        "baselineLoc": 602,
+        "lexisLoc": 63,
+        "reductionPct": 90,
+        "baselineTimeSec": 59.5,
+        "lexisTimeSec": 53
+      }
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "label": "DeepSeek V4",
+      "locByArmTask": {
+        "baseline": {
+          "email": 36,
+          "debounce": 61,
+          "csv-sum": 25,
+          "countdown": 113,
+          "rate-limit": 53
+        },
+        "lexis-two": {
+          "email": 9,
+          "debounce": 12,
+          "csv-sum": 4,
+          "countdown": 12,
+          "rate-limit": 20
+        }
+      },
+      "timeByArmTask": {
+        "baseline": {
+          "email": 37.21,
+          "debounce": 21.122,
+          "csv-sum": 10.365,
+          "countdown": 33.662,
+          "rate-limit": 31.551
+        },
+        "lexis-two": {
+          "email": 68.671,
+          "debounce": 16.821,
+          "csv-sum": 25.552,
+          "countdown": 45.493,
+          "rate-limit": 47.007
+        }
+      },
+      "correctByArm": {
+        "baseline": {
+          "pass": 14,
+          "total": 15
+        },
+        "lexis-two": {
+          "pass": 13,
+          "total": 15
+        }
+      },
+      "totals": {
+        "baselineLoc": 288,
+        "lexisLoc": 57,
+        "reductionPct": 80,
+        "baselineTimeSec": 133.9,
+        "lexisTimeSec": 203.5
+      }
+    },
+    {
+      "id": "qwen3.7-max",
+      "label": "Qwen3.7 Max",
+      "locByArmTask": {
+        "baseline": {
+          "email": 39,
+          "debounce": 48,
+          "csv-sum": 19,
+          "countdown": 124,
+          "rate-limit": 40
+        },
+        "lexis-two": {
+          "email": 14,
+          "debounce": 9,
+          "csv-sum": 4,
+          "countdown": 10,
+          "rate-limit": 17
+        }
+      },
+      "timeByArmTask": {
+        "baseline": {
+          "email": 58.608,
+          "debounce": 32.691,
+          "csv-sum": 26.66,
+          "countdown": 52.281,
+          "rate-limit": 42.698
+        },
+        "lexis-two": {
+          "email": 39.348,
+          "debounce": 27.973,
+          "csv-sum": 26.696,
+          "countdown": 38.458,
+          "rate-limit": 39.445
+        }
+      },
+      "correctByArm": {
+        "baseline": {
+          "pass": 12,
+          "total": 15
+        },
+        "lexis-two": {
+          "pass": 13,
+          "total": 15
+        }
+      },
+      "totals": {
+        "baselineLoc": 270,
+        "lexisLoc": 54,
+        "reductionPct": 80,
+        "baselineTimeSec": 212.9,
+        "lexisTimeSec": 171.9
+      }
+    },
+    {
+      "id": "minimax-m3",
+      "label": "MiniMax M3",
+      "locByArmTask": {
+        "baseline": {
+          "email": 55,
+          "debounce": 66,
+          "csv-sum": 33,
+          "countdown": 112,
+          "rate-limit": 59
+        },
+        "lexis-two": {
+          "email": 9,
+          "debounce": 10,
+          "csv-sum": 4,
+          "countdown": 18,
+          "rate-limit": 15
+        }
+      },
+      "timeByArmTask": {
+        "baseline": {
+          "email": 13.415,
+          "debounce": 12.657,
+          "csv-sum": 6.729,
+          "countdown": 12.771,
+          "rate-limit": 14.89
+        },
+        "lexis-two": {
+          "email": 6.683,
+          "debounce": 3.81,
+          "csv-sum": 2.563,
+          "countdown": 4.428,
+          "rate-limit": 4.817
+        }
+      },
+      "correctByArm": {
+        "baseline": {
+          "pass": 11,
+          "total": 15
+        },
+        "lexis-two": {
+          "pass": 15,
+          "total": 15
+        }
+      },
+      "totals": {
+        "baselineLoc": 325,
+        "lexisLoc": 56,
+        "reductionPct": 83,
+        "baselineTimeSec": 60.5,
+        "lexisTimeSec": 22.3
+      }
+    }
+  ],
+  "tasks": [
+    "email",
+    "debounce",
+    "csv-sum",
+    "countdown",
+    "rate-limit"
+  ],
+  "arms": [
+    "baseline",
+    "lexis-two"
+  ]
+}

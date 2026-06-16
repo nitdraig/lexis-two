@@ -1,0 +1,30 @@
+---
+interface Props {
+  ecosystem: {
+    title: string;
+    subtitle: string;
+  };
+}
+
+const { ecosystem } = Astro.props;
+---
+
+<section id="ecosystem">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>{ecosystem.title}</h2>
+      <p>{ecosystem.subtitle}</p>
+    </div>
+    <pre
+      class="ecosystem"
+      aria-label="Lexis ecosystem diagram">
+Lexis-One (private) ──extracts the best──▶ Lexis-Two (public)
+     │                                           │
+     │ personal configuration                    │ portable rules + skills
+     │ providers &amp; API keys                      │ multi-host adapters
+     └───────────────────────────────────────────┘
+                          │
+                    Lexis-Core (future)
+                    public orchestrator</pre>
+  </div>
+</section>

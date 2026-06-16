@@ -1,0 +1,232 @@
+---
+import benchmarkData from "../data/opencode-go-benchmark.json";
+
+interface Props {
+  benchmarks: {
+    title: string;
+    subtitle: string;
+    runDate: string;
+    runsPerCell: string;
+    source: string;
+    totalLoc: string;
+    reduction: string;
+    time: string;
+    byTask: string;
+    summary: string;
+    colModel: string;
+    colBaseline: string;
+    colLexis: string;
+    colReduction: string;
+    colCorrect: string;
+    regenerate: string;
+  };
+}
+
+const { benchmarks } = Astro.props;
+const chartPayload = JSON.stringify(benchmarkData);
+---
+
+<section id="benchmarks" class="benchmark-page">
+  <div class="wrap">
+    <div class="section-head benchmark-head">
+      <h2>{benchmarks.title}</h2>
+      <p>{benchmarks.subtitle}</p>
+      <p class="benchmark-meta">
+        {benchmarks.runDate}: <strong>{benchmarkData.date}</strong>
+        · {benchmarkData.repeat} {benchmarks.runsPerCell}
+        · {benchmarks.source}: <code>{benchmarkData.source}</code>
+      </p>
+    </div>
+
+    <div class="benchmark-grid">
+      <section class="benchmark-card wide" aria-labelledby="chart-total-loc-title">
+        <h3 id="chart-total-loc-title">{benchmarks.totalLoc}</h3>
+        <canvas id="chart-total-loc" height="280"></canvas>
+      </section>
+
+      <section class="benchmark-card" aria-labelledby="chart-reduction-title">
+        <h3 id="chart-reduction-title">{benchmarks.reduction}</h3>
+        <canvas id="chart-reduction" height="280"></canvas>
+      </section>
+
+      <section class="benchmark-card" aria-labelledby="chart-time-title">
+        <h3 id="chart-time-title">{benchmarks.time}</h3>
+        <canvas id="chart-time" height="280"></canvas>
+      </section>
+
+      <section class="benchmark-card wide" aria-labelledby="chart-by-task-title">
+        <h3 id="chart-by-task-title">{benchmarks.byTask}</h3>
+        <canvas id="chart-by-task" height="280"></canvas>
+      </section>
+
+      <section class="benchmark-card wide" aria-labelledby="summary-table-title">
+        <h3 id="summary-table-title">{benchmarks.summary}</h3>
+        <div class="table-wrap">
+          <table id="summary-table">
+            <thead>
+              <tr>
+                <th scope="col">{benchmarks.colModel}</th>
+                <th scope="col">{benchmarks.colBaseline}</th>
+                <th scope="col">{benchmarks.colLexis}</th>
+                <th scope="col">{benchmarks.colReduction}</th>
+                <th scope="col">{benchmarks.colCorrect}</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <p class="benchmark-foot">
+      {benchmarks.regenerate}
+      <code>npm run benchmark:opencode-go &amp;&amp; npm run benchmark:report</code>
+    </p>
+  </div>
+</section>
+
+<script define:vars={{ chartPayload, benchmarks }} is:inline>
+  (function () {
+    const CHART_JS_URL = "https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js";
+    const section = document.getElementById("benchmarks");
+    if (!section) return;
+
+    let loaded = false;
+
+    function renderCharts() {
+      if (loaded) return;
+      loaded = true;
+
+      const DATA = JSON.parse(chartPayload);
+      const labels = DATA.models.map(function (m) { return m.label; });
+
+      Chart.defaults.color = "#a0aa9e";
+      Chart.defaults.borderColor = "#1e2420";
+      Chart.defaults.font.family = "Syne, system-ui, sans-serif";
+
+      new Chart(document.getElementById("chart-total-loc"), {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "baseline",
+              data: DATA.models.map(function (m) { return m.totals.baselineLoc; }),
+              backgroundColor: "#c97a7a",
+            },
+            {
+              label: "lexis-two",
+              data: DATA.models.map(function (m) { return m.totals.lexisLoc; }),
+              backgroundColor: "#7cba8a",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: "bottom" } },
+          scales: { y: { beginAtZero: true } },
+        },
+      });
+
+      new Chart(document.getElementById("chart-reduction"), {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: benchmarks.reduction,
+              data: DATA.models.map(function (m) { return m.totals.reductionPct; }),
+              backgroundColor: "#7cba8a",
+            },
+          ],
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { beginAtZero: true, max: 100, ticks: { callback: function (v) { return v + "%"; } } },
+          },
+        },
+      });
+
+      new Chart(document.getElementById("chart-time"), {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "baseline",
+              data: DATA.models.map(function (m) { return m.totals.baselineTimeSec; }),
+              backgroundColor: "#c97a7a",
+            },
+            {
+              label: "lexis-two",
+              data: DATA.models.map(function (m) { return m.totals.lexisTimeSec; }),
+              backgroundColor: "#7cba8a",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: "bottom" } },
+          scales: { y: { beginAtZero: true } },
+        },
+      });
+
+      var taskColors = ["#7cba8a", "#5a9a6a", "#9fd4a8", "#4a7356", "#3d5f48"];
+      new Chart(document.getElementById("chart-by-task"), {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: DATA.tasks.map(function (taskId, i) {
+            return {
+              label: taskId,
+              data: DATA.models.map(function (m) { return m.locByArmTask["lexis-two"][taskId]; }),
+              backgroundColor: taskColors[i % taskColors.length],
+            };
+          }),
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: "bottom" } },
+          scales: { y: { beginAtZero: true } },
+        },
+      });
+
+      var tbody = document.querySelector("#summary-table tbody");
+      DATA.models.forEach(function (m) {
+        var c = m.correctByArm["lexis-two"];
+        var tr = document.createElement("tr");
+        tr.innerHTML =
+          "<td>" + m.label + "</td>" +
+          "<td>" + m.totals.baselineLoc + "</td>" +
+          "<td class=\"good\">" + m.totals.lexisLoc + "</td>" +
+          "<td class=\"good\">" + m.totals.reductionPct + "%</td>" +
+          "<td>" + c.pass + "/" + c.total + "</td>";
+        tbody.appendChild(tr);
+      });
+    }
+
+    function loadChartJS(callback) {
+      if (typeof Chart !== "undefined") { callback(); return; }
+      var s = document.createElement("script");
+      s.src = CHART_JS_URL;
+      s.onload = callback;
+      document.head.appendChild(s);
+    }
+
+    if ("IntersectionObserver" in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) {
+          observer.disconnect();
+          loadChartJS(renderCharts);
+        }
+      }, { rootMargin: "200px" });
+      observer.observe(section);
+    } else {
+      // Fallback: load immediately
+      loadChartJS(renderCharts);
+    }
+  })();
+</script>

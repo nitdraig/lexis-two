@@ -1,80 +1,114 @@
 # Benchmark
 
-Three arms (no skill, [caveman](https://github.com/JuliusBrussee/caveman), ponytail), three models, five everyday tasks, **10 runs per cell, median reported**. Code LOC is counted from fenced code blocks; tokens, cost, and latency come straight from the API.
+Five everyday tasks, **baseline vs lexis-two** (`skills/lexis-two/SKILL.md`). Code LOC from fenced blocks; correctness gate via `correctness.js`.
 
-## Reproduce
+## OpenCode Go (recommended)
 
-### Claude (Haiku / Sonnet / Opus)
+Uses the same models you run in OpenCode today. Default set in `opencode-go-models.json`:
 
-Requires an Anthropic API key and **Node.js ≥ 22.22.0** (promptfoo's engine constraint —
-check with `node --version` and upgrade if needed):
+| Model ID | Name | Transport |
+| -------- | ---- | --------- |
+| `kimi-k2.6` | Kimi K2.6 | OpenAI `/chat/completions` |
+| `deepseek-v4-pro` | DeepSeek V4 Pro | OpenAI `/chat/completions` |
+| `qwen3.7-max` | Qwen3.7 Max | Anthropic `/messages` |
+| `minimax-m3` | MiniMax M3 | Anthropic `/messages` |
+
+[OpenCode Go docs](https://opencode.ai/docs/go/) — subscribe, copy API key, `/connect` in TUI.
+
+### Run
 
 ```bash
-cp ../.env.example ../.env      # add your ANTHROPIC_API_KEY
-npx promptfoo@latest eval -c promptfooconfig.yaml --repeat 10
+cp .env.example .env          # OPENCODE_API_KEY=...
+node benchmarks/benchmark-opencode-go.js --repeat 3 --write-md
+```
+
+Single model:
+
+```bash
+node benchmarks/benchmark-opencode-go.js --model kimi-k2.6 --repeat 10 --write-md
+```
+
+Subset:
+
+```bash
+node benchmarks/benchmark-opencode-go.js --models kimi-k2.6,deepseek-v4-pro --repeat 5
+```
+
+Optional third arm:
+
+```bash
+node benchmarks/benchmark-opencode-go.js --caveman --repeat 3
+```
+
+Outputs:
+
+- `benchmarks/results/opencode-go-YYYY-MM-DD.json` — full responses + usage
+- `benchmarks/results/YYYY-MM-DD-opencode-go.md` — summary tables (with `--write-md`)
+- `site/src/data/opencode-go-benchmark.json` — chart data for the Astro site (`npm run benchmark:report`)
+- Live charts: `https://lexis-two.excelso.xyz/benchmarks/` (after `npm run site:build` + deploy)
+
+**Publish site/README metrics only from a committed `results/*-opencode-go.md` for the lexis-two arm.**
+
+### Adding models later (Gemini, Claude, OpenAI)
+
+1. Add entry to `opencode-go-models.json` (or a new `providers/*.json` when you split harnesses).
+2. Set `transport`: `openai-chat` or `anthropic-messages` per [Go endpoints](https://opencode.ai/docs/go/#endpoints).
+3. Re-run and commit a new `results/` file.
+
+---
+
+## Legacy: Claude via promptfoo
+
+Historical ponytail-arm results (2026-06-13) — **not Lexis-Two**. `arms/ponytail.js` now reads `skills/lexis-two/SKILL.md` until the promptfoo labels are renamed.
+
+Requires `ANTHROPIC_API_KEY` and **Node.js ≥ 22.22.0**:
+
+```bash
+npx promptfoo@latest eval -c benchmarks/promptfooconfig.yaml --repeat 10
 npx promptfoo@latest view
 ```
 
-### Local models via Ollama
+### Median results (10 runs, 2026-06-13) — ponytail arm only
 
-No API key or promptfoo required. Runs against any model served by Ollama:
+| arm | Haiku LOC | Sonnet LOC | Opus LOC |
+| --- | --------: | ---------: | -------: |
+| baseline | 518 | 693 | 256 |
+| caveman | 116 | 120 | 67 |
+| ponytail | 39 | 44 | 51 |
+
+Versus baseline, ponytail wrote **80-94% less code** in that run. Do not cite as Lexis-Two until re-run via `benchmark-opencode-go.js`.
+
+---
+
+## Local models (Ollama)
 
 ```bash
-ollama pull llama3.2          # or any other model
 python benchmarks/benchmark-local.py --model llama3.2 --repeat 3
 ```
 
-See `benchmarks/results/2026-06-15-llama3.2-local.md` for what to expect: the skill works
-well on instruction-following models (Claude-class) but transfers poorly to small local
-models where the multi-step decision ladder isn't reliably followed.
+Arms: baseline, caveman, lexis-two.
 
-Tasks: email validator, JS debounce, CSV sum, React countdown, FastAPI rate-limit (see `promptfooconfig.yaml`). Single-shot completions, default temperature.
+---
 
-## Median results (10 runs, 2026-06-13)
+## Tasks
 
-**Code (lines)**
-
-| arm | Haiku | Sonnet | Opus |
-|---|--:|--:|--:|
-| baseline (no skill) | 518 | 693 | 256 |
-| caveman | 116 | 120 | 67 |
-| **ponytail** | **39** | **44** | **51** |
-
-**Cost (USD, 5 tasks)**
-
-| arm | Haiku | Sonnet | Opus |
-|---|--:|--:|--:|
-| baseline (no skill) | 0.032 | 0.141 | 0.135 |
-| caveman | 0.014 | 0.045 | 0.075 |
-| **ponytail** | **0.010** | **0.032** | **0.071** |
-
-**Latency (seconds, 5 tasks)**
-
-| arm | Haiku | Sonnet | Opus |
-|---|--:|--:|--:|
-| baseline (no skill) | 37.7 | 124.1 | 58.7 |
-| caveman | 14.9 | 34.7 | 23.1 |
-| **ponytail** | **9.9** | **20.1** | **18.0** |
-
-Versus baseline, ponytail writes **80-94% less code**, costs **47-77% less**, and runs **3-6x faster**, on every model.
+Email validator, JS debounce, CSV sum, React countdown, FastAPI rate-limit (`promptfooconfig.yaml`).
 
 ## Metrics
 
 | File | Metric | Behavior |
-|------|--------|----------|
-| `loc.js` | `loc` | Measurement - always passes, records line count |
-| `correctness.js` | `correct` | Gate - fails if generated code doesn't work |
-
-`correctness.js` extracts fenced code blocks and runs per-task checks (spawns Python/Node for email, debounce, CSV; structural regex for React and FastAPI). A broken one-liner that scores great on LOC will fail on correctness.
-
-> **Note:** The React countdown and FastAPI rate-limit checks are keyword/structural only (no runtime execution), so they verify plausible structure rather than full correctness. The email, debounce, and CSV checks execute the code.
+| ---- | ------ | -------- |
+| `loc.js` | `loc` | Line count (measurement) |
+| `correctness.js` | `correct` | Gate — broken one-liners fail |
 
 ### Prerequisites
 
-Running the benchmark requires **Python 3**, **pandas**, and **Node.js** (18+).
+- **OpenCode Go:** Node.js 18+, `OPENCODE_API_KEY`
+- **promptfoo:** Node.js ≥ 22.22.0, `ANTHROPIC_API_KEY`, Python 3 for correctness checks
+- **Ollama:** Python 3, local Ollama
 
 ## Notes
 
-- Caveman is a prose-compression skill (it leaves code "normal"), so it lands between baseline and ponytail on code size and wins mainly on prose tokens.
-- Cost reflects single-shot calls that re-send the skill every time. In real sessions the skill is injected once and prompt-cached, so the cost gap widens further in ponytail's favor.
-- These are everyday tasks. For production-grade specs, where an unconstrained agent bloats much harder, see the writeups in `results/`.
+- Go usage limits apply ($12/5h etc.) — use `--delay-ms` and start with `--repeat 3`.
+- `qwen3.7-max` and `minimax-m3` use Anthropic `/messages` with header **`x-api-key`** (not `Authorization: Bearer`).
+- Real sessions inject the skill once (cached); benchmark re-sends the full skill each call — pessimistic on tokens.

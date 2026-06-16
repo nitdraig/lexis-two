@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lexis-two.excelso.xyz/sitemap-index.xml

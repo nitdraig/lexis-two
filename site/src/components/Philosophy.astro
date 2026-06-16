@@ -1,0 +1,23 @@
+---
+interface Props {
+  philosophy: {
+    title: string;
+    subtitle: string;
+    rungs: readonly string[];
+  };
+}
+
+const { philosophy } = Astro.props;
+---
+
+<section id="philosophy">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>{philosophy.title}</h2>
+      <p>{philosophy.subtitle}</p>
+    </div>
+    <ol class="ladder">
+      {philosophy.rungs.map((rung) => <li>{rung}</li>)}
+    </ol>
+  </div>
+</section>

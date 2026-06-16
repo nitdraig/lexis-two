@@ -1,6 +1,6 @@
 {
   "name": "lexis-two",
-  "description": "Lazy senior dev mode. Forces the simplest, shortest solution that actually works: YAGNI, stdlib first, no unrequested abstractions.",
+  "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
   "owner": {
     "name": "Agustin Avellaneda",
     "url": "https://github.com/nitdraig"
@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "lexis-two",
-      "description": "Lazy senior dev mode. Forces the simplest, shortest solution that actually works: YAGNI, stdlib first, no unrequested abstractions.",
+      "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
       "source": "./",
       "category": "productivity",
       "tags": ["yagni", "minimalism", "code-review", "productivity"],

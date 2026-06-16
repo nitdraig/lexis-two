@@ -31,7 +31,7 @@ Forked and extended from [ponytail](https://github.com/DietrichGebert/ponytail) 
 
 ## What is Lexis?
 
-Lexis is a multi-agent ecosystem designed for building premium SaaS products efficiently. It enforces a simple philosophy: **the best code is the code never written**.
+Lexis is a multi-agent ecosystem designed for building premium web apps products efficiently. It enforces a simple philosophy: **the best code is the code never written**.
 
 Rather than a single AI assistant, Lexis is a team of specialized agents — each with a defined role, model, and scope — coordinated to cover the full development lifecycle: planning, coding, refactoring, reviewing, and security auditing.
 
@@ -114,13 +114,13 @@ More hosts (Windsurf, Gemini CLI, pi, Copilot): see [docs/portability.md](./docs
 
 Once installed, these slash commands are available in OpenCode:
 
-| Command               | What it does                                                     |
-| --------------------- | ---------------------------------------------------------------- |
-| `/lexis-two-review`   | Reviews recent changes against AGENTS.md rules                   |
-| `/lexis-two-audit`    | Full codebase audit — over-engineering, deps, structure          |
-| `/lexis-two-debt`     | Surfaces all `// lexis:` comments as prioritized debt list       |
-| `/lexis-two-plan`     | Plans a feature using the minimalist decision hierarchy before coding  |
-| `/lexis-two-security` | Security audit focused on your stack (Node.js, MongoDB, Next.js) |
+| Command               | What it does                                                          |
+| --------------------- | --------------------------------------------------------------------- |
+| `/lexis-two-review`   | Reviews recent changes against AGENTS.md rules                        |
+| `/lexis-two-audit`    | Full codebase audit — over-engineering, deps, structure               |
+| `/lexis-two-debt`     | Surfaces all `// lexis:` comments as prioritized debt list            |
+| `/lexis-two-plan`     | Plans a feature using the minimalist decision hierarchy before coding |
+| `/lexis-two-security` | Security audit focused on your stack (Node.js, MongoDB, Next.js)      |
 
 ---
 

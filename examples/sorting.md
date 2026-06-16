@@ -2,7 +2,7 @@
 
 **Task:** "Sort this array of numbers."
 
-## Without Ponytail
+## Without Lexis
 
 ```js
 function quickSort(arr, compareFn = (a, b) => a - b) {
@@ -32,10 +32,10 @@ const sorted = quickSort(numbers);
 
 A hand-rolled quicksort. It allocates three arrays per recursion level, blows the stack on large inputs, and replaces an engine-optimized native sort with homework.
 
-## With Ponytail
+## With Lexis
 
 ```js
-// ponytail: this exists
+// lexis: this exists
 numbers.sort((a, b) => a - b)
 ```
 

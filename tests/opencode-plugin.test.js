@@ -13,14 +13,14 @@ const { pathToFileURL } = require('url');
 // plugin resolves its state path once at load (as it does under a real OpenCode
 // process, where XDG_CONFIG_HOME is already set). The dynamic import below runs
 // after this assignment, so the ordering holds.
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ponytail-opencode-'));
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-two-opencode-'));
 process.env.XDG_CONFIG_HOME = tmp;
-delete process.env.PONYTAIL_DEFAULT_MODE;
-const statePath = path.join(tmp, 'opencode', '.ponytail-active');
+delete process.env.LEXIS_TWO_DEFAULT_MODE;
+const statePath = path.join(tmp, 'opencode', '.lexis-two-active');
 
 let loadPlugin;
 test.before(async () => {
-  const url = pathToFileURL(path.join(__dirname, '..', '.opencode', 'plugins', 'ponytail.mjs'));
+  const url = pathToFileURL(path.join(__dirname, '..', '.opencode', 'plugins', 'lexis-two.mjs'));
   loadPlugin = (await import(url)).default;
 });
 
@@ -34,21 +34,21 @@ test('system.transform injects the ruleset at the default mode (full)', async ()
   const hooks = await loadPlugin({});
   const system = await transform(hooks);
   assert.equal(system.length, 1);
-  assert.match(system[0], /PONYTAIL MODE ACTIVE — level: full/);
+  assert.match(system[0], /LEXIS-TWO MODE ACTIVE — level: full/);
   assert.match(system[0], /lazy senior developer/);
 });
 
-test('command.execute.before persists /ponytail ultra, transform follows it', async () => {
+test('command.execute.before persists /lexis-two ultra, transform follows it', async () => {
   const hooks = await loadPlugin({});
-  await hooks['command.execute.before']({ command: 'ponytail', arguments: 'ultra', sessionID: 's' });
+  await hooks['command.execute.before']({ command: 'lexis-two', arguments: 'ultra', sessionID: 's' });
   assert.equal(fs.readFileSync(statePath, 'utf8'), 'ultra');
   const system = await transform(hooks);
-  assert.match(system[0], /PONYTAIL MODE ACTIVE — level: ultra/);
+  assert.match(system[0], /LEXIS-TWO MODE ACTIVE — level: ultra/);
 });
 
-test('/ponytail off persists off and transform injects nothing', async () => {
+test('/lexis-two off persists off and transform injects nothing', async () => {
   const hooks = await loadPlugin({});
-  await hooks['command.execute.before']({ command: 'ponytail', arguments: 'off', sessionID: 's' });
+  await hooks['command.execute.before']({ command: 'lexis-two', arguments: 'off', sessionID: 's' });
   assert.equal(fs.readFileSync(statePath, 'utf8'), 'off');
   const system = await transform(hooks);
   assert.deepEqual(system, []);

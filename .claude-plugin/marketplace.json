@@ -1,14 +1,14 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "ponytail",
+  "name": "lexis-two",
   "description": "Lazy senior dev mode for AI agents. The best code is the code you never wrote.",
   "owner": {
-    "name": "Dietrich Gebert",
-    "url": "https://github.com/DietrichGebert"
+    "name": "Agustin Avellaneda",
+    "url": "https://github.com/nitdraig"
   },
   "plugins": [
     {
-      "name": "ponytail",
+      "name": "lexis-two",
       "description": "Forces the laziest solution that works. YAGNI, stdlib first, one line over fifty.",
       "source": "./",
       "category": "productivity"

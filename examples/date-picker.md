@@ -2,7 +2,7 @@
 
 **Task:** "Add a date picker to this form."
 
-## Without Ponytail
+## Without Lexis
 
 ```bash
 npm install flatpickr
@@ -38,10 +38,10 @@ export default function DatePicker({ value, onChange, minDate, maxDate }) {
 
 One dependency, one wrapper component, two `useEffect` hooks, a cleanup function, and a CSS import, to pick a date.
 
-## With Ponytail
+## With Lexis
 
 ```html
-<!-- ponytail: browser has one -->
+<!-- lexis: browser has one -->
 <input type="date">
 ```
 

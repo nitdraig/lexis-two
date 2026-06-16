@@ -1,6 +1,7 @@
 {
-  "name": "ponytail",
+  "name": "lexis-two",
   "version": "4.6.0",
-  "description": "Lazy senior dev mode. Forces the simplest, shortest solution that actually works: YAGNI, stdlib first, no unrequested abstractions.",
-  "contextFileName": "AGENTS.md"
+  "description": "Lazy senior dev mode for the Lexis-Two ecosystem",
+  "contextFileName": "AGENTS.md",
+  "commands": "commands/"
 }

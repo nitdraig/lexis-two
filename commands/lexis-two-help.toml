@@ -1,0 +1,3 @@
+name = "lexis-two-help"
+description = "Quick reference for lexis-two levels, skills, and commands"
+prompt = "Show the lexis-two quick reference. One shot, change nothing: do not switch mode, write flag files, or persist anything. Levels: /lexis-two lite, /lexis-two (full, default), /lexis-two ultra. Commands: /lexis-two-review, /lexis-two-audit, /lexis-two-debt, /lexis-two-plan, /lexis-two-security, /lexis-two-help."

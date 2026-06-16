@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Every ponytail command the pi extension registers must also ship as a
+// Every lexis-two command the pi extension registers must also ship as a
 // file-based command for the hosts that need one: Claude Code (commands/*.toml,
-// which Gemini CLI reuses) and OpenCode (.opencode/command/*.md). /ponytail-help
+// which Gemini CLI reuses) and OpenCode (.opencode/command/*.md). /lexis-two-help
 // was advertised in the README and the help card but missing both files; this
 // guards that drift -- a registered command with no adapter file fails here.
 
@@ -11,29 +11,30 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.join(__dirname, '..');
-
-// pi-extension registers the canonical command set.
 const piSource = fs.readFileSync(path.join(root, 'pi-extension', 'index.js'), 'utf8');
+// Extract all registered commands: pi.registerCommand("command-name", ...)
 const commands = [...piSource.matchAll(/registerCommand\(["']([\w-]+)["']/g)].map((m) => m[1]);
 
 test('pi registers at least the base command', () => {
-  assert.ok(commands.includes('ponytail'), 'expected pi to register a ponytail command');
+  assert.ok(commands.includes('lexis-two'), 'expected pi to register a lexis-two command');
 });
 
 test('every registered command ships a Claude commands/*.toml', () => {
-  for (const name of commands) {
+  for (const command of commands) {
+    const tomlPath = path.join(root, 'commands', `${command}.toml`);
     assert.ok(
-      fs.existsSync(path.join(root, 'commands', `${name}.toml`)),
-      `missing commands/${name}.toml`,
+      fs.existsSync(tomlPath),
+      `missing Claude command adapter: commands/${command}.toml (registered in pi-extension/index.js)`
     );
   }
 });
 
 test('every registered command ships an OpenCode .opencode/command/*.md', () => {
-  for (const name of commands) {
+  for (const command of commands) {
+    const mdPath = path.join(root, '.opencode', 'command', `${command}.md`);
     assert.ok(
-      fs.existsSync(path.join(root, '.opencode', 'command', `${name}.md`)),
-      `missing .opencode/command/${name}.md`,
+      fs.existsSync(mdPath),
+      `missing OpenCode command adapter: .opencode/command/${command}.md (registered in pi-extension/index.js)`
     );
   }
 });

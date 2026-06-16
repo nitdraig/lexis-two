@@ -2,7 +2,7 @@
 
 **Task:** "We should cache these API responses."
 
-## Without Ponytail
+## Without Lexis
 
 ```python
 import time
@@ -53,7 +53,7 @@ class TTLCache:
 
 120 lines of custom infrastructure for a problem nobody has measured yet.
 
-## With Ponytail
+## With Lexis
 
 First question: **do you actually need a cache?**
 
@@ -61,7 +61,7 @@ First question: **do you actually need a cache?**
 - **Pure function, hot path?** The standard library has it:
 
   ```python
-  # ponytail: stdlib covers this
+  # lexis: stdlib covers this
   from functools import lru_cache
 
   @lru_cache(maxsize=1000)

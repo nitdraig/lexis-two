@@ -1,0 +1,3 @@
+name = "lexis-two-audit"
+description = "Audit the whole repo for over-engineering, what can be deleted"
+skill = "../skills/lexis-two-audit/SKILL.md"

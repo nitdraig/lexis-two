@@ -1,14 +1,14 @@
 {
-  "name": "ponytail",
-  "description": "Lazy senior dev mode for AI agents. The best code is the code you never wrote.",
+  "name": "lexis-two",
+  "description": "Lazy senior dev mode. Forces the simplest, shortest solution that actually works: YAGNI, stdlib first, no unrequested abstractions.",
   "owner": {
-    "name": "Dietrich Gebert",
-    "url": "https://github.com/DietrichGebert"
+    "name": "Agustin Avellaneda",
+    "url": "https://github.com/nitdraig"
   },
   "plugins": [
     {
-      "name": "ponytail",
-      "description": "Forces the laziest solution that works. YAGNI, stdlib first, one line over fifty.",
+      "name": "lexis-two",
+      "description": "Lazy senior dev mode. Forces the simplest, shortest solution that actually works: YAGNI, stdlib first, no unrequested abstractions.",
       "source": "./",
       "category": "productivity",
       "tags": ["yagni", "minimalism", "code-review", "productivity"],

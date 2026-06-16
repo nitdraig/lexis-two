@@ -1,14 +1,14 @@
 {
-  "name": "ponytail",
+  "name": "lexis-two",
   "interface": {
-    "displayName": "Ponytail"
+    "displayName": "lexis-two"
   },
   "plugins": [
     {
-      "name": "ponytail",
+      "name": "lexis-two",
       "source": {
         "source": "url",
-        "url": "https://github.com/DietrichGebert/ponytail.git",
+        "url": "https://github.com/nitdraig/lexis-two.git",
         "ref": "main"
       },
       "policy": {

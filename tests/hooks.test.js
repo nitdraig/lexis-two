@@ -20,7 +20,7 @@ function run(script, env, input = '') {
 // CLAUDE_CONFIG_DIR case sets it explicitly.
 delete process.env.CLAUDE_CONFIG_DIR;
 
-const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ponytail-hooks-'));
+const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-two-hooks-'));
 const home = path.join(temp, 'home');
 const pluginData = path.join(temp, 'plugin-data');
 fs.mkdirSync(home, { recursive: true });
@@ -30,108 +30,108 @@ const codexEnv = {
   HOME: home,
   USERPROFILE: home,
   PLUGIN_DATA: pluginData,
-  PONYTAIL_DEFAULT_MODE: 'ultra',
+  LEXIS_TWO_DEFAULT_MODE: 'ultra',
 };
-const codexState = path.join(pluginData, '.ponytail-active');
+const codexState = path.join(pluginData, '.lexis-two-active');
 
-let result = run('ponytail-activate.js', codexEnv);
+let result = run('lexis-two-activate.js', codexEnv);
 assert.equal(result.status, 0, result.stderr);
 assert.equal(fs.readFileSync(codexState, 'utf8'), 'ultra');
 let output = JSON.parse(result.stdout);
-assert.equal(output.systemMessage, 'PONYTAIL:ULTRA');
+assert.equal(output.systemMessage, 'LEXIS-TWO:ULTRA');
 assert.match(
   output.hookSpecificOutput.additionalContext,
-  /PONYTAIL MODE ACTIVE — level: ultra/,
+  /LEXIS-TWO MODE ACTIVE — level: ultra/,
 );
 
 result = run(
-  'ponytail-mode-tracker.js',
+  'lexis-two-mode-tracker.js',
   codexEnv,
-  JSON.stringify({ prompt: '@ponytail lite' }),
+  JSON.stringify({ prompt: '@lexis-two lite' }),
 );
 assert.equal(result.status, 0, result.stderr);
 assert.equal(fs.readFileSync(codexState, 'utf8'), 'lite');
 output = JSON.parse(result.stdout);
-assert.equal(output.systemMessage, 'PONYTAIL:LITE');
+assert.equal(output.systemMessage, 'LEXIS-TWO:LITE');
 
 result = run(
-  'ponytail-mode-tracker.js',
+  'lexis-two-mode-tracker.js',
   codexEnv,
   JSON.stringify({ prompt: 'normal mode' }),
 );
 assert.equal(result.status, 0, result.stderr);
 assert.equal(fs.existsSync(codexState), false);
 output = JSON.parse(result.stdout);
-assert.equal(output.systemMessage, 'PONYTAIL:OFF');
+assert.equal(output.systemMessage, 'LEXIS-TWO:OFF');
 
 const claudeEnv = {
   HOME: home,
   USERPROFILE: home,
-  PONYTAIL_DEFAULT_MODE: 'full',
+  LEXIS_TWO_DEFAULT_MODE: 'full',
 };
 delete claudeEnv.PLUGIN_DATA;
 
-result = run('ponytail-activate.js', claudeEnv);
+result = run('lexis-two-activate.js', claudeEnv);
 assert.equal(result.status, 0, result.stderr);
 assert.equal(
-  fs.readFileSync(path.join(home, '.claude', '.ponytail-active'), 'utf8'),
+  fs.readFileSync(path.join(home, '.claude', '.lexis-two-active'), 'utf8'),
   'full',
 );
 
-// CLAUDE_CONFIG_DIR overrides ~/.claude for the flag file (issue #34).
+// CLAUDE_CONFIG_DIR overrides ~/.claude for the flag file.
 const home2 = path.join(temp, 'home2');
 fs.mkdirSync(home2, { recursive: true });
 const customConfigDir = path.join(temp, 'custom-claude');
-result = run('ponytail-activate.js', {
+result = run('lexis-two-activate.js', {
   HOME: home2,
   USERPROFILE: home2,
   CLAUDE_CONFIG_DIR: customConfigDir,
-  PONYTAIL_DEFAULT_MODE: 'lite',
+  LEXIS_TWO_DEFAULT_MODE: 'lite',
 });
 assert.equal(result.status, 0, result.stderr);
 assert.equal(
-  fs.readFileSync(path.join(customConfigDir, '.ponytail-active'), 'utf8'),
+  fs.readFileSync(path.join(customConfigDir, '.lexis-two-active'), 'utf8'),
   'lite',
 );
 assert.equal(
-  fs.existsSync(path.join(home2, '.claude', '.ponytail-active')),
+  fs.existsSync(path.join(home2, '.claude', '.lexis-two-active')),
   false,
   'flag must not land in ~/.claude when CLAUDE_CONFIG_DIR is set',
 );
 
 const copilotData = path.join(temp, 'copilot-data');
 const codexData = path.join(temp, 'codex-data-shadow');
-result = run('ponytail-activate.js', {
+result = run('lexis-two-activate.js', {
   HOME: home,
   USERPROFILE: home,
   COPILOT_PLUGIN_DATA: copilotData,
   PLUGIN_DATA: codexData,
-  PONYTAIL_DEFAULT_MODE: 'full',
+  LEXIS_TWO_DEFAULT_MODE: 'full',
 });
 assert.equal(result.status, 0, result.stderr);
-assert.equal(fs.readFileSync(path.join(copilotData, '.ponytail-active'), 'utf8'), 'full');
+assert.equal(fs.readFileSync(path.join(copilotData, '.lexis-two-active'), 'utf8'), 'full');
 assert.equal(
-  fs.existsSync(path.join(codexData, '.ponytail-active')),
+  fs.existsSync(path.join(codexData, '.lexis-two-active')),
   false,
   'copilot hooks must not write mode state to codex PLUGIN_DATA',
 );
 output = JSON.parse(result.stdout);
-assert.match(output.additionalContext, /PONYTAIL MODE ACTIVE — level: full/);
+assert.match(output.additionalContext, /LEXIS-TWO MODE ACTIVE — level: full/);
 
 result = run(
-  'ponytail-mode-tracker.js',
+  'lexis-two-mode-tracker.js',
   {
     HOME: home,
     USERPROFILE: home,
     COPILOT_PLUGIN_DATA: copilotData,
     PLUGIN_DATA: codexData,
   },
-  JSON.stringify({ prompt: '/ponytail ultra' }),
+  JSON.stringify({ prompt: '/lexis-two ultra' }),
 );
 assert.equal(result.status, 0, result.stderr);
-assert.equal(fs.readFileSync(path.join(copilotData, '.ponytail-active'), 'utf8'), 'ultra');
+assert.equal(fs.readFileSync(path.join(copilotData, '.lexis-two-active'), 'utf8'), 'ultra');
 assert.equal(
-  fs.existsSync(path.join(codexData, '.ponytail-active')),
+  fs.existsSync(path.join(codexData, '.lexis-two-active')),
   false,
   'copilot mode tracker must keep codex PLUGIN_DATA untouched',
 );

@@ -2,7 +2,7 @@
 
 **Task:** "Add an endpoint that returns a user by id."
 
-## Without Ponytail
+## Without Lexis
 
 ```
 app/
@@ -48,10 +48,10 @@ def get_user(user_id: int, service: UserService = Depends(get_user_service)):
 
 Five files, three classes, a custom exception, and a dependency-injection chain, wrapping one database call.
 
-## With Ponytail
+## With Lexis
 
 ```python
-# ponytail: drop the layers; keep the response schema, it whitelists what leaves the API
+# lexis: drop the layers; keep the response schema, it whitelists what leaves the API
 class UserOut(BaseModel):
     id: int
     name: str
@@ -65,4 +65,4 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     return user
 ```
 
-**5 files → 9 lines.** The repository, service, and custom exception were ceremony. The response schema was not: it whitelists which fields leave the API, so it stays. Returning the raw ORM model (`return user`) would leak every column, including the ones you never meant to expose. That is the line ponytail draws, and it is the same one the skill draws in "when NOT to be lazy": cut the layers, keep the trust boundary. Add a service layer when a second caller shows up, if it ever does.
+**5 files → 9 lines.** The repository, service, and custom exception were ceremony. The response schema was not: it whitelists which fields leave the API, so it stays. Returning the raw ORM model (`return user`) would leak every column, including the ones you never meant to expose. That is the line Lexis draws, and it is the same one the skill draws in "when NOT to be lazy": cut the layers, keep the trust boundary. Add a service layer when a second caller shows up, if it ever does.

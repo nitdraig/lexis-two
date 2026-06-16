@@ -1,19 +1,19 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
-    <img src="assets/logo.png" width="220" alt="Ponytail, the lazy senior dev">
+  <!--  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png"> -->
+    <img src="assets/logo.png" width="220" alt="Lexis-two, the lazy senior dev">
   </picture>
 </p>
 
-<h1 align="center">Ponytail</h1>
+<h1 align="center">Lexis-two</h1>
 
 <p align="center">
-  <em>He says nothing. He writes one line. It works.</em>
+  <em>The AI agent ecosystem that thinks like the laziest senior dev in the room.</em>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/DietrichGebert/ponytail?style=flat-square&color=111111&label=stars" alt="Stars">
-  <img src="https://img.shields.io/github/v/release/DietrichGebert/ponytail?style=flat-square&color=111111&label=release" alt="Release">
+  <img src="https://img.shields.io/github/stars/nitdraig/ponytail?style=flat-square&color=111111&label=stars" alt="Stars">
+  <img src="https://img.shields.io/github/v/release/nitdraig/ponytail?style=flat-square&color=111111&label=release" alt="Release">
   <img src="https://img.shields.io/badge/works%20with-13%20agents-111111?style=flat-square" alt="Works with 13 agents">
   <img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license">
 </p>
@@ -23,185 +23,196 @@
   <sub>Median of 10 runs across Haiku, Sonnet, and Opus. <a href="benchmarks/">Reproduce it yourself.</a></sub>
 </p>
 
+Built on top of [OpenCode](https://opencode.ai) and [Cursor](https://cursor.sh).
+Forked and extended from [ponytail](https://github.com/DietrichGebert/ponytail) by DietrichGebert (MIT).
+
 ---
 
-You know him. Long ponytail. Oval glasses. Has been at the company longer than the version control. You show him fifty lines; he looks at them, says nothing, and replaces them with one.
+## What is Lexis?
 
-Ponytail puts him inside your AI agent.
+Lexis is a multi-agent ecosystem designed for building premium SaaS products efficiently. It enforces a simple philosophy: **the best code is the code never written**.
 
-## Before / after
+Rather than a single AI assistant, Lexis is a team of specialized agents — each with a defined role, model, and scope — coordinated to cover the full development lifecycle: planning, coding, refactoring, reviewing, and security auditing.
 
-You ask for a date picker. Your agent installs flatpickr, writes a wrapper component, adds a stylesheet, and starts a discussion about timezones.
+### The Agents
 
-With ponytail:
+| Agent              | Role                 | Scope                                |
+| ------------------ | -------------------- | ------------------------------------ |
+| `lexis-one`        | Primary coding agent | Implements, edits, runs bash         |
+| `lexis-review`     | Strategic reviewer   | Evaluates changes, never edits       |
+| `ui-architect`     | UX/UI architect      | Consults on design, never implements |
+| `refactor-agent`   | Refactor specialist  | Large-scale code restructuring       |
+| `security-auditor` | Security analyst     | Read-only, runs audit tools          |
+| `explorer`         | Codebase mapper      | Read-only, fast local model          |
 
-```html
-<!-- ponytail: browser has one -->
-<input type="date">
-```
+### The Philosophy
 
-More survivors in [examples/](examples/).
+Before writing any code, Lexis stops at the first rung that holds:
 
-## Numbers
+1. Does this need to exist at all? (YAGNI)
+2. Does the standard library already do this?
+3. Does a native platform feature cover it?
+4. Does an already-installed dependency solve it?
+5. Can this be one line?
+6. Only then: write the minimum code that works.
 
-Five everyday tasks (email validator, debounce, CSV sum, countdown timer, rate limiter), three models, three arms: no skill, the [caveman](https://github.com/JuliusBrussee/caveman) skill, and ponytail. Ten runs per cell, median reported.
+---
 
-<p align="center">
-  <img src="assets/benchmark-3model.svg" width="860" alt="Median lines of code per arm across Haiku, Sonnet and Opus; ponytail writes 80-94% less code than the no-skill baseline">
-</p>
+## Stack
 
-**80-94% less code, 47-77% less cost, and 3-6× faster than a no-skill agent, on every model.** Every shortcut ponytail takes is marked in the code with a `ponytail:` comment naming its upgrade path. Reproduce it yourself: `npx promptfoo eval -c benchmarks/promptfooconfig.yaml`. Method and raw numbers: [benchmarks/](benchmarks/). Production-grade tasks, where an unconstrained agent bloats far more, are written up in [benchmarks/results/](benchmarks/results/).
+Lexis is optimized for this stack — adapt as needed for your own:
 
-## How it works
+- **Frontend**: Next.js App Router, React, TypeScript strict
+- **Backend**: Express.js / Fastify, Node.js, TypeScript
+- **Database**: MongoDB (default) / PostgreSQL / SQLite
+- **Cache**: Redis
+- **Styling**: Tailwind CSS
+- **Data fetching**: TanStack Query v5
+- **Package Manager**: npm
 
-Before writing code, the agent stops at the first rung that holds:
+---
 
-```
-1. Does this need to exist?   → no: skip it (YAGNI)
-2. Stdlib does it?            → use it
-3. Native platform feature?   → use it
-4. Installed dependency?      → use it
-5. One line?                  → one line
-6. Only then: the minimum that works
-```
-
-Lazy, not negligent: trust-boundary validation, data-loss handling, security, and accessibility are never on the chopping block.
-
-## Install
-
-The most effort ponytail will ever ask of you:
-
-The Claude Code and Codex plugins run two tiny Node.js lifecycle hooks, so `node` needs to be on your PATH (note for Nix/nvm users: it must be on the non-interactive shell's PATH). If it isn't, the skills still work, the always-on activation just stays quiet instead of erroring on every prompt.
-
-### Claude Code
-
-```
-/plugin marketplace add DietrichGebert/ponytail
-/plugin install ponytail@ponytail
-```
-
-### Codex
-
-```bash
-codex plugin marketplace add DietrichGebert/ponytail
-codex
-```
-
-Open `/plugins`, select the Ponytail marketplace, and install Ponytail. Then
-open `/hooks`, review and trust its two lifecycle hooks, and start a new thread.
-
-This same install also covers the Codex desktop app: restart the app after installing and it picks up the plugin.
-
-### GitHub Copilot CLI
-
-```bash
-copilot plugin marketplace add DietrichGebert/ponytail
-copilot plugin install ponytail@ponytail
-```
-
-In an interactive Copilot CLI session, use the slash equivalents:
-
-```
-/plugin marketplace add DietrichGebert/ponytail
-/plugin install ponytail@ponytail
-```
-
-Copilot CLI namespaces plugin commands by plugin name. For example:
-
-```text
-/ponytail:ponytail ultra
-/ponytail:ponytail-review
-```
-
-### Pi agent harness
-
-```
-pi install git:github.com/DietrichGebert/ponytail
-```
+## Installation
 
 ### OpenCode
 
-Run OpenCode from a checkout of this repo (the plugin reuses its `hooks/` and `skills/`), and add to `opencode.json`:
-
-```json
-{ "plugin": ["./.opencode/plugins/ponytail.mjs"] }
+```bash
+# Clone the repo
+git clone https://github.com/nitdraig/lexis-two.git ~/lexis-two
 ```
 
-Injects the ruleset every turn at the active level; adds the `/ponytail` commands (see [Commands](#commands)). OpenCode also auto-loads this repo's `AGENTS.md`, so the rules hold even without the plugin. The plugin adds the `lite/full/ultra/off` levels.
+Add to your `opencode.json`:
 
-The `./` path resolves against your project's `opencode.json`; to share one checkout across projects, point it at the absolute path of the `.mjs` instead (it finds its `hooks/` and `skills/` relative to its own file).
+```jsonc
+{
+  "plugin": ["~/lexis-two/.opencode/plugins/lexis-two.mjs"],
+  "instructions": ["~/lexis-two/AGENTS.md"],
+}
+```
 
-### Gemini CLI
+### Cursor
 
 ```bash
-gemini extensions install https://github.com/DietrichGebert/ponytail
+# Copy rules to your project or global Cursor config
+cp ~/lexis-two/.cursor/rules/lexis-two.mdc .cursor/rules/lexis-two.mdc
 ```
 
-Loads the ruleset as always-on context every session and registers the `/ponytail` commands; the `skills/` ship too, activated when a task needs them.
-
-### Antigravity CLI
-
-Google is renaming Gemini CLI to Antigravity CLI (the `agy` binary); the same extension installs there:
+Or globally:
 
 ```bash
-agy plugin install https://github.com/DietrichGebert/ponytail
+`cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc`
 ```
 
-It reuses this repo's `gemini-extension.json`. One difference: Antigravity converts the `/ponytail` commands into skills, so you type them into the chat (e.g. `/ponytail-review` as a message) instead of picking them from a slash menu. Until the migration completes (around June 18, 2026), `gemini extensions install` still works too. To run it as an always-on rule instead, drop the ruleset into `.agents/rules/`.
-
-That was it. He'd be proud. He won't say it.
-
-Active every session, with a handful of commands (see [Commands](#commands)). `/ponytail ultra` exists for when the codebase has wronged you personally. Startup and mode-change text shows the current mode.
-
-Set the level for every new session with the `PONYTAIL_DEFAULT_MODE` env var (`lite`/`full`/`ultra`/`off`), or a `defaultMode` field in `~/.config/ponytail/config.json` (`%APPDATA%\ponytail\config.json` on Windows). The default is `full`.
-
-Cursor, Windsurf, Cline, GitHub Copilot (editor), Aider, Kiro: copy the matching rules file from this repo ([`.cursor/rules/`](.cursor/rules/), [`.windsurf/rules/`](.windsurf/rules/), [`.clinerules/`](.clinerules/), [`.github/copilot-instructions.md`](.github/copilot-instructions.md), [`AGENTS.md`](AGENTS.md), [`.kiro/steering/`](.kiro/steering/)).
-
-Kiro: copy `.kiro/steering/ponytail.md` to `~/.kiro/steering/` (global) or `.kiro/steering/` in your project.
-
-GitHub Copilot CLI fallback (instruction-only mode): it reads `AGENTS.md` and `.github/copilot-instructions.md` in a project, or copy the rules into `~/.copilot/copilot-instructions.md` to run ponytail in every project. This path keeps always-on guidance, but does not add plugin mode switches or hooks.
-
-VS Code with the Codex extension reads `AGENTS.md`, which this repo ships, so it works from the repo root with no setup (`~/.codex/AGENTS.md` makes Codex global).
-
-Which files map to which agent: [Agent portability](docs/agent-portability.md).
+---
 
 ## Commands
 
-| Command | What it does |
-|---------|--------------|
-| `/ponytail [lite \| full \| ultra \| off]` | Set the intensity, or turn it off. No argument reports the current level. |
-| `/ponytail-review` | Review the current diff for over-engineering, hands back a delete-list. |
-| `/ponytail-audit` | Audit the whole repo for over-engineering, not just the diff. |
-| `/ponytail-debt` | Harvest the `ponytail:` shortcuts you've deferred into a ledger, so "later" doesn't become "never". |
-| `/ponytail-help` | Quick reference for the commands above. |
+Once installed, these slash commands are available in OpenCode:
 
-Commands need a skill-capable host (Claude Code, Codex, OpenCode, Gemini, pi). In Codex they're skills, invoke with `@` (`@ponytail-review`). The instruction-only adapters (Cursor, Windsurf, Cline, Copilot, Kiro, Antigravity) load the always-on ruleset without the commands.
+| Command               | What it does                                                     |
+| --------------------- | ---------------------------------------------------------------- |
+| `/lexis-two-review`   | Reviews recent changes against AGENTS.md rules                   |
+| `/lexis-two-audit`    | Full codebase audit — over-engineering, deps, structure          |
+| `/lexis-two-debt`     | Surfaces all `// lexis:` comments as prioritized debt list       |
+| `/lexis-two-plan`     | Plans a feature using the lazy decision hierarchy before coding  |
+| `/lexis-two-security` | Security audit focused on your stack (Node.js, MongoDB, Next.js) |
 
-## Development
+---
 
-When changing the compact rule text, keep the agent copies aligned:
+## Modes
+
+Switch working mode with `/mode <name>` in OpenCode:
+
+| Mode         | Focus                          | Best for               |
+| ------------ | ------------------------------ | ---------------------- |
+| `build`      | Minimum viable implementation  | Day-to-day coding      |
+| `plan`       | Analysis before implementation | Complex features       |
+| `review`     | Evaluate, no edits             | Before committing      |
+| `debug`      | Trace issues, no edits         | Investigating bugs     |
+| `docs`       | JSDoc, README, comments        | Documentation sprints  |
+| `brainstorm` | Ideas and trade-offs           | Architecture decisions |
+
+---
+
+## The `lexis:` Comment Tag
+
+Lexis marks intentional simplifications with inline comments:
+
+```typescript
+// lexis: using native <dialog> instead of modal library — no dep needed
+// lexis: skipping abstraction — only used once, extract if needed in v2
+// lexis: tech debt — revisit when auth module is stable
+```
+
+Run `/lexis-two-debt` to collect and prioritize all tagged items across the codebase.
+
+---
+
+## Adapting Lexis-Two to Any Stack
+
+Lexis-Two is highly portable and can be adapted to any programming language, framework, or database stack. To customize it for your team's stack, follow these three steps:
+
+### 1. Update the Steering Rules (`AGENTS.md`)
+
+The canonical source of truth for your agent's behavior is `AGENTS.md`. Open it and replace the **Stack-Specific Shortcuts** section with rules tailored to your technology.
+
+- **For Python / Django / FastAPI**: Enforce standard library features (like `functools.lru_cache` or `dataclasses`), native type hints, and built-in SQLite/PostgreSQL patterns.
+- **For Rust**: Enforce standard library traits, `Option`/`Result` patterns, and specific crate guidelines (e.g., `tokio` for async, `serde` for serialization).
+- **For Go**: Enforce built-in concurrency primitives (channels, goroutines), standard library HTTP routing, and table-driven testing.
+
+Once you update `AGENTS.md`, run the integrity check script to automatically synchronize all static rule copies for IDE hosts:
 
 ```bash
 node scripts/check-rule-copies.js
-npm test
 ```
 
-The correctness benchmark spawns Python for email and CSV checks; `python3` is tried before `python`. CSV checks need `pandas` installed locally.
+_(If it fails, copy the updated body of `AGENTS.md` into `.cursor/rules/lexis-two.mdc`, `.windsurf/rules/lexis-two.md`, `.clinerules/lexis-two.md`, and `.kiro/steering/lexis-two.md`, preserving their frontmatter)._
 
-## FAQ
+### 2. Customize Portable Skills (`skills/`)
 
-**Does it need a config file?**
-No. An optional `~/.config/ponytail/config.json` or `PONYTAIL_DEFAULT_MODE` env var can set the default level, but nothing is required.
+Each portable skill in `skills/` can be adapted to run your stack's specific CLI tools:
 
-**What if I really need the 120-line cache class?**
-You don't. Insist anyway and he'll build it. Slowly. Correctly. While looking at you.
+- **Security Audit (`skills/lexis-two-security/SKILL.md`)**: Change the automated commands to match your stack. For example, use `cargo audit` for Rust, `pip-audit` for Python, or `gosec` for Go instead of `npm audit`.
+- **Codebase Audit (`skills/lexis-two-audit/SKILL.md`)**: Change `depcheck` or linter commands to tools like `pylint`, `clippy`, or `golangci-lint`.
+- **Technical Debt (`skills/lexis-two-debt/SKILL.md`)**: Adjust file extensions in the `grep` command to match your language (e.g., `--include="*.py"` or `--include="*.rs"`).
 
-**Does it scale?**
-The code you never wrote scales infinitely. Zero bugs, zero CVEs, 100% uptime since forever.
+### 3. Update Host Commands (`commands/` and `.opencode/`)
 
-**Why "ponytail"?**
-You know exactly why.
+If you change the commands or tools in the skills, make sure to update:
+
+- The description and prompt fields in the Gemini CLI TOML files (`commands/*.toml`).
+- The description and instructions in the OpenCode Markdown commands (`.opencode/command/*.md`).
+
+---
+
+## Complementary Repos
+
+| Repo                                               | What it adds                                                        |
+| -------------------------------------------------- | ------------------------------------------------------------------- |
+| [my-skills](https://github.com/nitdraig/my-skills) | OpenCode/Cursor skills: code review, testing, security, performance |
+
+---
+
+## Roadmap
+
+- [x] v0.1 — Core AGENTS.md + plugin + commands + modes
+- [ ] v0.2 — Agent ecosystem documentation + project AGENTS.md template
+- [x] v0.3 — Lexis-Two: next evolution beyond IDE/CLI agents
+- [ ] v0.4 — Lexis-Core: orchestrator agent for complex multi-agent workflows
+
+---
+
+## Contributing
+
+Contributions welcome. Before opening a PR, read `AGENTS.md` — it applies here too.
+
+Focus areas: stack-specific shortcuts for other tech stacks, new modes, additional commands.
+
+---
 
 ## License
 
-[MIT](LICENSE). The shortest license that works.
+MIT — see [LICENSE](./LICENSE).
+
+Original ponytail concept by [DietrichGebert](https://github.com/DietrichGebert/ponytail).
+Lexis ecosystem by [@nitdraig](https://github.com/nitdraig).

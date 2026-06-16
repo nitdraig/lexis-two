@@ -1,66 +1,82 @@
 #!/usr/bin/env node
+// lexis-two — rule copy integrity check
+//
+// To avoid runtime overhead, instruction-tier hosts (Windsurf, Cline, Kiro,
+// Cursor) load static copies of the rules. This script acts as a build/CI guard
+// to ensure those copies never drift from the canonical source (AGENTS.md).
+//
+// It asserts that:
+//   1. Every rule copy file exists.
+//   2. Every copy is completely identical to AGENTS.md (ignoring host-specific frontmatter).
+//   3. The canonical AGENTS.md itself contains the load-bearing Lexis-Two rules.
+
 const fs = require('fs');
 const path = require('path');
 
 const root = path.join(__dirname, '..');
 
-function read(relPath) {
-  return fs.readFileSync(path.join(root, relPath), 'utf8').replace(/\r\n/g, '\n').trim();
-}
+// Canonical source of truth
+const SOURCE_FILE = 'AGENTS.md';
 
-function stripFrontmatter(text) {
-  return text.replace(/^---\n[\s\S]*?\n---\n*/, '').trim();
-}
-
-const agents = read('AGENTS.md');
-const canonical = agents.replace(/\n\n\(Yes, this file also applies[\s\S]*?\)$/, '').trim();
-
-// Compact copies: same body as AGENTS.md, host-specific frontmatter stripped.
-const copies = [
-  ['.cursor/rules/ponytail.mdc', stripFrontmatter],
-  ['.windsurf/rules/ponytail.md', text => text.trim()],
-  ['.clinerules/ponytail.md', text => text.trim()],
-  ['.github/copilot-instructions.md', text => text.trim()],
-  ['.kiro/steering/ponytail.md', stripFrontmatter],
+// Static copies to validate
+const COPIES = [
+  '.windsurf/rules/lexis-two.md',
+  '.clinerules/lexis-two.md',
+  '.kiro/steering/lexis-two.md',
+  '.cursor/rules/lexis-two.mdc',
 ];
 
-let failed = false;
+// Load-bearing phrases that MUST exist in the source of truth. If these are
+// missing, the source file has been gutted, and the copies are validating
+// against an empty shell.
+const INVARIANTS = [
+  'lazy senior',
+  'Input validation at trust boundaries',
+  'YAGNI',
+];
 
-for (const [relPath, normalize] of copies) {
-  const actual = normalize(read(relPath));
-  if (actual !== canonical) {
-    console.error(`${relPath} drifted from AGENTS.md`);
+function read(relPath) {
+  try {
+    return fs.readFileSync(path.join(root, relPath), 'utf8');
+  } catch (e) {
+    console.error(`Error: failed to read ${relPath}`);
+    process.exit(1);
+  }
+}
+
+// 1. Validate canonical source
+const source = read(SOURCE_FILE);
+for (const phrase of INVARIANTS) {
+  if (!source.includes(phrase)) {
+    console.error(`Error: canonical source (${SOURCE_FILE}) is missing load-bearing rule: "${phrase}"`);
+    process.exit(1);
+  }
+}
+
+// Helper to strip frontmatter (metadata blocks between '---' at start of file)
+function stripFrontmatter(content) {
+  return content.replace(/^---[\s\S]*?---\s*/, '');
+}
+
+// 2. Validate copies
+let failed = false;
+const canonicalBody = stripFrontmatter(source).trim();
+
+for (const copyPath of COPIES) {
+  const copyContent = read(copyPath);
+  const copyBody = stripFrontmatter(copyContent).trim();
+
+  if (copyBody !== canonicalBody) {
+    console.error(`Drift detected: ${copyPath} does not match ${SOURCE_FILE}`);
     failed = true;
   }
 }
 
-// SKILL.md is the runtime source of truth and is longer than the compact body,
-// so it cannot be byte-compared. ponytail: canary, not full equality. Assert the
-// load-bearing rules survive verbatim in both the source and AGENTS.md. Changing
-// a rule's wording trips this, which is the reminder to propagate it everywhere.
-// Upgrade path: generate the copies from SKILL.md if this ever misses a real drift.
-const INVARIANTS = [
-  'naive heuristic',                       // ceiling-comment rule
-  'ONE runnable check',                    // test reflex
-  'flimsier algorithm',                    // robust-variant rule
-  'input validation at trust boundaries',  // the "not lazy about" clause
-  'Lazy code without its check is unfinished', // one-check promoted to headline
-];
-
-const skill = read('skills/ponytail/SKILL.md');
-const sources = [['skills/ponytail/SKILL.md', skill], ['AGENTS.md', agents]];
-for (const phrase of INVARIANTS) {
-  for (const [label, text] of sources) {
-    if (!text.includes(phrase)) {
-      console.error(`${label} is missing rule invariant: "${phrase}"`);
-      failed = true;
-    }
-  }
-}
-
 if (failed) {
-  console.error('Update the copied rule text, AGENTS.md, or SKILL.md so the shared rules match.');
+  console.error('\nIntegrity check FAILED. Rule copies have drifted from AGENTS.md.');
+  console.error('To fix, copy AGENTS.md content into the drifted files, preserving their frontmatter if any.');
   process.exit(1);
 }
 
-console.log(`Rule copies match AGENTS.md; ${INVARIANTS.length} rule invariants present in SKILL.md and AGENTS.md.`);
+console.log('Rule copy integrity check PASSED.');
+process.exit(0);

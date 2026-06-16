@@ -8,8 +8,8 @@ const {
   normalizeConfigMode,
   normalizePersistedMode,
   writeDefaultMode,
-} = require("../hooks/ponytail-config.js");
-const { getPonytailInstructions, filterSkillBodyForMode } = require("../hooks/ponytail-instructions.js");
+} = require("../hooks/lexis-two-config.js");
+const { getLexisInstructions, filterSkillBodyForMode } = require("../hooks/lexis-two-instructions.js");
 
 export { filterSkillBodyForMode };
 export const readDefaultMode = getDefaultMode;
@@ -20,7 +20,7 @@ export function resolveSessionMode(entries, fallbackMode = DEFAULT_MODE) {
 
   for (let i = entries.length - 1; i >= 0; i -= 1) {
     const entry = entries[i];
-    if (entry?.type !== "custom" || entry?.customType !== "ponytail-mode") continue;
+    if (entry?.type !== "custom" || entry?.customType !== "lexis-two-mode") continue;
 
     const mode = normalizePersistedMode(entry?.data?.mode);
     if (mode) return mode;
@@ -29,7 +29,7 @@ export function resolveSessionMode(entries, fallbackMode = DEFAULT_MODE) {
   return fallback;
 }
 
-export function parsePonytailCommand(text, defaultMode = DEFAULT_MODE) {
+export function parseLexisCommand(text, defaultMode = DEFAULT_MODE) {
   const fallback = normalizePersistedMode(defaultMode) || DEFAULT_MODE;
   const normalizedText = String(text || "").trim().toLowerCase();
 
@@ -52,7 +52,7 @@ export function parsePonytailCommand(text, defaultMode = DEFAULT_MODE) {
 
 export { writeDefaultMode };
 
-export default function ponytailExtension(pi) {
+export default function lexisExtension(pi) {
   let currentMode = DEFAULT_MODE;
   let configuredDefaultMode = getDefaultMode();
 
@@ -61,8 +61,8 @@ export default function ponytailExtension(pi) {
     if (!normalized) return;
 
     currentMode = normalized;
-    pi.appendEntry("ponytail-mode", { mode: normalized });
-    ctx?.ui?.notify?.(`Ponytail mode set to ${normalized}.`, "info");
+    pi.appendEntry("lexis-two-mode", { mode: normalized });
+    ctx?.ui?.notify?.(`Lexis-Two mode set to ${normalized}.`, "info");
   };
 
   const sendAlias = (skillName, args, ctx) => {
@@ -78,13 +78,13 @@ export default function ponytailExtension(pi) {
     pi.sendUserMessage(message);
   };
 
-  pi.registerCommand("ponytail", {
-    description: "Set or report Ponytail mode",
+  pi.registerCommand("lexis-two", {
+    description: "Set or report Lexis-Two mode",
     handler: async (args, ctx) => {
-      const parsed = parsePonytailCommand(args, configuredDefaultMode);
+      const parsed = parseLexisCommand(args, configuredDefaultMode);
 
       if (parsed.type === "status") {
-        ctx?.ui?.notify?.(`Ponytail: current ${currentMode} • default ${configuredDefaultMode}`, "info");
+        ctx?.ui?.notify?.(`Lexis-Two: current ${currentMode} • default ${configuredDefaultMode}`, "info");
         return;
       }
 
@@ -93,7 +93,7 @@ export default function ponytailExtension(pi) {
         if (written) {
           configuredDefaultMode = getDefaultMode();
           const message = configuredDefaultMode === written
-            ? `Default Ponytail mode set to ${written}.`
+            ? `Default Lexis-Two mode set to ${written}.`
             : `Saved default ${written}, but env override keeps default at ${configuredDefaultMode}.`;
           ctx?.ui?.notify?.(message, "info");
         }
@@ -105,35 +105,45 @@ export default function ponytailExtension(pi) {
         return;
       }
 
-      ctx?.ui?.notify?.("Unknown or unsupported /ponytail mode.", "warning");
+      ctx?.ui?.notify?.("Unknown or unsupported /lexis-two mode.", "warning");
     },
   });
 
-  pi.registerCommand("ponytail-review", {
-    description: "Run /skill:ponytail-review",
-    handler: (_args, ctx) => sendAlias("/skill:ponytail-review", "", ctx),
+  pi.registerCommand("lexis-two-review", {
+    description: "Run /skill:lexis-two-review",
+    handler: (_args, ctx) => sendAlias("/skill:lexis-two-review", "", ctx),
   });
 
-  pi.registerCommand("ponytail-audit", {
-    description: "Run /skill:ponytail-audit",
-    handler: (_args, ctx) => sendAlias("/skill:ponytail-audit", "", ctx),
+  pi.registerCommand("lexis-two-audit", {
+    description: "Run /skill:lexis-two-audit",
+    handler: (_args, ctx) => sendAlias("/skill:lexis-two-audit", "", ctx),
   });
 
-  pi.registerCommand("ponytail-debt", {
-    description: "Run /skill:ponytail-debt",
-    handler: (_args, ctx) => sendAlias("/skill:ponytail-debt", "", ctx),
+  pi.registerCommand("lexis-two-debt", {
+    description: "Run /skill:lexis-two-debt",
+    handler: (_args, ctx) => sendAlias("/skill:lexis-two-debt", "", ctx),
   });
 
-  pi.registerCommand("ponytail-help", {
-    description: "Run /skill:ponytail-help",
-    handler: (_args, ctx) => sendAlias("/skill:ponytail-help", "", ctx),
+  pi.registerCommand("lexis-two-plan", {
+    description: "Run /skill:lexis-two-plan",
+    handler: (_args, ctx) => sendAlias("/skill:lexis-two-plan", "", ctx),
+  });
+
+  pi.registerCommand("lexis-two-security", {
+    description: "Run /skill:lexis-two-security",
+    handler: (_args, ctx) => sendAlias("/skill:lexis-two-security", "", ctx),
+  });
+
+  pi.registerCommand("lexis-two-help", {
+    description: "Run /skill:lexis-two-help",
+    handler: (_args, ctx) => sendAlias("/skill:lexis-two-help", "", ctx),
   });
 
   pi.on("input", async (event) => {
     if (event?.source === "extension") return;
 
     const text = String(event?.text || "");
-    if (currentMode !== "off" && /\b(stop ponytail|normal mode)\b/i.test(text)) {
+    if (currentMode !== "off" && /\b(stop lexis|normal mode)\b/i.test(text)) {
       setMode("off");
     }
   });
@@ -146,6 +156,6 @@ export default function ponytailExtension(pi) {
 
   pi.on("before_agent_start", async (event) => {
     if (!currentMode || currentMode === "off") return;
-    return { systemPrompt: `${event.systemPrompt}\n\n${getPonytailInstructions(currentMode)}` };
+    return { systemPrompt: `${event.systemPrompt}\n\n${getLexisInstructions(currentMode)}` };
   });
 }

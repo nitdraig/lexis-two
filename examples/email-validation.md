@@ -2,7 +2,7 @@
 
 **Task:** "Validate an email address in Python."
 
-## Without Ponytail
+## Without Lexis
 
 ```python
 import re
@@ -33,17 +33,17 @@ def validate_email(email: str) -> bool:
 
 A class, a wrapper, a regex that still rejects valid addresses and accepts invalid ones. Regex cannot validate email. Only a delivery attempt can.
 
-## With Ponytail
+## With Lexis
 
 ```python
-# ponytail: good enough, real validation is sending the mail
+# lexis: good enough, real validation is sending the mail
 "@" in email and "." in email.split("@")[-1]
 ```
 
 Or, if it must be thorough, the standard library has it:
 
 ```python
-# ponytail: stdlib covers this
+# lexis: stdlib covers this
 from email.utils import parseaddr
 "@" in parseaddr(email)[1]
 ```

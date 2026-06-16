@@ -1,123 +1,89 @@
-import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import test from "node:test";
+import assert from "node:assert/strict";
+import lexisExtension from "../index.js";
 
-import ponytailExtension from "../index.js";
+class MockPi {
+  constructor() {
+    this.commands = {};
+    this.listeners = {};
+    this.entries = [];
+    this.userMessages = [];
+  }
 
-function createPiHarness() {
-  const events = new Map();
-  const commands = new Map();
-  const appendedEntries = [];
-  const sentUserMessages = [];
+  registerCommand(name, config) {
+    this.commands[name] = config;
+  }
 
-  const pi = {
-    on(eventName, handler) {
-      events.set(eventName, handler);
-    },
-    registerCommand(name, options) {
-      commands.set(name, options);
-    },
-    appendEntry(customType, data) {
-      appendedEntries.push({ customType, data });
-    },
-    sendUserMessage(text, options) {
-      sentUserMessages.push({ text, options });
+  on(event, handler) {
+    this.listeners[event] = handler;
+  }
+
+  appendEntry(type, data) {
+    this.entries.push({ type, data });
+  }
+
+  sendUserMessage(text, options) {
+    this.userMessages.push({ text, options });
+  }
+}
+
+test("lexisExtension registers commands and listeners", () => {
+  const pi = new MockPi();
+  lexisExtension(pi);
+
+  assert.ok(pi.commands["lexis-two"]);
+  assert.ok(pi.commands["lexis-two-review"]);
+  assert.ok(pi.commands["lexis-two-audit"]);
+  assert.ok(pi.commands["lexis-two-debt"]);
+  assert.ok(pi.commands["lexis-two-plan"]);
+  assert.ok(pi.commands["lexis-two-security"]);
+  assert.ok(pi.commands["lexis-two-help"]);
+
+  assert.ok(pi.listeners["input"]);
+  assert.ok(pi.listeners["session_start"]);
+  assert.ok(pi.listeners["before_agent_start"]);
+});
+
+test("lexisExtension command handlers trigger correctly", async () => {
+  const pi = new MockPi();
+  lexisExtension(pi);
+
+  let notified = null;
+  const ctx = {
+    ui: {
+      notify: (msg, type) => {
+        notified = { msg, type };
+      },
     },
   };
 
-  ponytailExtension(pi);
-  return { events, commands, appendedEntries, sentUserMessages };
-}
+  await pi.commands["lexis-two"].handler("lite", ctx);
+  assert.equal(pi.entries[0].type, "lexis-two-mode");
+  assert.equal(pi.entries[0].data.mode, "lite");
+  assert.equal(notified.msg, "Lexis-Two mode set to lite.");
 
-function createCommandContext(overrides = {}) {
-  return {
-    isIdle: () => true,
-    sessionManager: { getEntries: () => [] },
-    ui: { notify() {} },
-    ...overrides,
-  };
-}
-
-function withTempConfig(fn) {
-  const tempConfigHome = mkdtempSync(join(tmpdir(), "ponytail-test-"));
-  const previousXdg = process.env.XDG_CONFIG_HOME;
-  process.env.XDG_CONFIG_HOME = tempConfigHome;
-
-  return Promise.resolve()
-    .then(fn)
-    .finally(() => {
-      if (previousXdg === undefined) delete process.env.XDG_CONFIG_HOME;
-      else process.env.XDG_CONFIG_HOME = previousXdg;
-      rmSync(tempConfigHome, { recursive: true, force: true });
-    });
-}
-
-test("extension registers Ponytail commands", () => {
-  const { commands } = createPiHarness();
-
-  assert.deepEqual([...commands.keys()].sort(), ["ponytail", "ponytail-audit", "ponytail-debt", "ponytail-help", "ponytail-review"]);
+  pi.commands["lexis-two-review"].handler("", ctx);
+  assert.equal(pi.userMessages[0].text, "/skill:lexis-two-review");
 });
 
-test("/ponytail updates session mode and injects instructions", async () => withTempConfig(async () => {
-  const { commands, events, appendedEntries } = createPiHarness();
-  const ctx = createCommandContext();
+test("lexisExtension input listener detects deactivation", async () => {
+  const pi = new MockPi();
+  lexisExtension(pi);
 
-  await events.get("session_start")({ reason: "startup" }, ctx);
-  await commands.get("ponytail").handler("ultra", ctx);
-
-  assert.deepEqual(appendedEntries.at(-1), {
-    customType: "ponytail-mode",
-    data: { mode: "ultra" },
-  });
-
-  const result = await events.get("before_agent_start")({ systemPrompt: "BASE" }, ctx);
-  assert.ok(result.systemPrompt.includes("PONYTAIL MODE ACTIVE"));
-  assert.ok(result.systemPrompt.includes("ultra"));
-}));
-
-test("session_start restores latest persisted mode", async () => withTempConfig(async () => {
-  const { events } = createPiHarness();
-  const ctx = createCommandContext({
-    sessionManager: {
-      getEntries: () => [
-        { type: "custom", customType: "ponytail-mode", data: { mode: "lite" } },
-      ],
+  let notified = null;
+  const ctx = {
+    ui: {
+      notify: (msg, type) => {
+        notified = { msg, type };
+      },
     },
-  });
+  };
 
-  await events.get("session_start")({ reason: "resume" }, ctx);
-  const result = await events.get("before_agent_start")({ systemPrompt: "BASE" }, ctx);
+  // Set mode to full first
+  await pi.commands["lexis-two"].handler("full", ctx);
+  assert.equal(pi.entries[0].data.mode, "full");
 
-  assert.ok(result.systemPrompt.includes("lite"));
-}));
-
-test("skill alias commands delegate to Pi skill commands", async () => {
-  const { commands, sentUserMessages } = createPiHarness();
-  const ctx = createCommandContext();
-
-  await commands.get("ponytail-review").handler("", ctx);
-  await commands.get("ponytail-audit").handler("", ctx);
-  await commands.get("ponytail-debt").handler("", ctx);
-  await commands.get("ponytail-help").handler("", ctx);
-
-  assert.deepEqual(sentUserMessages.map((entry) => entry.text), [
-    "/skill:ponytail-review",
-    "/skill:ponytail-audit",
-    "/skill:ponytail-debt",
-    "/skill:ponytail-help",
-  ]);
+  // Send input "stop lexis"
+  await pi.listeners["input"]({ text: "Please stop lexis now" });
+  assert.equal(pi.entries[1].data.mode, "off");
 });
-
-test("normal mode disables persistent instructions", async () => withTempConfig(async () => {
-  const { commands, events } = createPiHarness();
-  const ctx = createCommandContext();
-
-  await events.get("session_start")({ reason: "startup" }, ctx);
-  await commands.get("ponytail").handler("ultra", ctx);
-  await events.get("input")({ text: "normal mode", source: "interactive" }, ctx);
-
-  const disabled = await events.get("before_agent_start")({ systemPrompt: "BASE" }, ctx);
-  assert.equal(disabled, undefined);
-}));

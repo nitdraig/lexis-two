@@ -1,0 +1,3 @@
+name = "lexis-two-security"
+description = "Security audit focused on Node.js / TypeScript / Next.js / MongoDB stack"
+skill = "../skills/lexis-two-security/SKILL.md"

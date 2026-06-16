@@ -1,0 +1,3 @@
+name = "lexis-two-debt"
+description = "Harvest all lexis: comments into a prioritized debt ledger"
+skill = "../skills/lexis-two-debt/SKILL.md"

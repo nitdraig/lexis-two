@@ -1,0 +1,3 @@
+name = "lexis-two-plan"
+description = "Plan a feature using the Lexis-Two lazy decision hierarchy before any code is written"
+skill = "../skills/lexis-two-plan/SKILL.md"

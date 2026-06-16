@@ -1,0 +1,3 @@
+name = "lexis-two-review"
+description = "Review current diff for over-engineering and Lexis-Two rule violations"
+skill = "../skills/lexis-two-review/SKILL.md"

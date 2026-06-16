@@ -1,0 +1,29 @@
+# Ignore development, build, and website files when publishing to npm
+node_modules/
+site/
+benchmarks/
+docs/
+tests/
+scripts/
+.github/
+.git/
+.astro/
+.cache/
+
+# Ignore local config/temp files
+.env
+.env.*
+.promptfoo/
+*.log
+
+# Ignore other plugin scaffolds not needed for the npm package
+.claude-plugin/
+.codex-plugin/
+.github/plugin/
+gemini-extension.json
+pi-extension/
+
+# Ignore markdown documentation files except README
+AUDIT.md
+SPECXIS.md
+CHANGELOG.md

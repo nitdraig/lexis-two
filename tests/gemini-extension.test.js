@@ -16,7 +16,9 @@ const MANIFEST = 'gemini-extension.json';
 const EXTENSION_NAME = 'lexis-two';
 // Floating refs are a supply-chain footgun; the manifest version must be pinned.
 const PINNED_SEMVER = /^\d+\.\d+\.\d+$/;
+// All versioned manifests must agree on the same semver string.
 const VERSIONED_MANIFESTS = [
+  'package.json',
   'gemini-extension.json',
   '.claude-plugin/plugin.json',
   '.codex-plugin/plugin.json',
@@ -48,15 +50,15 @@ test('manifest names the lexis-two extension with a pinned version', () => {
   assert.match(manifest.version, PINNED_SEMVER);
 });
 
-test('version stays aligned with the other plugin manifests', () => {
+test('all versioned manifests share the same version', () => {
   const versions = VERSIONED_MANIFESTS.map((rel) => {
-    const manifest = JSON.parse(read(rel));
-    assert.match(manifest.version, PINNED_SEMVER, `${rel} version must be pinned semver`);
-    return manifest.version;
+    const data = JSON.parse(read(rel));
+    assert.match(data.version, PINNED_SEMVER, `${rel} version must be pinned semver`);
+    return data.version;
   });
   const [sharedVersion, ...rest] = versions;
   for (const version of rest) {
-    assert.equal(version, sharedVersion);
+    assert.equal(version, sharedVersion, `version mismatch: expected ${sharedVersion}, got ${version}`);
   }
 });
 

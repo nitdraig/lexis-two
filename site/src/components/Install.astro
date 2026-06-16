@@ -18,20 +18,26 @@ const { install } = Astro.props;
       <h2>{install.title}</h2>
       <p>{install.subtitle}</p>
     </div>
-    <div
-      class="install-tabs"
-      role="tablist"
-      aria-label="Install instructions"
-    >
+    <div class="install-tabs" role="tablist" aria-label="Install instructions">
       <button
         type="button"
         class="tab-btn"
         role="tab"
         aria-selected="true"
+        aria-controls="tab-opencode-npm"
+        id="tab-btn-opencode-npm"
+      >
+        OpenCode (npm)
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        aria-selected="false"
         aria-controls="tab-opencode"
         id="tab-btn-opencode"
       >
-        {install.tabOpencode}
+        OpenCode (Local)
       </button>
       <button
         type="button"
@@ -55,10 +61,26 @@ const { install } = Astro.props;
       </button>
     </div>
     <div
-      id="tab-opencode"
+      id="tab-opencode-npm"
       class="tab-panel active"
       role="tabpanel"
+      aria-labelledby="tab-btn-opencode-npm"
+    >
+      <pre><code set:html={`# Add to your opencode.json
+{
+  "plugin": ["@draig/lexis-two"]
+}
+
+# Optional: Copy slash commands globally to use them anywhere
+mkdir -p ~/.config/opencode/commands
+cp -r .opencode/command/lexis-two*.md ~/.config/opencode/commands/`} /></pre>
+    </div>
+    <div
+      id="tab-opencode"
+      class="tab-panel"
+      role="tabpanel"
       aria-labelledby="tab-btn-opencode"
+      hidden
     >
       <pre><code set:html={`git clone https://github.com/nitdraig/lexis-two.git ~/lexis-two
 

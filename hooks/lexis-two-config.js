@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // lexis-two — shared configuration resolver
 //
 // Resolution order for default mode:

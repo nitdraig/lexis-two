@@ -1,6 +1,6 @@
 {
   "name": "lexis-two",
-  "version": "4.6.0",
+  "version": "1.0.0",
   "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
   "author": {
     "name": "Agustin Avellaneda",
@@ -10,7 +10,7 @@
   "repository": "https://github.com/nitdraig/lexis-two",
   "license": "MIT",
   "keywords": ["yagni", "minimalism", "code-review", "productivity"],
-  "skills": "./skills/",
+  "skills": "../skills/",
   "interface": {
     "displayName": "Lexis-Two",
     "shortDescription": "The simple way to obtain the best code",
@@ -25,7 +25,7 @@
       "Find the smallest correct implementation."
     ],
     "brandColor": "#111111",
-    "composerIcon": "./assets/logo.png",
-    "logo": "./assets/logo.png"
+    "composerIcon": "../assets/logo.png",
+    "logo": "../assets/logo.png"
   }
 }

@@ -4,16 +4,16 @@
     "sessionStart": [
       {
         "type": "command",
-        "bash": "node \"${PLUGIN_ROOT}/hooks/lexis-two-activate.js\"",
-        "powershell": "node \"${PLUGIN_ROOT}\\hooks\\lexis-two-activate.js\"",
+        "bash": "command -v node >/dev/null 2>&1 && node \"${PLUGIN_ROOT}/hooks/lexis-two-activate.js\" || exit 0",
+        "powershell": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"${PLUGIN_ROOT}\\hooks\\lexis-two-activate.js\" }",
         "timeoutSec": 5
       }
     ],
     "userPromptSubmitted": [
       {
         "type": "command",
-        "bash": "node \"${PLUGIN_ROOT}/hooks/lexis-two-mode-tracker.js\"",
-        "powershell": "node \"${PLUGIN_ROOT}\\hooks\\lexis-two-mode-tracker.js\"",
+        "bash": "command -v node >/dev/null 2>&1 && node \"${PLUGIN_ROOT}/hooks/lexis-two-mode-tracker.js\" || exit 0",
+        "powershell": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"${PLUGIN_ROOT}\\hooks\\lexis-two-mode-tracker.js\" }",
         "timeoutSec": 5
       }
     ]

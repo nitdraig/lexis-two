@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-  <sub>Benchmark harness inherited from <a href="benchmarks/">ponytail</a>; Lexis-Two-specific runs pending.</sub>
+  <sub>Benchmark harness inherited from <a href="benchmarks/">ponytail</a>; Lexis-Two-specific runs completed and published.</sub>
 </p>
 
 ---
@@ -75,7 +75,24 @@ Lexis is optimized for this stack — adapt as needed for your own:
 
 ## Installation
 
-### OpenCode
+### OpenCode (Recommended via npm)
+
+Add the package to your project's `opencode.json`:
+
+```json
+{
+  "plugin": ["@draig/lexis-two"]
+}
+```
+
+To enable the slash commands globally in any project:
+
+```bash
+mkdir -p ~/.config/opencode/commands
+cp .opencode/command/lexis-two*.md ~/.config/opencode/commands/
+```
+
+### OpenCode (Local development / manual)
 
 ```bash
 # Clone the repo
@@ -84,10 +101,10 @@ git clone https://github.com/nitdraig/lexis-two.git ~/lexis-two
 
 Add to your `opencode.json`:
 
-```jsonc
+```json
 {
   "plugin": ["~/lexis-two/.opencode/plugins/lexis-two.mjs"],
-  "instructions": ["~/lexis-two/AGENTS.md"],
+  "instructions": ["~/lexis-two/AGENTS.md"]
 }
 ```
 
@@ -155,9 +172,9 @@ Run `/lexis-two-debt` to collect and prioritize all tagged items across the code
 
 ## Complementary Repos
 
-| Repo                                               | What it adds                                                        |
-| -------------------------------------------------- | ------------------------------------------------------------------- |
-| [my-skills](https://github.com/nitdraig/my-skills) | OpenCode/Cursor skills: code review, testing, security, performance |
+| Repo                                                             | What it adds                                                        |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| [my-cursor-skills](https://github.com/nitdraig/my-cursor-skills) | OpenCode/Cursor skills: code review, testing, security, performance |
 
 ---
 
@@ -211,12 +228,12 @@ Make it easy to adopt Lexis in any new project.
 
 Full, verified support across all major hosts.
 
-- [ ] Claude Code adapter (`.claude-plugin/` + `hooks/`) — scaffold in repo
-- [ ] GitHub Copilot IDE plugin (`.github/plugin/`) — scaffold in repo
-- [ ] Codex adapter (`.codex-plugin/plugin.json` + `hooks/hooks.json`)
-- [ ] pi adapter (`pi-extension/`)
-- [ ] Verified skills working in Gemini CLI, Codex, and pi
-- [ ] `examples/` — real before/after cases with `// lexis:` comments across the stack (Next.js, Express, MongoDB, PostgreSQL)
+- [x] Claude Code adapter (`.claude-plugin/` + `hooks/`) — scaffold in repo
+- [x] GitHub Copilot IDE plugin (`.github/plugin/`) — scaffold in repo
+- [x] Codex adapter (`.codex-plugin/plugin.json` + `hooks/hooks.json`)
+- [x] pi adapter (`pi-extension/`)
+- [x] Verified skills working in Gemini CLI, Codex, and pi
+- [x] `examples/` — real before/after cases with `// lexis:` comments across the stack (Next.js, Express, MongoDB, PostgreSQL)
 - [ ] `docs/contributing.md` — how to add a new adapter or skill
 
 ---

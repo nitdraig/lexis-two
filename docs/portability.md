@@ -3,7 +3,7 @@
 Lexis-Two is an agent-portable ecosystem. The `skills/` folder holds the core behavior.
 Host-specific files are thin adapters that point to those skills.
 
-**Site (live target):** [lexis-two.excelso.xyz](https://lexis-two.excelso.xyz) — static landing in `docs/`. See [site.md](./site.md) for hosting.
+**Site (live target):** [lexis-two.excelso.xyz](https://lexis-two.excelso.xyz) — built from `site/` and deployed via GitHub Actions. See [site.md](./site.md) for hosting.
 
 ## Naming
 

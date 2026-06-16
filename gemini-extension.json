@@ -1,6 +1,6 @@
 {
   "name": "lexis-two",
-  "version": "4.6.0",
+  "version": "1.0.0",
   "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
   "contextFileName": "AGENTS.md",
   "commands": "commands/"

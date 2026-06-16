@@ -9,6 +9,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { normalizePersistedMode, getDefaultMode } = require('./lexis-two-config');
 
 const LEVELS = {
   lite: `
@@ -62,22 +63,8 @@ Never lazy about: input validation, error handling, security, accessibility, typ
 `.trim(),
 };
 
-const DEFAULT_MODE = process.env.LEXIS_TWO_DEFAULT_MODE || "full";
 const INDEPENDENT_MODES = new Set(['review']);
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'lexis-two', 'SKILL.md');
-
-/**
- * Normalizes a raw string from user input or persisted state into a valid mode.
- * Returns null if the string is not a recognized mode.
- * @param {string} raw
- * @returns {'lite'|'full'|'ultra'|'off'|null}
- */
-function normalizePersistedMode(raw) {
-  const m = (raw || "").toLowerCase().trim();
-  if (m === "off") return "off";
-  if (LEVELS[m] || m === "review") return m;
-  return null;
-}
 
 /**
  * Filters the skill body for a specific mode.
@@ -86,7 +73,7 @@ function normalizePersistedMode(raw) {
  * @returns {string}
  */
 function filterSkillBodyForMode(body, mode) {
-  const effectiveMode = normalizePersistedMode(mode) || DEFAULT_MODE;
+  const effectiveMode = normalizePersistedMode(mode) || getDefaultMode();
   const withoutFrontmatter = String(body || '').replace(/^---[\s\S]*?---\s*/, '');
 
   return withoutFrontmatter
@@ -115,28 +102,20 @@ function filterSkillBodyForMode(body, mode) {
  * @returns {string}
  */
 function getLexisInstructions(mode) {
-  const configuredMode = normalizePersistedMode(mode) || DEFAULT_MODE;
+  const configuredMode = normalizePersistedMode(mode) || getDefaultMode();
 
   if (INDEPENDENT_MODES.has(configuredMode)) {
     return 'LEXIS-TWO MODE ACTIVE — level: ' + configuredMode + '. Behavior defined by /lexis-two-' + configuredMode + ' skill.';
   }
 
-  const effectiveMode = normalizePersistedMode(configuredMode) || DEFAULT_MODE;
+  const effectiveMode = normalizePersistedMode(configuredMode) || getDefaultMode();
 
   try {
     return 'LEXIS-TWO MODE ACTIVE — level: ' + effectiveMode + '\n\n' +
       filterSkillBodyForMode(fs.readFileSync(SKILL_PATH, 'utf8'), effectiveMode);
   } catch (e) {
-    return LEVELS[effectiveMode] || LEVELS[DEFAULT_MODE];
+    return LEVELS[effectiveMode] || LEVELS[getDefaultMode()];
   }
-}
-
-/**
- * Returns the default mode from env or 'full'.
- * @returns {'lite'|'full'|'ultra'}
- */
-function getDefaultMode() {
-  return normalizePersistedMode(DEFAULT_MODE) || "full";
 }
 
 module.exports = {

@@ -1,7 +1,7 @@
 {
   "name": "lexis-two",
   "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "author": {
     "name": "Agustin Avellaneda",
     "url": "https://github.com/nitdraig"

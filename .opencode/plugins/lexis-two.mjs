@@ -14,11 +14,23 @@ import path from "path";
 
 // The shared instruction builder is CommonJS; bridge to it from this ES module.
 const require = createRequire(import.meta.url);
+
+let lexisInstructionsModule;
+try {
+  lexisInstructionsModule = require("../../hooks/lexis-two-instructions");
+} catch (e) {
+  try {
+    lexisInstructionsModule = require("@draig/lexis-two/hooks/lexis-two-instructions");
+  } catch (err) {
+    throw new Error("Failed to load lexis-two-instructions: " + err.message);
+  }
+}
+
 const {
   getLexisInstructions,
   getDefaultMode,
   normalizePersistedMode,
-} = require("../../hooks/lexis-two-instructions");
+} = lexisInstructionsModule;
 
 // OpenCode has no flag-file convention of its own; keep mode beside its config.
 const statePath = path.join(

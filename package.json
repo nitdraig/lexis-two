@@ -1,9 +1,10 @@
 {
   "name": "@draig/lexis-two",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
   "main": "./.opencode/plugins/lexis-two.mjs",
   "exports": {
+    ".": "./.opencode/plugins/lexis-two.mjs",
     "./server": "./.opencode/plugins/lexis-two.mjs",
     "./tui": "./.opencode/plugins/lexis-two-tui.mjs"
   },

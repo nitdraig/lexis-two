@@ -79,10 +79,21 @@
     subtitle:
       "En hosts con adaptadores de comandos hoy: OpenCode, Gemini CLI y pi. Claude Code y Copilot plugin llegan en v0.3.",
     items: [
-      { name: "/lexis", desc: "Comando unificado (status, plan, review, audit, debt, security, help, mode)" },
-      { name: "/lexis p, r, a, d, s", desc: "Atajos cortos (plan, review, audit, debt, security)" },
-      { name: "/specxis", desc: "Ciclo de Spec-Driven Development (v0.5)" },
-      { name: "/specxis new, plan, implement", desc: "Subcomandos de Specxis para guiar el desarrollo" },
+      { name: "/lexis status", desc: "Muestra el estado actual del plugin, nivel de intensidad activo y configuración por defecto." },
+      { name: "/lexis <lite|full|ultra|off>", desc: "Cambia el nivel de intensidad de las reglas de pereza inteligente para el agente de IA." },
+      { name: "/lexis plan (o /lexis p)", desc: "Diseña una solución técnica paso a paso aplicando la jerarquía minimalista antes de escribir código." },
+      { name: "/lexis review (o /lexis r)", desc: "Revisa los cambios recientes en git (diff) para detectar sobreingeniería y sugerir simplificaciones." },
+      { name: "/lexis audit (o /lexis a)", desc: "Escanea todo el repositorio en busca de código muerto, dependencias innecesarias o abstracciones prematuras." },
+      { name: "/lexis debt (o /lexis d)", desc: "Cosecha y prioriza todos los comentarios // lexis: del código en un ledger de deuda técnica." },
+      { name: "/lexis security (o /lexis s)", desc: "Realiza una auditoría de seguridad enfocada en vulnerabilidades del stack (Node.js/Next.js/MongoDB)." },
+      { name: "/lexis help (o /lexis h)", desc: "Despliega la tarjeta de referencia rápida con todos los comandos y niveles." },
+      { name: "/specxis status", desc: "Monitorea el estado, progreso de tareas y deuda técnica de las especificaciones activas." },
+      { name: "/specxis new <slug>", desc: "Crea una nueva propuesta aplicando el lazy check inicial para validar si la feature realmente debe existir." },
+      { name: "/specxis plan <slug>", desc: "Genera los archivos spec.md (MUST/SHOULD/MAY) y tasks.md (lista de tareas técnicas) a partir de la propuesta." },
+      { name: "/specxis implement <slug>", desc: "Guía al agente para implementar la siguiente tarea pendiente, una por una, de forma controlada." },
+      { name: "/specxis review <slug>", desc: "Evalúa la implementación actual contra los requisitos de la especificación y las reglas de AGENTS.md." },
+      { name: "/specxis close <slug>", desc: "Archiva la especificación completada y consolida sus comentarios // lexis: en el ledger de deuda técnica." },
+      { name: "/specxis debt", desc: "Sincroniza todos los comentarios // lexis: del código de forma portable en .specxis/debt.md." },
     ],
   },
   install: {
@@ -151,5 +162,11 @@
     colReduction: "Reducción",
     colCorrect: "Correctas (lexis)",
     regenerate: "Regenerar:",
+  },
+  excelsoOpen: {
+    title: "Excelso Open",
+    description: "Este proyecto forma parte de Excelso Open, nuestra rama de código abierto enfocada en la comunidad, impulsando tecnología colaborativa y proyectos de impacto social.",
+    linkText: "Visita excelso.xyz",
+    url: "https://excelso.xyz",
   },
 } as const;

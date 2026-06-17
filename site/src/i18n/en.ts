@@ -77,10 +77,21 @@ export default {
     subtitle:
       "On hosts with command adapters today: OpenCode, Gemini CLI, and pi. Claude Code and Copilot plugin land in v0.3.",
     items: [
-      { name: "/lexis", desc: "Unified command (status, plan, review, audit, debt, security, help, mode)" },
-      { name: "/lexis p, r, a, d, s", desc: "Short aliases (plan, review, audit, debt, security)" },
-      { name: "/specxis", desc: "Spec-Driven Development lifecycle (v0.5)" },
-      { name: "/specxis new, plan, implement", desc: "Specxis subcommands to guide development" },
+      { name: "/lexis status", desc: "Shows the current plugin status, active intensity level, and default configuration." },
+      { name: "/lexis <lite|full|ultra|off>", desc: "Switches the intensity level of the smart-lazy ruleset for the AI agent." },
+      { name: "/lexis plan (or /lexis p)", desc: "Plans a technical solution step-by-step applying the minimalist hierarchy before writing code." },
+      { name: "/lexis review (or /lexis r)", desc: "Reviews recent git changes (diff) to detect over-engineering and suggest simplifications." },
+      { name: "/lexis audit (or /lexis a)", desc: "Audits the entire repository for dead code, unnecessary dependencies, or premature abstractions." },
+      { name: "/lexis debt (or /lexis d)", desc: "Harvests and prioritizes all // lexis: comments across the codebase into a tracked debt ledger." },
+      { name: "/lexis security (or /lexis s)", desc: "Runs a focused security audit targeting vulnerabilities in the stack (Node.js/Next.js/MongoDB)." },
+      { name: "/lexis help (or /lexis h)", desc: "Displays the quick reference card with all commands and levels." },
+      { name: "/specxis status", desc: "Monitors the status, task progress, and technical debt of active specifications." },
+      { name: "/specxis new <slug>", desc: "Creates a new spec folder and proposal.md applying the initial lazy check to validate if the feature should exist." },
+      { name: "/specxis plan <slug>", desc: "Generates spec.md (MUST/SHOULD/MAY) and tasks.md (technical task list) from the proposal." },
+      { name: "/specxis implement <slug>", desc: "Guides the agent to implement the next unchecked task, one by one, in a controlled manner." },
+      { name: "/specxis review <slug>", desc: "Evaluates the current implementation against the specification requirements and AGENTS.md rules." },
+      { name: "/specxis close <slug>", desc: "Archives the completed spec and syncs its // lexis: comments to the technical debt ledger." },
+      { name: "/specxis debt", desc: "Syncs all // lexis: comments across the codebase portably into .specxis/debt.md." },
     ],
   },
   install: {
@@ -148,5 +159,11 @@ export default {
     colReduction: "Reduction",
     colCorrect: "Correct (lexis)",
     regenerate: "Regenerate:",
+  },
+  excelsoOpen: {
+    title: "Excelso Open",
+    description: "This project is proud to be part of Excelso Open, our open-source and community-focused branch, championing collaborative technology and social impact projects.",
+    linkText: "Visit excelso.xyz",
+    url: "https://excelso.xyz",
   },
 } as const;

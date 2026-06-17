@@ -17,11 +17,12 @@ Inspired by OpenSpec and GitHub Spec Kit, adapted to the Lexis philosophy.
 ## Workflow
 
 ```
-/specxis-new    → proposal.md (lazy check first)
-/specxis-plan   → spec.md + tasks.md
-/specxis-implement → one task at a time
-/specxis-review → review.md
-/specxis-close  → archive + debt sync
+/specxis new <slug>       → proposal.md (lazy check first)
+/specxis plan <slug>      → spec.md + tasks.md
+/specxis implement <slug> → one task at a time
+/specxis review <slug>    → review.md
+/specxis close <slug>     → archive + debt sync
+/specxis debt             ➔ sync technical debt to .specxis/debt.md
 ```
 
 ## Key Principle

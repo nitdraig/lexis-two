@@ -1,7 +1,6 @@
 <p align="center">
   <picture>
-  <!--  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png"> -->
-    <img src="https://github.com/nitdraig/lexis-two/assets/logo.png" width="220" alt="Lexis-two">
+    <img src="https://github.com/nitdraig/lexis-two/blob/main/assets/logo.png" width="220" alt="Lexis-two">
   </picture>
 </p>
 
@@ -26,6 +25,12 @@
 
 Built on top of [OpenCode](https://opencode.ai) and [Cursor](https://cursor.sh).
 Forked and extended from [ponytail](https://github.com/DietrichGebert/ponytail) by DietrichGebert (MIT).
+
+---
+
+## Excelso Open
+
+This project is proud to be part of **Excelso Open**, our open-source and community-focused branch, championing collaborative technology and social impact projects. Learn more about our mission and other projects at [excelso.xyz](https://excelso.xyz).
 
 ---
 
@@ -130,36 +135,84 @@ More hosts (Windsurf, Gemini CLI, pi, Copilot): see [docs/portability.md](./docs
 
 ## Commands
 
-Once installed, these unifed slash commands are available in OpenCode, Gemini CLI, and pi:
+Once installed, these unified slash commands are available in OpenCode, Gemini CLI, and pi. They are designed to streamline your development process, enforce the minimalist Lexis philosophy, and manage technical debt.
 
 ### 1. `/lexis` — Core Lexis Commands
-Manage Lexis senior dev mode, intensity levels, and quality/security tools under a single unifed command.
+Manage Lexis senior dev mode, intensity levels, and quality/security tools under a single unified command.
 
-| Subcommand | Shortcut | What it does |
-| ---------- | -------- | ------------ |
-| `/lexis status` | `/lexis` | Shows current mode (lite/full/ultra/off) and default configuration. |
-| `/lexis lite` / `full` / `ultra` / `off` | - | Switches the intensity level of the ruleset. |
-| `/lexis plan` | `/lexis p` | Plans a feature using the minimalist decision hierarchy before coding. |
-| `/lexis review` | `/lexis r` | Reviews recent changes against `AGENTS.md` rules for over-engineering. |
-| `/lexis audit` | `/lexis a` | Full codebase audit — over-engineering, deps, structure. |
-| `/lexis debt` | `/lexis d` | Surfaces all `// lexis:` comments as a prioritized debt list. |
-| `/lexis security` | `/lexis s` | Security audit focused on your stack (Node.js, MongoDB, Next.js). |
-| `/lexis help` | `/lexis h` | Shows the quick reference card. |
+#### Subcommands in Detail:
 
-*(Note: The old individual commands like `/lexis-two-review` are fully supported for backward compatibility but will display a deprecation warning guiding you to use `/lexis` instead.)*
+* **`/lexis status` (Shortcut: `/lexis`)**
+  * **What it does:** Reports the current active mode of the plugin (lite/full/ultra/off) and your configured default mode.
+  * **When to use:** Use this to verify which intensity level is currently guiding your AI agent.
+
+* **`/lexis <lite | full | ultra | off>`**
+  * **What it does:** Dynamically switches the intensity level of the smart-lazy ruleset.
+    * `lite`: Builds what's asked but suggests a lazier alternative in one line.
+    * `full` (Default): Enforces the strict minimalist ladder (YAGNI, stdlib, native, one line, minimum build).
+    * `ultra`: YAGNI extremist mode. Challenges requirements, deletes code first, and prefers one-liners.
+    * `off`: Fully deactivates Lexis rules for the current session.
+  * **When to use:** Use `ultra` when starting a refactoring or cleanup sprint; use `lite` when you have strict, non-negotiable specifications.
+
+* **`/lexis plan` (Shortcut: `/lexis p`)**
+  * **What it does:** Produces a step-by-step technical plan for a requested feature *before* writing any code. It strictly applies the lazy decision hierarchy to ensure no over-engineering is designed.
+  * **When to use:** Run this before starting any new feature to align with the agent on the simplest possible implementation path.
+
+* **`/lexis review` (Shortcut: `/lexis r`)**
+  * **What it does:** Analyzes your recent git changes (`git diff HEAD`) specifically for over-engineering, dead code, speculative features, reinvented standard libraries, or unnecessary abstractions.
+  * **When to use:** Run this before committing or opening a Pull Request to ensure your code is as lean and maintainable as possible.
+
+* **`/lexis audit` (Shortcut: `/lexis a`)**
+  * **What it does:** Performs a comprehensive, read-only audit of your entire repository (not just a diff) to identify over-engineering, unused dependencies, and redundant boilerplate.
+  * **When to use:** Excellent for onboarding onto a new codebase or doing a monthly code cleanup.
+
+* **`/lexis debt` (Shortcut: `/lexis d`)**
+  * **What it does:** Recursively scans the codebase for `// lexis:` comment tags and compiles them into a prioritized technical debt ledger, categorizing them into *Immediate*, *Next Sprint*, *Backlog*, and *Permanent*.
+  * **When to use:** Run this to check what shortcuts were taken and when they need to be upgraded.
+
+* **`/lexis security` (Shortcut: `/lexis s`)**
+  * **What it does:** Runs a focused security audit on your stack (optimized for Node.js, Next.js, and MongoDB), checking for NoSQL injection, command injection, XSS, missing route middleware, hardcoded secrets, and unvalidated inputs.
+  * **When to use:** Run this before any production deployment or security review.
+
+* **`/lexis help` (Shortcut: `/lexis h`)**
+  * **What it does:** Displays a quick reference card with all commands, levels, and configuration options.
+
+_(Note: The old individual commands like `/lexis-two-review` are fully supported for backward compatibility but will display a deprecation warning guiding you to use `/lexis` instead.)_
+
+---
 
 ### 2. `/specxis` — Spec-Driven Development (v0.5)
-Manage the complete Specxis SDD lifecycle for complex features.
+Manage the complete Specxis SDD lifecycle for complex features. Specxis ensures that developer-agent agreements are persisted as lightweight Markdown files in your repository, keeping requirements lean and focused.
 
-| Subcommand | What it does |
-| ---------- | ------------ |
-| `/specxis` or `/specxis status` | Shows active specs, tasks progress, and debt. |
-| `/specxis new <slug>` | Creates a new spec folder and `proposal.md` applying the lazy check. |
-| `/specxis plan <slug>` | Generates `spec.md` and `tasks.md` from `proposal.md`. |
-| `/specxis implement <slug>` | Implements the next unchecked task in the active spec. |
-| `/specxis review <slug>` | Reviews the implementation against `spec.md` and `AGENTS.md`. |
-| `/specxis close <slug>` | Archives the completed spec and syncs its debt to `.specxis/debt.md`. |
-| `/specxis debt` | Sincroniza todos los comentarios `// lexis:` del código de forma portable. |
+#### Subcommands in Detail:
+
+* **`/specxis status` (Shortcut: `/specxis`)**
+  * **What it does:** Lists all active specifications in `.specxis/active/`, displaying their current status (draft/agreed/implementing/done), task completion progress (e.g., `3/5 tasks checked`), and whether a review has been completed. It also shows a summary of archived specs and open debt.
+  * **When to use:** Use this as your central dashboard to see what features are currently in development and their progress.
+
+* **`/specxis new <slug>`**
+  * **What it does:** Creates a new spec folder at `.specxis/active/[slug]/` and initializes a `proposal.md` file from the Specxis template. It prompts you with the *lazy check* ("Does this feature need to exist? What is the absolute minimum?") to challenge the requirement before planning.
+  * **When to use:** Run this when starting a complex feature that touches 3+ files or requires UX/backend coordination.
+
+* **`/specxis plan <slug>`**
+  * **What it does:** Reads your `proposal.md`, applies the lazy decision hierarchy, and generates `spec.md` (MUST/SHOULD/MAY) and `tasks.md` (a technical task list, max 10 tasks, with each task mapping to exactly one file or function).
+  * **When to use:** Run this once the initial proposal is aligned to generate a structured, actionable implementation plan.
+
+* **`/specxis implement <slug>`**
+  * **What it does:** Finds the first unchecked task in your `tasks.md`, implements it following the `spec.md` MUST requirements and `AGENTS.md` rules, and marks the task as completed (`- [x]`). It implements exactly one task per run to ensure maximum control and quality.
+  * **When to use:** Use this to guide the AI agent step-by-step through the implementation of your feature.
+
+* **`/specxis review <slug>`**
+  * **What it does:** Runs a read-only evaluation of the current implementation against the requirements in `spec.md` and the rules of `AGENTS.md`. It writes its findings (Severity, Location, Issue, Fix) to `review.md`.
+  * **When to use:** Run this after implementing your tasks to verify that the feature is fully compliant and clean before closing.
+
+* **`/specxis close <slug>`**
+  * **What it does:** Verifies that all tasks are completed and no Critical/High findings are open. It then moves the spec folder to `.specxis/archive/[slug]/`, harvests any `// lexis:` comments added during development, and appends them to your global `.specxis/debt.md` ledger.
+  * **When to use:** Run this when your feature is fully implemented, tested, and ready to be archived.
+
+* **`/specxis debt`**
+  * **What it does:** Recursively scans the codebase for `// lexis:` comments and synchronizes them with `.specxis/debt.md` using a highly portable Node.js script.
+  * **When to use:** Run this to keep your technical debt ledger perfectly in sync with your codebase.
 
 ---
 

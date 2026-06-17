@@ -13,6 +13,7 @@ import Stacks from "./Stacks.astro";
 import Suggested from "./Suggested.astro";
 import Benchmarks from "./Benchmarks.astro";
 import Ecosystem from "./Ecosystem.astro";
+import ExcelsoOpen from "./ExcelsoOpen.astro";
 import Footer from "./Footer.astro";
 
 interface Props {
@@ -37,6 +38,7 @@ const t = getDictionary(locale);
   <Suggested suggested={t.suggested} />
   <Benchmarks benchmarks={t.benchmarks} />
   <Ecosystem ecosystem={t.ecosystem} />
+  <ExcelsoOpen excelsoOpen={t.excelsoOpen} />
 </main>
 
 <Footer footer={t.footer} />

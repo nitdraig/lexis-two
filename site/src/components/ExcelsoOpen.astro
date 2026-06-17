@@ -1,0 +1,74 @@
+---
+interface Props {
+  excelsoOpen: {
+    title: string;
+    description: string;
+    linkText: string;
+    url: string;
+  };
+}
+
+const { excelsoOpen } = Astro.props;
+---
+
+<section id="excelso-open" class="excelso-open-section">
+  <div class="wrap">
+    <div class="excelso-open-card">
+      <h2>{excelsoOpen.title}</h2>
+      <p>{excelsoOpen.description}</p>
+      <a
+        href={excelsoOpen.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="excelso-link"
+      >
+        {excelsoOpen.linkText} ➔
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .excelso-open-section {
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 100%);
+  }
+  .excelso-open-card {
+    max-width: 42rem;
+    margin-inline: auto;
+    text-align: center;
+    padding: 2.5rem 2rem;
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    background: var(--bg-code);
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+  .excelso-open-card h2 {
+    font-size: 1.8rem;
+    margin: 0 0 1rem;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+  .excelso-open-card p {
+    margin: 0 0 1.5rem;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+  .excelso-link {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    color: var(--bg);
+    background: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+  }
+  .excelso-link:hover {
+    background: #9fd4a8;
+    color: var(--bg);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--accent-glow);
+  }
+</style>

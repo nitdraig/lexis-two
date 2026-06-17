@@ -21,8 +21,8 @@ Slash commands and skill folders use the `lexis-two-*` prefix. Plugin manifests 
 | Host | Files | Level |
 | ---- | ----- | ----- |
 | OpenCode | `.opencode/plugins/lexis-two.mjs`, `.opencode/command/`, `hooks/`, `skills/` | Full — plugin + mode switches + commands |
-| Claude Code | `.claude-plugin/`, `hooks/hooks.json`, `commands/`, `skills/` | **Coming soon** (v0.3) — files in repo, not verified |
-| GitHub Copilot (IDE plugin) | `.github/plugin/plugin.json`, `hooks/copilot-hooks.json`, `commands/`, `skills/` | **Coming soon** (v0.3) — files in repo, not verified |
+| Claude Code | `.claude-plugin/`, `hooks/hooks.json`, `commands/`, `skills/` | Full — plugin + mode switches + commands |
+| GitHub Copilot (IDE plugin) | `.github/plugin/plugin.json`, `hooks/copilot-hooks.json`, `commands/`, `skills/` | Full — plugin + mode switches + commands |
 | Gemini CLI | `gemini-extension.json`, `AGENTS.md`, `commands/`, `skills/` | Full — extension manifest + commands |
 | pi | `pi-extension/`, `skills/` (via `package.json` `"pi"`) | Full — extension + commands |
 | Codex | `.codex-plugin/plugin.json`, `hooks/hooks.json`, `AGENTS.md` | Full — plugin + hooks |
@@ -47,7 +47,7 @@ instruction-tier copies (Cursor, Windsurf, Cline, Kiro) have not drifted.
 
 ## Slash Commands
 
-Available on hosts that ship `commands/` and/or `.opencode/command/` today: OpenCode, Gemini CLI, pi. Claude Code and Copilot plugin: v0.3.
+Available on hosts that ship `commands/` and/or `.opencode/command/` today: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.
 
 | Command | Skill / behavior |
 | ------- | ---------------- |

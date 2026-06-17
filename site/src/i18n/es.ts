@@ -61,8 +61,8 @@
     headEntry: "Punto de entrada",
     rows: [
       { host: "OpenCode", level: "full", entry: ".opencode/plugins/lexis-two.mjs" },
-      { host: "Claude Code", level: "soon", entry: ".claude-plugin/ + hooks/ (v0.3)" },
-      { host: "GitHub Copilot (plugin)", level: "soon", entry: ".github/plugin/plugin.json (v0.3)" },
+      { host: "Claude Code", level: "full", entry: ".claude-plugin/ + hooks/" },
+      { host: "GitHub Copilot (plugin)", level: "full", entry: ".github/plugin/plugin.json" },
       { host: "Gemini CLI", level: "full", entry: "gemini-extension.json" },
       { host: "pi", level: "full", entry: "pi-extension/" },
       { host: "Codex", level: "full", entry: ".codex-plugin/ + AGENTS.md" },
@@ -77,7 +77,7 @@
   commands: {
     title: "Slash commands",
     subtitle:
-      "En hosts con adaptadores de comandos hoy: OpenCode, Gemini CLI y pi. Claude Code y Copilot plugin llegan en v0.3.",
+      "En hosts con adaptadores de comandos: OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
     items: [
       { name: "/lexis status", desc: "Muestra el estado actual del plugin, nivel de intensidad activo y configuración por defecto." },
       { name: "/lexis <lite|full|ultra|off>", desc: "Cambia el nivel de intensidad de las reglas de pereza inteligente para el agente de IA." },

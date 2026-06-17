@@ -59,8 +59,8 @@ export default {
     headEntry: "Entry point",
     rows: [
       { host: "OpenCode", level: "full", entry: ".opencode/plugins/lexis-two.mjs" },
-      { host: "Claude Code", level: "soon", entry: ".claude-plugin/ + hooks/ (v0.3)" },
-      { host: "GitHub Copilot (plugin)", level: "soon", entry: ".github/plugin/plugin.json (v0.3)" },
+      { host: "Claude Code", level: "full", entry: ".claude-plugin/ + hooks/" },
+      { host: "GitHub Copilot (plugin)", level: "full", entry: ".github/plugin/plugin.json" },
       { host: "Gemini CLI", level: "full", entry: "gemini-extension.json" },
       { host: "pi", level: "full", entry: "pi-extension/" },
       { host: "Codex", level: "full", entry: ".codex-plugin/ + AGENTS.md" },
@@ -75,7 +75,7 @@ export default {
   commands: {
     title: "Slash commands",
     subtitle:
-      "On hosts with command adapters today: OpenCode, Gemini CLI, and pi. Claude Code and Copilot plugin land in v0.3.",
+      "On hosts with command adapters: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.",
     items: [
       { name: "/lexis status", desc: "Shows the current plugin status, active intensity level, and default configuration." },
       { name: "/lexis <lite|full|ultra|off>", desc: "Switches the intensity level of the smart-lazy ruleset for the AI agent." },

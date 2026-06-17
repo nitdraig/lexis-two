@@ -69,15 +69,37 @@ test('hooks integration tests', async (t) => {
     // First activate
     run('lexis-two-activate.js', codexEnv);
 
-    const result = run(
+    let result = run(
       'lexis-two-mode-tracker.js',
       codexEnv,
       JSON.stringify({ prompt: '@lexis-two lite' }),
     );
     assert.equal(result.status, 0, result.stderr);
     assert.equal(fs.readFileSync(codexState, 'utf8'), 'lite');
-    const output = JSON.parse(result.stdout);
+    let output = JSON.parse(result.stdout);
     assert.equal(output.systemMessage, 'LEXIS-TWO:LITE');
+
+    // Test the new unifed /lexis command
+    result = run(
+      'lexis-two-mode-tracker.js',
+      codexEnv,
+      JSON.stringify({ prompt: '/lexis ultra' }),
+    );
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(fs.readFileSync(codexState, 'utf8'), 'ultra');
+    output = JSON.parse(result.stdout);
+    assert.equal(output.systemMessage, 'LEXIS-TWO:ULTRA');
+
+    // Test the review subcommand
+    result = run(
+      'lexis-two-mode-tracker.js',
+      codexEnv,
+      JSON.stringify({ prompt: '/lexis review' }),
+    );
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(fs.readFileSync(codexState, 'utf8'), 'review');
+    output = JSON.parse(result.stdout);
+    assert.equal(output.systemMessage, 'LEXIS-TWO:REVIEW');
   });
 
   await t.test('lexis-two-mode-tracker.js deactivates mode with normal prompt', () => {

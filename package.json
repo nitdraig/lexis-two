@@ -20,7 +20,8 @@
     "hooks/",
     "skills/",
     "templates/",
-    "scripts/"
+    "scripts/",
+    "pi-extension/index.js"
   ],
   "keywords": [
     "pi-package",

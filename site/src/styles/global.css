@@ -227,6 +227,7 @@ img {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-end;
+    align-items: center;
     width: auto;
     flex-basis: auto;
     gap: 0.35rem 1.25rem;

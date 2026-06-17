@@ -4,7 +4,7 @@ site/
 benchmarks/
 docs/
 tests/
-scripts/
+scripts/check-rule-copies.js
 .github/
 .git/
 .astro/
@@ -21,7 +21,8 @@ scripts/
 .codex-plugin/
 .github/plugin/
 gemini-extension.json
-pi-extension/
+pi-extension/test/
+pi-extension/package.json
 
 # Ignore markdown documentation files except README
 AUDIT.md

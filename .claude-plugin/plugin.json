@@ -1,6 +1,6 @@
 {
   "name": "lexis-two",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
   "author": {
     "name": "Agustin Avellaneda",

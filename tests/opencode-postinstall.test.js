@@ -15,7 +15,7 @@ test('postinstall patches OpenCode @latest wrapper package.json', async () => {
 
   fs.writeFileSync(
     path.join(wrapperDir, 'package.json'),
-    JSON.stringify({ dependencies: { '@draig/lexis-two': '1.0.8' } }, null, 2),
+    JSON.stringify({ dependencies: { '@draig/lexis-two': '1.0.9' } }, null, 2),
   );
   fs.copyFileSync(
     path.join(__dirname, '..', 'package.json'),

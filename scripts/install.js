@@ -252,9 +252,9 @@ function fileExists(target) {
 }
 
 function getOpencodeConfigDir(home) {
-  if (process.platform === 'win32') {
-    const appData = process.env.APPDATA || path.join(home, 'AppData', 'Roaming');
-    return path.join(appData, 'opencode');
+  // lexis: match `opencode debug paths` — on Windows OpenCode uses ~/.config/opencode, not %APPDATA%/opencode
+  if (process.env.OPENCODE_CONFIG_DIR) {
+    return process.env.OPENCODE_CONFIG_DIR;
   }
   const xdg = process.env.XDG_CONFIG_HOME;
   if (xdg) {

@@ -32,7 +32,7 @@ npx @draig/lexis-two install --host cursor --scope project --dry-run --yes
 | **Cline** | `.clinerules/lexis-two.md` | — |
 | **Kiro** | `.kiro/steering/lexis-two.md` | — |
 | **AGENTS.md** | `./AGENTS.md` | — |
-| **OpenCode** | `opencode.json` + `.opencode/commands/` | `~/.config/opencode/opencode.json` + `commands/` |
+| **OpenCode** | `opencode.json` + `.opencode/commands/` | `~/.config/opencode/commands/` (Windows: `%USERPROFILE%\.config\opencode\commands\`) |
 | **Copilot (repo)** | `.github/copilot-instructions.md` | — |
 
 ### Hint-only hosts (A4)
@@ -77,6 +77,20 @@ npx @draig/lexis-two install --host opencode --scope project --yes
 ```
 
 This merges `opencode.json` (appends `@draig/lexis-two` to `plugin` without removing existing entries) and copies slash commands to `.opencode/commands/`.
+
+**Plugin ≠ slash commands.** The npm plugin injects rules only. Commands are separate markdown files — install copies them, or OpenCode will not list `/lexis` in the picker.
+
+For every project you use OpenCode in:
+
+```bash
+npx @draig/lexis-two install --host opencode --scope project --yes
+```
+
+Or install once globally (all projects):
+
+```bash
+npx @draig/lexis-two install --host opencode --scope global --yes
+```
 
 Manual alternative — add to `opencode.json`:
 

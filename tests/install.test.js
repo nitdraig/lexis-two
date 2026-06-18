@@ -16,6 +16,7 @@ const {
   createContext,
   detectHosts,
   executePlan,
+  getOpencodeConfigDir,
   isHintHost,
   parseArgs,
 } = require('../scripts/install.js');
@@ -349,4 +350,33 @@ test('CLI install writes copilot repo instructions when .github exists', () => {
   const target = path.join(temp, '.github', 'copilot-instructions.md');
   assert.equal(fs.existsSync(target), true);
   assert.match(fs.readFileSync(target, 'utf8'), /lazy senior developer/i);
+});
+
+test('getOpencodeConfigDir uses ~/.config/opencode by default', () => {
+  const home = path.join(os.tmpdir(), 'lexis-home');
+  assert.equal(
+    getOpencodeConfigDir(home),
+    path.join(home, '.config', 'opencode'),
+  );
+});
+
+test('CLI global opencode install writes commands under ~/.config/opencode/commands', () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-install-opencode-global-'));
+  const result = runCli(
+    [
+      '--host',
+      'opencode',
+      '--scope',
+      'global',
+      '--yes',
+      '--project-dir',
+      temp,
+      '--non-interactive',
+    ],
+    temp,
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  const commandPath = path.join(temp, '.config', 'opencode', 'commands', 'lexis.md');
+  assert.equal(fs.existsSync(commandPath), true);
 });

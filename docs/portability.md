@@ -20,7 +20,7 @@ Slash commands and skill folders use the `lexis-two-*` prefix. Plugin manifests 
 
 | Host | Files | Level |
 | ---- | ----- | ----- |
-| OpenCode | `.opencode/plugins/lexis-two.mjs`, `.opencode/command/`, `hooks/`, `skills/` | Full — plugin + mode switches + commands |
+| OpenCode | `.opencode/plugins/lexis-two.mjs`, `.opencode/commands/`, `hooks/`, `skills/` | Full — plugin + mode switches + commands |
 | Claude Code | `.claude-plugin/`, `hooks/hooks.json`, `commands/`, `skills/` | Full — plugin + mode switches + commands |
 | GitHub Copilot (IDE plugin) | `.github/plugin/plugin.json`, `hooks/copilot-hooks.json`, `commands/`, `skills/` | Full — plugin + mode switches + commands |
 | Gemini CLI | `gemini-extension.json`, `AGENTS.md`, `commands/`, `skills/` | Full — extension manifest + commands |
@@ -42,12 +42,14 @@ Keep adapters thin. When a host supports skills or hooks, point it at the
 existing `skills/` and `hooks/` files. When a host only supports project
 instructions, keep its rule text aligned with `AGENTS.md`.
 
+**Contributing:** See [CONTRIBUTING.md](../CONTRIBUTING.md) for how to add a host, skill, or command without duplicating logic.
+
 Run `node scripts/check-rule-copies.js` after editing `AGENTS.md` to verify
 instruction-tier copies (Cursor, Windsurf, Cline, Kiro) have not drifted.
 
 ## Slash Commands
 
-Available on hosts that ship `commands/` and/or `.opencode/command/` today: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.
+Available on hosts that ship `commands/` and/or `.opencode/commands/` today: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.
 
 | Command | Skill / behavior |
 | ------- | ---------------- |
@@ -59,7 +61,7 @@ Available on hosts that ship `commands/` and/or `.opencode/command/` today: Open
 | `/lexis-two-security` | `skills/lexis-two-security/` — security audit (Node/TS stack default) |
 | `/lexis-two-help` | Quick reference card |
 
-Gemini CLI: `commands/lexis-two*.toml`. OpenCode: `.opencode/command/lexis-two*.md`.
+Gemini CLI: `commands/lexis-two*.toml`. OpenCode: `.opencode/commands/lexis-two*.md`.
 
 ## Portable Skills
 

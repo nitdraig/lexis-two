@@ -44,11 +44,11 @@
   example: {
     title: "Un ejemplo",
     subtitle:
-      "Ordenar un arreglo. De examples/sorting.md en el repo.",
+      'Dialogo de confirmacion. De <a href="https://github.com/nitdraig/lexis-two/tree/main/examples/nextjs/01-modal-library">examples/nextjs/01-modal-library</a>.',
     without: "Sin Lexis-Two",
     with: "Con Lexis-Two",
-    withoutFoot: "Quicksort hecho a mano. Tarea de la escuela.",
-    withFoot: "24 líneas -> 1. Todo runtime trae un sort optimizado por pros.",
+    withoutFoot: "Portal, overlay, bloqueo de scroll y Escape para un si/no.",
+    withFoot: "74 lineas → 24. &lt;dialog&gt; nativo trae focus trap y backdrop.",
     copy: "Copiar",
     copied: "Copiado",
   },
@@ -99,10 +99,13 @@
   install: {
     title: "Instalar",
     subtitle:
-      "Clona una vez. Apunta tu host a los archivos del adaptador.",
+      "Un comando para hosts de reglas — o configura plugins manualmente.",
+    tabNpx: "npx install",
     tabOpencode: "OpenCode",
+    tabOpencodeNpm: "OpenCode (npm)",
     tabCursor: "Cursor",
     tabClone: "Clonar",
+    npxHint: "Detecta Cursor, Windsurf, Cline, Kiro, OpenCode y AGENTS.md. Se puede re-ejecutar sin riesgo.",
   },
   adapt: {
     title: "Adapta a cualquier stack",

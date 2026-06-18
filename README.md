@@ -40,6 +40,8 @@ Lexis is a multi-agent ecosystem designed for building premium web apps products
 
 Rather than a single AI assistant, Lexis is a team of specialized agents — each with a defined role, model, and scope — coordinated to cover the full development lifecycle: planning, coding, refactoring, reviewing, and security auditing.
 
+**See it in code:** [examples/](./examples/) — nine before/after pairs across Next.js, Express, and FastAPI.
+
 ### The Agents
 
 | Agent              | Role                 | Scope                                |
@@ -80,6 +82,28 @@ Lexis is optimized for this stack — adapt as needed for your own:
 
 ## Installation
 
+### One-command setup (rules-only hosts)
+
+From your project directory:
+
+```bash
+npx @draig/lexis-two install
+```
+
+Non-interactive example (Cursor + OpenCode + `AGENTS.md`):
+
+```bash
+npx @draig/lexis-two install --host cursor,opencode,agents --scope project --yes
+```
+
+Hosts covered: Cursor, Windsurf, Cline, Kiro, OpenCode (`opencode.json` merge), `copilot-repo`, and project `AGENTS.md`. Plugin marketplaces (`claude`, `copilot`, `gemini`, `pi`) print setup hints. See [docs/setup.md](./docs/setup.md).
+
+Uninstall (removes only unchanged Lexis-Two files):
+
+```bash
+npx @draig/lexis-two install --uninstall --host cursor,opencode --scope project --yes
+```
+
 ### OpenCode (Recommended via npm)
 
 Add the package to your project's `opencode.json`:
@@ -94,8 +118,8 @@ To enable the slash commands globally in any project:
 
 ```bash
 mkdir -p ~/.config/opencode/commands
-cp .opencode/command/lexis*.md ~/.config/opencode/commands/
-cp .opencode/command/specxis*.md ~/.config/opencode/commands/
+cp .opencode/commands/lexis*.md ~/.config/opencode/commands/
+cp .opencode/commands/specxis*.md ~/.config/opencode/commands/
 ```
 
 ### OpenCode (Local development / manual)
@@ -292,10 +316,13 @@ Make it easy to adopt Lexis in any new project.
 - [ ] `AGENTS.template.md` — project-level AGENTS.md template with commented sections (stack, design tokens, glossary, conventions)
 - [x] `docs/portability.md` — hosts, commands, skills, install paths
 - [x] `docs/site.md` — GitHub Pages + `lexis-two.excelso.xyz`
-- [ ] `docs/setup.md` — detailed installation guide per host
+- [x] `docs/setup.md` — installer guide (phase A1; OpenCode merge in A2)
 - [ ] `docs/modes.md` — when to use lite / full / ultra and how to create custom modes
-- [ ] `npx lexis-two install` — setup script that detects the host (cursor, windsurf, opencode…) and copies the right files
+- [x] `npx lexis-two install` — setup script (phase A1: rules-only hosts)
 - [ ] README improvements with real `// lexis:` comment examples showing before/after simplifications
+- [x] `examples/nextjs/01-modal-library` — gold-standard before/after (B1)
+- [x] `examples/nextjs/` + `examples/express/` — six before/after cases (B2)
+- [x] `examples/fastapi/` — three before/after cases (B3)
 
 ---
 
@@ -308,8 +335,8 @@ Full, verified support across all major hosts.
 - [x] Codex adapter (`.codex-plugin/plugin.json` + `hooks/hooks.json`)
 - [x] pi adapter (`pi-extension/`)
 - [x] Verified skills working in Gemini CLI, Codex, and pi
-- [x] `examples/` — real before/after cases with `// lexis:` comments across the stack (Next.js, Express, MongoDB, PostgreSQL)
-- [ ] `docs/contributing.md` — how to add a new adapter or skill
+- [x] `examples/` — nine before/after cases across Next.js, Express, FastAPI (B1–B3)
+- [x] `CONTRIBUTING.md` — how to add a new adapter or skill
 
 ---
 
@@ -362,9 +389,9 @@ The commercial evolution. Defined once v1.0 has traction.
 
 ## Contributing
 
-Contributions welcome. Before opening a PR, read `AGENTS.md` — it applies here too.
+Contributions welcome. Read [CONTRIBUTING.md](./CONTRIBUTING.md) for architecture, host/skill/command checklists, and the PR contract. [AGENTS.md](./AGENTS.md) applies to this repo too.
 
-Focus areas: stack-specific shortcuts for other tech stacks, new modes, additional commands.
+Focus areas: stack-specific shortcuts for other tech stacks, new examples, additional hosts, installer improvements.
 
 ---
 

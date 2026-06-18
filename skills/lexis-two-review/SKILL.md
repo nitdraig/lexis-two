@@ -21,4 +21,6 @@ Output:
 - **Violations**: rule breaks with file/line refs and suggested fix
 - **Next steps**: concrete actions in priority order
 
+**Calibration:** compare against [examples/](https://github.com/nitdraig/lexis-two/tree/main/examples) before flagging over-engineering — especially native platform wins (`<dialog>`, `<input type="date">`, stdlib sort).
+
 Respond in Spanish.

@@ -3,9 +3,12 @@ interface Props {
   install: {
     title: string;
     subtitle: string;
+    tabNpx: string;
     tabOpencode: string;
+    tabOpencodeNpm: string;
     tabCursor: string;
     tabClone: string;
+    npxHint: string;
   };
 }
 
@@ -24,10 +27,20 @@ const { install } = Astro.props;
         class="tab-btn"
         role="tab"
         aria-selected="true"
+        aria-controls="tab-npx"
+        id="tab-btn-npx"
+      >
+        {install.tabNpx}
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        role="tab"
+        aria-selected="false"
         aria-controls="tab-opencode-npm"
         id="tab-btn-opencode-npm"
       >
-        OpenCode (npm)
+        {install.tabOpencodeNpm}
       </button>
       <button
         type="button"
@@ -37,7 +50,7 @@ const { install } = Astro.props;
         aria-controls="tab-opencode"
         id="tab-btn-opencode"
       >
-        OpenCode (Local)
+        {install.tabOpencode}
       </button>
       <button
         type="button"
@@ -61,20 +74,41 @@ const { install } = Astro.props;
       </button>
     </div>
     <div
-      id="tab-opencode-npm"
+      id="tab-npx"
       class="tab-panel active"
       role="tabpanel"
-      aria-labelledby="tab-btn-opencode-npm"
+      aria-labelledby="tab-btn-npx"
     >
-      <pre><code set:html={`# Add to your opencode.json
+      <p class="install-hint">{install.npxHint}</p>
+      <pre><code set:html={`# Interactive — from your project directory
+npx @draig/lexis-two install
+
+# Non-interactive: Cursor + OpenCode + AGENTS.md
+npx @draig/lexis-two install --host cursor,opencode,agents --scope project --yes
+
+# Plugin hosts (setup hints for Claude, Copilot, Gemini, pi)
+npx @draig/lexis-two install --host claude,gemini,copilot --yes
+
+# Preview without writing files
+npx @draig/lexis-two install --dry-run --yes
+
+# Uninstall Lexis-Two files from the project
+npx @draig/lexis-two install --uninstall --host cursor,opencode --scope project --yes`} /></pre>
+    </div>
+    <div
+      id="tab-opencode-npm"
+      class="tab-panel"
+      role="tabpanel"
+      aria-labelledby="tab-btn-opencode-npm"
+      hidden
+    >
+      <pre><code set:html={`# Or let the installer merge opencode.json for you:
+npx @draig/lexis-two install --host opencode --scope project --yes
+
+# Manual: add to opencode.json
 {
   "plugin": ["@draig/lexis-two"]
-}
-
-# Optional: Copy slash commands globally to use them anywhere
-mkdir -p ~/.config/opencode/commands
-cp -r .opencode/command/lexis*.md ~/.config/opencode/commands/
-cp -r .opencode/command/specxis*.md ~/.config/opencode/commands/`} /></pre>
+}`} /></pre>
     </div>
     <div
       id="tab-opencode"
@@ -98,11 +132,14 @@ cp -r .opencode/command/specxis*.md ~/.config/opencode/commands/`} /></pre>
       aria-labelledby="tab-btn-cursor"
       hidden
     >
-      <pre><code>git clone https://github.com/nitdraig/lexis-two.git ~/lexis-two
+      <pre><code set:html={`# Or use the installer:
+npx @draig/lexis-two install --host cursor --scope both --yes
+
+# Manual — project:
 cp ~/lexis-two/.cursor/rules/lexis-two.mdc .cursor/rules/lexis-two.mdc
 
-# Or globally:
-cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc</code></pre>
+# Manual — global:
+cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc`} /></pre>
     </div>
     <div
       id="tab-clone"
@@ -119,6 +156,14 @@ cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc</code><
     </div>
   </div>
 </section>
+
+<style>
+  .install-hint {
+    margin: 0 0 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+</style>
 
 <script>
   document.querySelectorAll(".tab-btn").forEach(function (btn) {

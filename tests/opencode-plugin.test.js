@@ -39,6 +39,14 @@ test('system.transform injects the ruleset at the default mode (full)', async ()
   assert.match(system[0], /lazy senior developer/);
 });
 
+test('/lexis ultra persists mode, transform follows it', async () => {
+  const hooks = await loadServer({});
+  await hooks['command.execute.before']({ command: 'lexis', arguments: 'ultra', sessionID: 's' });
+  assert.equal(fs.readFileSync(statePath, 'utf8'), 'ultra');
+  const system = await transform(hooks);
+  assert.match(system[0], /LEXIS-TWO MODE ACTIVE — level: ultra/);
+});
+
 test('command.execute.before persists /lexis-two ultra, transform follows it', async () => {
   const hooks = await loadServer({});
   await hooks['command.execute.before']({ command: 'lexis-two', arguments: 'ultra', sessionID: 's' });

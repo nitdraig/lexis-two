@@ -72,13 +72,12 @@ function createServerHooks({ client } = {}) {
       output.system.push(getLexisInstructions(mode));
     },
 
-    // Persist `/lexis-two <level>` so the next turn's injection follows it.
+    // Persist `/lexis <level>` or `/lexis-two <level>` so the next turn's injection follows it.
     "command.execute.before": async (input) => {
-      if (!input || input.command !== "lexis-two") return;
+      if (!input || (input.command !== "lexis-two" && input.command !== "lexis")) return;
+      const firstArg = String(input.arguments || "").trim().split(/\s+/)[0];
       // `off` is persisted like any mode; the transform reads it and stays silent.
-      const mode =
-        normalizePersistedMode((input.arguments || "").trim()) ||
-        getDefaultMode();
+      const mode = normalizePersistedMode(firstArg) || getDefaultMode();
       writeMode(mode);
       log("info", "lexis-two " + mode);
     },

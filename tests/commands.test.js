@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Every lexis-two command the pi extension registers must also ship as a
 // file-based command for the hosts that need one: Claude Code (commands/*.toml,
-// which Gemini CLI reuses) and OpenCode (.opencode/command/*.md). /lexis-two-help
+// which Gemini CLI reuses) and OpenCode (.opencode/commands/*.md). /lexis-two-help
 // was advertised in the README and the help card but missing both files; this
 // guards that drift -- a registered command with no adapter file fails here.
 
@@ -29,12 +29,12 @@ test('every registered command ships a Claude commands/*.toml', () => {
   }
 });
 
-test('every registered command ships an OpenCode .opencode/command/*.md', () => {
+test('every registered command ships an OpenCode .opencode/commands/*.md', () => {
   for (const command of commands) {
-    const mdPath = path.join(root, '.opencode', 'command', `${command}.md`);
+    const mdPath = path.join(root, '.opencode', 'commands', `${command}.md`);
     assert.ok(
       fs.existsSync(mdPath),
-      `missing OpenCode command adapter: .opencode/command/${command}.md (registered in pi-extension/index.js)`
+      `missing OpenCode command adapter: .opencode/commands/${command}.md (registered in pi-extension/index.js)`
     );
   }
 });

@@ -14,7 +14,7 @@ Host-specific files are thin adapters that point to those skills.
 | `lexis-one` | Private agent configuration (not published) |
 | `lexis-zero` | Future orchestrator-style agent (not shipped yet) |
 
-Slash commands and skill folders use the `lexis-two-*` prefix. Plugin manifests use `"name": "lexis-two"`.
+Slash commands: **`/lexis`** is canonical (subcommands below). Skill folders and adapter files keep the `lexis-two-*` prefix for package identity. Legacy `/lexis-two-*` commands remain as deprecated aliases.
 
 ## Supported Hosts
 
@@ -51,17 +51,46 @@ instruction-tier copies (Cursor, Windsurf, Cline, Kiro) have not drifted.
 
 Available on hosts that ship `commands/` and/or `.opencode/commands/` today: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.
 
-| Command | Skill / behavior |
-| ------- | ---------------- |
-| `/lexis-two` | Mode switch — `lite`, `full` (default), `ultra`, `off` |
-| `/lexis-two-review` | `skills/lexis-two-review/` — diff review for over-engineering |
-| `/lexis-two-audit` | `skills/lexis-two-audit/` — full repo audit |
-| `/lexis-two-debt` | `skills/lexis-two-debt/` — harvest `// lexis:` comments |
-| `/lexis-two-plan` | `skills/lexis-two-plan/` — plan before coding |
-| `/lexis-two-security` | `skills/lexis-two-security/` — security audit (Node/TS stack default) |
-| `/lexis-two-help` | Quick reference card |
+**Install reminder:** the npm **plugin** injects rules only. Slash commands need `.opencode/commands/*.md` (project) or `~/.config/opencode/commands/` (global). Run:
 
-Gemini CLI: `commands/lexis-two*.toml`. OpenCode: `.opencode/commands/lexis-two*.md`.
+```bash
+npx @draig/lexis-two install --host opencode --scope project --yes
+```
+
+### Canonical (`/lexis`)
+
+| Command | Skill folder | Behavior |
+| ------- | ------------ | -------- |
+| `/lexis` or `/lexis status` | — | Report active + default mode |
+| `/lexis lite` \| `full` \| `ultra` \| `off` | `skills/lexis-two/` | Switch ruleset intensity |
+| `/lexis plan` (or `p`) | `skills/lexis-two-plan/` | Plan before coding |
+| `/lexis review` (or `r`) | `skills/lexis-two-review/` | Diff review for over-engineering |
+| `/lexis audit` (or `a`) | `skills/lexis-two-audit/` | Full repo audit |
+| `/lexis debt` (or `d`) | `skills/lexis-two-debt/` | Harvest `// lexis:` comments |
+| `/lexis security` (or `s`) | `skills/lexis-two-security/` | Security audit (Node/TS default) |
+| `/lexis help` (or `h`) | `skills/lexis-two-help/` | Quick reference |
+
+Modes: [modes.md](./modes.md).
+
+### Legacy aliases (deprecated)
+
+| Alias | Use instead |
+| ----- | ----------- |
+| `/lexis-two` | `/lexis` + mode |
+| `/lexis-two-review` | `/lexis review` |
+| `/lexis-two-audit` | `/lexis audit` |
+| `/lexis-two-debt` | `/lexis debt` |
+| `/lexis-two-plan` | `/lexis plan` |
+| `/lexis-two-security` | `/lexis security` |
+| `/lexis-two-help` | `/lexis help` |
+
+### Specxis (SDD)
+
+| Command | Skill |
+| ------- | ----- |
+| `/specxis` | `skills/specxis/` — see [specxis.md](./specxis.md) |
+
+Adapter files: Gemini `commands/*.toml`, OpenCode `.opencode/commands/*.md`, pi `pi-extension/index.js`.
 
 ## Portable Skills
 
@@ -134,8 +163,9 @@ cp ~/lexis-two/AGENTS.md ~/.copilot/copilot-instructions.md
 # VS Code + Codex (global)
 cp ~/lexis-two/AGENTS.md ~/.codex/AGENTS.md
 
-# OpenCode (global) — add to ~/.config/opencode/opencode.json:
-# { "plugin": ["~/lexis-two/.opencode/plugins/lexis-two.mjs"] }
+# OpenCode (global) — plugin + commands:
+# npx @draig/lexis-two install --host opencode --scope global --yes
+# Config dir: ~/.config/opencode (Windows: %USERPROFILE%\.config\opencode)
 ```
 
 ## Config

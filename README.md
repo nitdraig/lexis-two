@@ -96,7 +96,7 @@ Non-interactive example (Cursor + OpenCode + `AGENTS.md`):
 npx @draig/lexis-two install --host cursor,opencode,agents --scope project --yes
 ```
 
-Hosts covered: Cursor, Windsurf, Cline, Kiro, OpenCode (`opencode.json` merge), `copilot-repo`, and project `AGENTS.md`. Plugin marketplaces (`claude`, `copilot`, `gemini`, `pi`) print setup hints. See [docs/setup.md](./docs/setup.md).
+Hosts covered: Cursor, Windsurf, Cline, Kiro, OpenCode (`opencode.json` merge + slash commands), `copilot-repo`, and project `AGENTS.md`. Plugin marketplaces (`claude`, `copilot`, `gemini`, `pi`) print setup hints. See [docs/setup.md](./docs/setup.md). Modes: [docs/modes.md](./docs/modes.md).
 
 Uninstall (removes only unchanged Lexis-Two files):
 
@@ -316,10 +316,10 @@ Make it easy to adopt Lexis in any new project.
 - [ ] `AGENTS.template.md` — project-level AGENTS.md template with commented sections (stack, design tokens, glossary, conventions)
 - [x] `docs/portability.md` — hosts, commands, skills, install paths
 - [x] `docs/site.md` — GitHub Pages + `lexis-two.excelso.xyz`
-- [x] `docs/setup.md` — installer guide (phase A1; OpenCode merge in A2)
-- [ ] `docs/modes.md` — when to use lite / full / ultra and how to create custom modes
-- [x] `npx lexis-two install` — setup script (phase A1: rules-only hosts)
-- [ ] README improvements with real `// lexis:` comment examples showing before/after simplifications
+- [x] `docs/setup.md` — installer guide (OpenCode merge + global commands)
+- [x] `docs/modes.md` — lite / full / ultra / off and default resolution
+- [x] `npx @draig/lexis-two install` — setup script (rules, OpenCode, uninstall, hints)
+- [x] README links to `examples/` before/after catalog
 - [x] `examples/nextjs/01-modal-library` — gold-standard before/after (B1)
 - [x] `examples/nextjs/` + `examples/express/` — six before/after cases (B2)
 - [x] `examples/fastapi/` — three before/after cases (B3)
@@ -398,6 +398,10 @@ Focus areas: stack-specific shortcuts for other tech stacks, new examples, addit
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md).
 
 Original ponytail concept by [DietrichGebert](https://github.com/DietrichGebert/ponytail).
 Lexis ecosystem by [@nitdraig](https://github.com/nitdraig).

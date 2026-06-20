@@ -163,6 +163,8 @@ export default {
     colReduction: "Reduction",
     colCorrect: "Correct (lexis)",
     regenerate: "Regenerate:",
+    disclaimer:
+      "Results are from one OpenCode Go run (5 tasks, 3 repeats per cell). Model- and task-specific — not universal marketing claims.",
   },
   excelsoOpen: {
     title: "Excelso Open",

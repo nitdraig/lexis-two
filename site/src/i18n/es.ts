@@ -165,6 +165,8 @@
     colReduction: "Reducción",
     colCorrect: "Correctas (lexis)",
     regenerate: "Regenerar:",
+    disclaimer:
+      "Resultados de una corrida OpenCode Go (5 tareas, 3 repeticiones por celda). Dependen del modelo y la tarea — no son claims universales.",
   },
   excelsoOpen: {
     title: "Excelso Open",

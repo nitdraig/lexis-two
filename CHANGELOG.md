@@ -4,6 +4,19 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-06-21
+
+### Added
+
+- Cursor installer copies portable `skills/*/SKILL.md` into `.cursor/skills/` (project) or `~/.cursor/skills/` (global).
+
+## [1.2.1] - 2026-06-21
+
+### Fixed
+
+- `bin/lexis-two.js` shim and `devDependency` `file:.` so `npx` works from the package repo on Windows.
+- CI install tests: isolate `XDG_CONFIG_HOME` when mocking `HOME`.
+
 ## [1.2.0] - 2026-06-17
 
 ### Added
@@ -55,6 +68,8 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 Foundation release: OpenCode plugin, portable skills, multi-host adapters (Cursor, Windsurf, Cline, Kiro, Gemini, pi).
 
+[1.2.2]: https://github.com/nitdraig/lexis-two/compare/v1.2.1...v1.2.2
+[1.2.1]: https://github.com/nitdraig/lexis-two/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/nitdraig/lexis-two/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/nitdraig/lexis-two/compare/v1.0.2...v1.1.1
 [1.1.0]: https://github.com/nitdraig/lexis-two/compare/v1.0.9...v1.1.0

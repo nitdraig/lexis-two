@@ -42,11 +42,13 @@ node scripts/install.js install --yes
 
 In any **other** project directory, `npx @draig/lexis-two install` works without extra steps.
 
+**Cursor skills:** the installer copies every `skills/*/SKILL.md` into `.cursor/skills/<name>/` (project) or `~/.cursor/skills/<name>/` (global). Reload the Cursor window after install — skills appear under **Settings → Rules → Agent Skills** (or invoke with `@lexis-two-review`, etc.).
+
 ### Phase A1 hosts (automated)
 
 | Host | Project path | Global path |
 | ---- | ------------ | ----------- |
-| **Cursor** | `.cursor/rules/lexis-two.mdc` | `~/.cursor/rules/lexis-two.mdc` |
+| **Cursor** | `.cursor/rules/lexis-two.mdc` + `.cursor/skills/*` | `~/.cursor/rules/lexis-two.mdc` + `~/.cursor/skills/*` |
 | **Windsurf** | `.windsurf/rules/lexis-two.md` | — |
 | **Cline** | `.clinerules/lexis-two.md` | — |
 | **Kiro** | `.kiro/steering/lexis-two.md` | — |

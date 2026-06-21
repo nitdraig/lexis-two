@@ -26,7 +26,7 @@ Slash commands: **`/lexis`** is canonical (subcommands below). Skill folders and
 | Gemini CLI | `gemini-extension.json`, `AGENTS.md`, `commands/`, `skills/` | Full — extension manifest + commands |
 | pi | `pi-extension/`, `skills/` (via `package.json` `"pi"`) | Full — extension + commands |
 | Codex | `.codex-plugin/plugin.json`, `hooks/hooks.json`, `AGENTS.md` | Full — plugin + hooks |
-| Cursor | `.cursor/rules/lexis-two.mdc` | Rules — always-on project rule |
+| Cursor | `.cursor/rules/lexis-two.mdc`, `.cursor/skills/*` | Rules + Agent Skills (installer copies `skills/`) |
 | Windsurf | `.windsurf/rules/lexis-two.md` | Rules — project rule |
 | Cline | `.clinerules/lexis-two.md` | Rules — project rule |
 | GitHub Copilot (repo) | `.github/copilot-instructions.md` | Rules — repository instruction |

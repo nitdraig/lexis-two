@@ -288,6 +288,70 @@ function listOpencodeCommandFiles() {
     }));
 }
 
+function listPortableSkillDirs() {
+  const dir = path.join(PACKAGE_ROOT, 'skills');
+  return fs
+    .readdirSync(dir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .filter((name) => fs.existsSync(path.join(dir, name, 'SKILL.md')))
+    .map((name) => ({
+      name,
+      src: path.join(dir, name, 'SKILL.md'),
+    }));
+}
+
+function cursorSkillDest(ctx, installScope, skillName) {
+  const base = installScope === 'project' ? ctx.projectDir : ctx.home;
+  return path.join(base, '.cursor', 'skills', skillName, 'SKILL.md');
+}
+
+function planCursorSkillCopies(options, ctx) {
+  const host = RULE_HOSTS.cursor;
+  const scopes = resolveScopes(options.scope, host);
+  /** @type {InstallAction[]} */
+  const actions = [];
+
+  for (const installScope of scopes) {
+    for (const skill of listPortableSkillDirs()) {
+      actions.push(
+        planFileCopy(
+          'cursor',
+          installScope,
+          skill.src,
+          cursorSkillDest(ctx, installScope, skill.name),
+          options,
+          false,
+        ),
+      );
+    }
+  }
+
+  return actions;
+}
+
+function planCursorSkillRemoves(ctx, options) {
+  const host = RULE_HOSTS.cursor;
+  const scopes = resolveScopes(options.scope, host);
+  /** @type {InstallAction[]} */
+  const actions = [];
+
+  for (const installScope of scopes) {
+    for (const skill of listPortableSkillDirs()) {
+      actions.push(
+        planFileRemove(
+          'cursor',
+          installScope,
+          cursorSkillDest(ctx, installScope, skill.name),
+          skill.src,
+        ),
+      );
+    }
+  }
+
+  return actions;
+}
+
 function readJsonConfig(configPath) {
   if (!fs.existsSync(configPath)) {
     return {};
@@ -749,6 +813,10 @@ function buildUninstallPlan(hostIds, options, ctx) {
 
       actions.push(planFileRemove(host.id, installScope, targetPath, packageSrc));
     }
+
+    if (hostId === 'cursor') {
+      actions.push(...planCursorSkillRemoves(ctx, options));
+    }
   }
 
   return actions;
@@ -776,6 +844,10 @@ function buildPlan(hostIds, options, ctx) {
           : host.globalDest(ctx.home);
 
       actions.push(planCopyAction(host, installScope, destPath, options));
+    }
+
+    if (hostId === 'cursor') {
+      actions.push(...planCursorSkillCopies(options, ctx));
     }
   }
 
@@ -941,7 +1013,9 @@ function printNextSteps(hostIds) {
   const lines = ['Done. Next steps:'];
 
   if (hostIds.includes('cursor')) {
-    lines.push('  • Cursor: open your project — lexis-two.mdc should be active.');
+    lines.push(
+      '  • Cursor: open your project — lexis-two.mdc + skills under .cursor/skills/ should load.',
+    );
   }
   if (hostIds.includes('agents')) {
     lines.push('  • Generic agents: load AGENTS.md from your project root.');
@@ -1037,5 +1111,7 @@ module.exports = {
   isHintHost,
   planOpencodeConfigMerge,
   planOpencodeConfigUninstall,
+  listPortableSkillDirs,
+  cursorSkillDest,
   backupPath,
 };

@@ -18,6 +18,7 @@ const {
   executePlan,
   getOpencodeConfigDir,
   isHintHost,
+  listPortableSkillDirs,
   parseArgs,
 } = require('../scripts/install.js');
 
@@ -74,13 +75,18 @@ test('buildPlan dry-run lists cursor project copy', () => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-install-plan-'));
   const ctx = createContext(temp);
   const actions = buildPlan(['cursor'], { scope: 'project', force: false }, ctx);
+  const skillCount = listPortableSkillDirs().length;
 
-  assert.equal(actions.length, 1);
+  assert.equal(actions.length, 1 + skillCount);
   assert.equal(actions[0].type, 'copy');
   assert.equal(actions[0].host, 'cursor');
   assert.equal(
     actions[0].to,
     path.join(temp, '.cursor', 'rules', 'lexis-two.mdc'),
+  );
+  assert.equal(
+    actions[1].to,
+    path.join(temp, '.cursor', 'skills', listPortableSkillDirs()[0].name, 'SKILL.md'),
   );
 });
 
@@ -99,14 +105,15 @@ test('buildPlan skips existing AGENTS.md without --force', () => {
 test('executePlan is idempotent for identical files', () => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-install-idem-'));
   const ctx = createContext(temp);
+  const skillCount = listPortableSkillDirs().length;
 
   const first = buildPlan(['cursor'], { scope: 'project', force: false }, ctx);
-  assert.equal(executePlan(first).applied, 1);
+  assert.equal(executePlan(first).applied, 1 + skillCount);
 
   const second = buildPlan(['cursor'], { scope: 'project', force: false }, ctx);
-  assert.equal(second[0].type, 'skip');
-  assert.equal(second[0].reason, 'identical');
-  assert.equal(executePlan(second).skipped, 1);
+  assert.equal(second.every((action) => action.type === 'skip'), true);
+  assert.equal(second.every((action) => action.reason === 'identical'), true);
+  assert.equal(executePlan(second).skipped, 1 + skillCount);
 });
 
 test('CLI dry-run prints copy action without writing files', () => {
@@ -157,6 +164,10 @@ test('CLI install writes cursor rule file', () => {
     'utf8',
   );
   assert.equal(fs.readFileSync(installed, 'utf8'), expected);
+
+  const reviewSkill = path.join(temp, '.cursor', 'skills', 'lexis-two-review', 'SKILL.md');
+  assert.equal(fs.existsSync(reviewSkill), true);
+  assert.match(fs.readFileSync(reviewSkill, 'utf8'), /lexis-two-review/);
 });
 
 test('buildPlan merges opencode.json without clobbering existing plugins', () => {

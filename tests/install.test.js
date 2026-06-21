@@ -21,15 +21,25 @@ const {
   parseArgs,
 } = require('../scripts/install.js');
 
+const OPENCODE_ENV_KEYS = ['XDG_CONFIG_HOME', 'OPENCODE_CONFIG_DIR'];
+
+function withoutOpencodeEnvOverrides(env) {
+  const next = { ...env };
+  for (const key of OPENCODE_ENV_KEYS) {
+    delete next[key];
+  }
+  return next;
+}
+
 function runCli(args, projectDir) {
   return spawnSync(process.execPath, [installScript, 'install', ...args], {
     cwd: root,
     encoding: 'utf8',
-    env: {
+    env: withoutOpencodeEnvOverrides({
       ...process.env,
       USERPROFILE: projectDir,
       HOME: projectDir,
-    },
+    }),
   });
 }
 
@@ -352,7 +362,23 @@ test('CLI install writes copilot repo instructions when .github exists', () => {
   assert.match(fs.readFileSync(target, 'utf8'), /lazy senior developer/i);
 });
 
-test('getOpencodeConfigDir uses ~/.config/opencode by default', () => {
+test('getOpencodeConfigDir uses ~/.config/opencode by default', (t) => {
+  const saved = Object.fromEntries(
+    OPENCODE_ENV_KEYS.map((key) => [key, process.env[key]]),
+  );
+  t.after(() => {
+    for (const key of OPENCODE_ENV_KEYS) {
+      if (saved[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = saved[key];
+      }
+    }
+  });
+  for (const key of OPENCODE_ENV_KEYS) {
+    delete process.env[key];
+  }
+
   const home = path.join(os.tmpdir(), 'lexis-home');
   assert.equal(
     getOpencodeConfigDir(home),

@@ -2,4 +2,24 @@
 description: Quick reference for lexis-two levels, skills, and commands
 ---
 
-Show the lexis-two quick reference. One shot, change nothing: do not switch mode, write flag files, or persist anything. Levels: /lexis-two lite (build what's asked, name the lazier alternative in one line), /lexis-two (full, the default ladder: YAGNI then stdlib then native then one line then minimum), /lexis-two ultra (deletion before addition, challenges the requirement before building). Commands: /lexis-two-review (over-engineering review of the current changes), /lexis-two-audit (whole-repo over-engineering audit), /lexis-two-debt (harvest lexis: comments into a tracked ledger), /lexis-two-plan (plan a feature applying lazy hierarchy), /lexis-two-security (security audit of stack), /lexis-two-help (this card). Deactivate with 'stop lexis', 'normal mode', or /lexis-two off; resume anytime with /lexis-two. Default mode is full; change it with the LEXIS_TWO_DEFAULT_MODE environment variable (off|lite|full|ultra) or a config file at ~/.config/lexis-two/config.json (Windows: %APPDATA%\lexis-two\config.json) with {"defaultMode": "lite"}. Resolution order: env var, then config file, then full.
+Show the lexis-two quick reference. One shot, change nothing: do not switch mode, write flag files, or persist anything.
+
+Levels: `/lexis lite`, `/lexis full` (default), `/lexis ultra`, `/lexis off`.
+
+Commands (canonical `/lexis <name>`; skills live under `lexis-two-*`):
+- `plan` — lazy feature plan before coding
+- `review` — diff review for over-engineering
+- `audit` — whole-repo over-engineering audit
+- `debt` — harvest `// lexis:` comments
+- `security` — security audit (Node/TS default)
+- `doubt` — clarify ambiguous requirements (no code)
+- `incremental` — smallest vertical slice first
+- `debug` — minimal repro and smallest fix
+- `source` — ground in docs and existing code
+- `predict` — proposed vs lazy comparison
+- `scenario` — happy / edge / failure scenarios
+- `help` — this card
+
+Legacy `/lexis-two-*` names still work with a deprecation notice.
+
+Deactivate: `stop lexis`, `normal mode`, or `/lexis off`. Default mode: `LEXIS_TWO_DEFAULT_MODE` or `~/.config/lexis-two/config.json`.

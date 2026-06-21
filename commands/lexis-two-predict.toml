@@ -1,0 +1,3 @@
+name = "lexis-two-predict"
+description = "Compare proposed vs lazy approach — LOC, deps, maintenance"
+skill = "../skills/lexis-two-predict/SKILL.md"

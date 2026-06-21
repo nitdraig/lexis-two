@@ -13,6 +13,14 @@ Subcommands (when $ARGUMENTS matches):
 - `audit` or `a`: audit the entire repository for over-engineering.
 - `debt` or `d`: harvest all `// lexis:` comments into a tracked ledger.
 - `security` or `s`: run a focused security audit on the stack.
+- `doubt`: challenge ambiguous requirements (questions only, no code).
+- `incremental` or `inc`: ship the smallest vertical slice first.
+- `debug` or `triage`: minimal repro and smallest bug fix.
+- `source` or `src`: read repo sources and official docs before inventing APIs.
+- `predict`: compare proposed vs lazy approach (LOC, deps, maintenance).
+- `scenario`: walk happy, edge, and failure scenarios before design.
 - `help` or `h`: show the quick reference card.
+
+Legacy `lexis-two-*` slash names still work but are deprecated.
 
 Respond in Spanish.

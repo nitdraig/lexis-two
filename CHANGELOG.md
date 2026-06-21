@@ -2,6 +2,12 @@
 
 All notable changes to `@draig/lexis-two` are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Added
+
+- Six workflow skills: `doubt`, `incremental`, `debug`, `source`, `predict`, `scenario` under `/lexis` (folders `skills/lexis-two-*`).
+
 ## [1.1.1] - 2026-06-18
 
 ### Fixed

@@ -1,0 +1,3 @@
+name = "lexis-two-doubt-driven"
+description = "Challenge ambiguous requirements with minimal questions before code"
+skill = "../skills/lexis-two-doubt-driven/SKILL.md"

@@ -1,0 +1,3 @@
+name = "lexis-two-debug-triage"
+description = "Minimal reproduction and smallest bug fix"
+skill = "../skills/lexis-two-debug-triage/SKILL.md"

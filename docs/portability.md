@@ -68,6 +68,12 @@ npx @draig/lexis-two install --host opencode --scope project --yes
 | `/lexis audit` (or `a`) | `skills/lexis-two-audit/` | Full repo audit |
 | `/lexis debt` (or `d`) | `skills/lexis-two-debt/` | Harvest `// lexis:` comments |
 | `/lexis security` (or `s`) | `skills/lexis-two-security/` | Security audit (Node/TS default) |
+| `/lexis doubt` | `skills/lexis-two-doubt-driven/` | Clarify ambiguous requirements |
+| `/lexis incremental` (or `inc`) | `skills/lexis-two-incremental-impl/` | Smallest vertical slice first |
+| `/lexis debug` (or `triage`) | `skills/lexis-two-debug-triage/` | Minimal repro and fix |
+| `/lexis source` (or `src`) | `skills/lexis-two-source-driven/` | Docs and repo-grounded design |
+| `/lexis predict` | `skills/lexis-two-predict/` | Proposed vs lazy comparison |
+| `/lexis scenario` | `skills/lexis-two-scenario/` | Happy / edge / failure scenarios |
 | `/lexis help` (or `h`) | `skills/lexis-two-help/` | Quick reference |
 
 Modes: [modes.md](./modes.md).
@@ -82,6 +88,12 @@ Modes: [modes.md](./modes.md).
 | `/lexis-two-debt` | `/lexis debt` |
 | `/lexis-two-plan` | `/lexis plan` |
 | `/lexis-two-security` | `/lexis security` |
+| `/lexis-two-doubt-driven` | `/lexis doubt` |
+| `/lexis-two-incremental-impl` | `/lexis incremental` |
+| `/lexis-two-debug-triage` | `/lexis debug` |
+| `/lexis-two-source-driven` | `/lexis source` |
+| `/lexis-two-predict` | `/lexis predict` |
+| `/lexis-two-scenario` | `/lexis scenario` |
 | `/lexis-two-help` | `/lexis help` |
 
 ### Specxis (SDD)
@@ -102,6 +114,12 @@ Adapter files: Gemini `commands/*.toml`, OpenCode `.opencode/commands/*.md`, pi 
 | `skills/lexis-two-debt/` | Harvest `// lexis:` comments into debt ledger |
 | `skills/lexis-two-plan/` | Feature planning before coding |
 | `skills/lexis-two-security/` | Security audit (default: Node.js / Next.js / MongoDB) |
+| `skills/lexis-two-doubt-driven/` | Clarify requirements before code |
+| `skills/lexis-two-incremental-impl/` | Vertical-slice delivery |
+| `skills/lexis-two-debug-triage/` | Minimal bug triage |
+| `skills/lexis-two-source-driven/` | Source- and doc-grounded design |
+| `skills/lexis-two-predict/` | Approach comparison (LOC, deps, maintenance) |
+| `skills/lexis-two-scenario/` | Scenario walkthrough before build |
 
 Adapt skill shell commands for other stacks — see README **Adapting Lexis-Two to Any Stack**.
 

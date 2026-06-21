@@ -39,6 +39,8 @@ test("lexisExtension registers commands and listeners", () => {
   assert.ok(pi.commands["lexis-two-plan"]);
   assert.ok(pi.commands["lexis-two-security"]);
   assert.ok(pi.commands["lexis-two-help"]);
+  assert.ok(pi.commands["lexis-two-doubt-driven"]);
+  assert.ok(pi.commands["lexis-two-scenario"]);
   assert.ok(pi.commands["specxis"]);
 
   assert.ok(pi.listeners["input"]);
@@ -74,11 +76,14 @@ test("lexisExtension command handlers trigger correctly", async () => {
   await pi.commands["lexis"].handler("review", ctx);
   assert.equal(pi.userMessages[1].text, "/skill:lexis-two-review");
 
+  await pi.commands["lexis"].handler("doubt", ctx);
+  assert.equal(pi.userMessages[2].text, "/skill:lexis-two-doubt-driven");
+
   await pi.commands["specxis"].handler("status", ctx);
-  assert.equal(pi.userMessages[2].text, "/skill:specxis status");
+  assert.equal(pi.userMessages[3].text, "/skill:specxis status");
 
   pi.commands["lexis-two-review"].handler("", ctx);
-  assert.equal(pi.userMessages[3].text, "/skill:lexis-two-review");
+  assert.equal(pi.userMessages[4].text, "/skill:lexis-two-review");
 });
 
 test("lexisExtension input listener detects deactivation", async () => {

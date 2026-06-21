@@ -201,7 +201,16 @@ Manage Lexis senior dev mode, intensity levels, and quality/security tools under
 * **`/lexis help` (Shortcut: `/lexis h`)**
   * **What it does:** Displays a quick reference card with all commands, levels, and configuration options.
 
-_(Note: The old individual commands like `/lexis-two-review` are fully supported for backward compatibility but will display a deprecation warning guiding you to use `/lexis` instead.)_
+#### Workflow skills (v1.2)
+
+* **`/lexis doubt`** — Clarify ambiguous requirements (max 3 questions, no code).
+* **`/lexis incremental` (or `inc`)** — Ship the smallest vertical slice; defer the rest.
+* **`/lexis debug` (or `triage`)** — Repro, smallest fix, verify — no drive-by refactors.
+* **`/lexis source` (or `src`)** — Ground in repo code and official docs before inventing APIs.
+* **`/lexis predict`** — Compare proposed vs lazy approach (LOC, deps, maintenance).
+* **`/lexis scenario`** — Happy, edge, and failure scenarios before design.
+
+_(Skill folders remain `skills/lexis-two-*`. Legacy `/lexis-two-*` slash names still work with a deprecation notice.)_
 
 ---
 

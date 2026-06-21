@@ -12,8 +12,10 @@ const path = require('path');
 
 const root = path.join(__dirname, '..');
 const piSource = fs.readFileSync(path.join(root, 'pi-extension', 'index.js'), 'utf8');
-// Extract all registered commands: pi.registerCommand("command-name", ...)
-const commands = [...piSource.matchAll(/registerCommand\(["']([\w-]+)["']/g)].map((m) => m[1]);
+// Literal registerCommand("name") plus DEPRECATED_LEXIS_SKILL_COMMANDS { command: "..." } entries
+const literalCommands = [...piSource.matchAll(/registerCommand\(["']([\w-]+)["']/g)].map((m) => m[1]);
+const deprecatedCommands = [...piSource.matchAll(/command: "(lexis-two-[^"]+)"/g)].map((m) => m[1]);
+const commands = [...new Set([...literalCommands, ...deprecatedCommands])];
 
 test('pi registers at least the base command', () => {
   assert.ok(commands.includes('lexis-two'), 'expected pi to register a lexis-two command');

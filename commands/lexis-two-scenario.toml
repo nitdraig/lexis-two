@@ -1,0 +1,3 @@
+name = "lexis-two-scenario"
+description = "Walk happy, edge, and failure scenarios before coding"
+skill = "../skills/lexis-two-scenario/SKILL.md"

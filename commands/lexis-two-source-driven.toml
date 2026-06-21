@@ -1,0 +1,3 @@
+name = "lexis-two-source-driven"
+description = "Read official sources and existing code before inventing APIs"
+skill = "../skills/lexis-two-source-driven/SKILL.md"

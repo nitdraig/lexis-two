@@ -4,9 +4,12 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-06-17
+
 ### Added
 
-- Six workflow skills: `doubt`, `incremental`, `debug`, `source`, `predict`, `scenario` under `/lexis` (folders `skills/lexis-two-*`).
+- Six workflow skills under `/lexis`: `doubt`, `incremental` (`inc`), `debug` (`triage`), `source` (`src`), `predict`, `scenario` — folders `skills/lexis-two-*`.
+- OpenCode, Gemini CLI, pi, and legacy slash aliases wired for all six skills.
 
 ## [1.1.1] - 2026-06-18
 
@@ -52,6 +55,7 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 Foundation release: OpenCode plugin, portable skills, multi-host adapters (Cursor, Windsurf, Cline, Kiro, Gemini, pi).
 
+[1.2.0]: https://github.com/nitdraig/lexis-two/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/nitdraig/lexis-two/compare/v1.0.2...v1.1.1
 [1.1.0]: https://github.com/nitdraig/lexis-two/compare/v1.0.9...v1.1.0
 [1.0.9]: https://github.com/nitdraig/lexis-two/compare/v1.0.2...v1.0.9

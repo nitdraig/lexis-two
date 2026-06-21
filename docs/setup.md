@@ -23,6 +23,25 @@ Preview without writing files:
 npx @draig/lexis-two install --host cursor --scope project --dry-run --yes
 ```
 
+### Developing inside the `lexis-two` repository
+
+`npx` resolves the **local** `package.json` when you run commands from the repo root. On Windows that skips creating `node_modules/.bin/lexis-two.cmd`, so `npx @draig/lexis-two install` can fail with *"lexis-two" is not recognized*.
+
+From the repo root, use either:
+
+```bash
+npm install   # once — links the CLI via devDependency file:.
+npx @draig/lexis-two install --yes
+```
+
+```bash
+npm run lexis-two -- install --yes
+# or
+node scripts/install.js install --yes
+```
+
+In any **other** project directory, `npx @draig/lexis-two install` works without extra steps.
+
 ### Phase A1 hosts (automated)
 
 | Host | Project path | Global path |

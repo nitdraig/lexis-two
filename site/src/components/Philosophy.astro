@@ -3,6 +3,12 @@ interface Props {
   philosophy: {
     title: string;
     subtitle: string;
+    principles: readonly {
+      name: string;
+      desc: string;
+    }[];
+    ladderTitle: string;
+    ladderSubtitle: string;
     rungs: readonly string[];
   };
 }
@@ -16,8 +22,44 @@ const { philosophy } = Astro.props;
       <h2>{philosophy.title}</h2>
       <p>{philosophy.subtitle}</p>
     </div>
+    <div class="adapt-list principles-grid">
+      {
+        philosophy.principles.map((principle) => (
+          <article class="adapt-card">
+            <h3>{principle.name}</h3>
+            <p>{principle.desc}</p>
+          </article>
+        ))
+      }
+    </div>
+    <div class="section-head ladder-head">
+      <h3>{philosophy.ladderTitle}</h3>
+      <p>{philosophy.ladderSubtitle}</p>
+    </div>
     <ol class="ladder">
       {philosophy.rungs.map((rung) => <li>{rung}</li>)}
     </ol>
   </div>
 </section>
+
+<style>
+  .principles-grid {
+    margin-bottom: 2.5rem;
+  }
+
+  .ladder-head {
+    margin-bottom: 1.25rem;
+  }
+
+  .ladder-head h3 {
+    font-size: 1.25rem;
+    margin: 0 0 0.35rem;
+    letter-spacing: -0.02em;
+  }
+
+  .ladder-head p {
+    margin: 0;
+    color: var(--text-muted);
+    max-width: 40rem;
+  }
+</style>

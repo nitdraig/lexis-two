@@ -8,7 +8,7 @@
 
 <p align="center">
   <em>The simple way to obtain the best code.</em><br>
-  <small>Portable rules, skills, and slash commands for AI agents. The simple way to get the best code. With lowest tokens usage.</small>
+  <small>Portable rules, skills, and slash commands — grounded in YAGNI, KISS, DRY, and SOLID, not bloat.</small>
 </p>
 
 <p align="center">
@@ -23,8 +23,8 @@
 
 ---
 
-Built on top of [OpenCode](https://opencode.ai) and [Cursor](https://cursor.sh).
-Forked and extended from [ponytail](https://github.com/DietrichGebert/ponytail) by DietrichGebert (MIT).
+Built on [OpenCode](https://opencode.ai) and [Cursor](https://cursor.sh).
+Benchmark harness and attribution: [ponytail](https://github.com/DietrichGebert/ponytail) by DietrichGebert (MIT).
 
 ---
 
@@ -36,9 +36,9 @@ This project is proud to be part of **Excelso Open**, our open-source and commun
 
 ## What is Lexis?
 
-Lexis is a multi-agent ecosystem designed for building premium web apps products efficiently. It enforces a simple philosophy: **the best code is the code never written**.
+Lexis is a multi-agent ecosystem for shipping production web apps with **engineering discipline**, not prompt theater.
 
-Rather than a single AI assistant, Lexis is a team of specialized agents — each with a defined role, model, and scope — coordinated to cover the full development lifecycle: planning, coding, refactoring, reviewing, and security auditing.
+It coordinates specialized agents — planning, implementation, review, refactor, security — around one portable ruleset and a shared `skills/` catalog. The default stance is skeptical: prove the feature belongs, pick the simplest stack-native solution, and write the minimum that holds under real constraints.
 
 **See it in code:** [examples/](./examples/) — nine before/after pairs across Next.js, Express, and FastAPI.
 
@@ -53,9 +53,22 @@ Rather than a single AI assistant, Lexis is a team of specialized agents — eac
 | `security-auditor` | Security analyst     | Read-only, runs audit tools          |
 | `explorer`         | Codebase mapper      | Read-only, fast local model          |
 
-### The Philosophy
+### Principles
 
-Before writing any code, Lexis stops at the first rung that holds:
+Simplicity here is **method**, not aesthetic minimalism.
+
+| Principle | What it means in Lexis-Two |
+| --------- | -------------------------- |
+| **YAGNI** | Question every feature and abstraction before it exists — the ladder below is the gate |
+| **KISS** | Stdlib, platform APIs, and boring one-liners beat new dependencies |
+| **DRY** | One `skills/` source, thin host adapters — slash commands route, they do not fork logic |
+| **SOLID** | Clear module and service boundaries — no abstractions nobody asked for |
+
+Fewer tokens and fewer files are a **side effect** of correct, maintainable code — not the whole philosophy.
+
+### The decision ladder
+
+Before writing any code, stop at the first rung that holds:
 
 1. Does this need to exist at all? (YAGNI)
 2. Does the standard library already do this?
@@ -280,8 +293,9 @@ Run `/lexis debt` (or `/lexis d`) to collect and prioritize all tagged items acr
 
 ## Complementary Repos
 
-| Repo                                                             | What it adds                                                        |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Repo | What it adds |
+| ---- | ------------ |
+| [ponytail](https://github.com/DietrichGebert/ponytail) | Benchmark harness and early decision-ladder patterns (MIT) |
 | [my-cursor-skills](https://github.com/nitdraig/my-cursor-skills) | OpenCode/Cursor skills: code review, testing, security, performance |
 
 ---

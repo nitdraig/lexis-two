@@ -2,7 +2,7 @@
   meta: {
     title: "Lexis-Two -- La forma simple de obtener el mejor código.",
     description:
-      "Reglas, skills y slash commands portables para agentes de IA. La forma simple de obtener el mejor código. Con el menor uso de tokens.",
+      "Reglas, skills y slash commands portables -- YAGNI, KISS, DRY y SOLID antes de cada línea de código.",
   },
   nav: {
     philosophy: "Filosofía",
@@ -18,7 +18,7 @@
     badge: "LEXIS-TWO",
     title: "La forma simple de obtener el mejor código.",
     tagline:
-      "Reglas, skills y slash commands portables para agentes de IA. La forma simple de obtener el mejor código. Con el menor uso de tokens.",
+      "Reglas, skills y slash commands portables -- YAGNI, KISS, DRY y SOLID antes de cada línea de código. Flujos multi-agente, una fuente de skills, adaptadores delgados.",
     benchmark:
       "Haz benchmarks con tus modelos OpenCode Go, luego publica resultados --",
     benchmarkLink: "OpenCode Go harness",
@@ -29,8 +29,29 @@
     ctaBenchmark: "Ver benchmarks",
   },
   philosophy: {
-    title: "La escalera",
+    title: "Disciplina de ingeniería",
     subtitle:
+      "Lexis-Two trata la simplicidad como método: defaults escépticos, patrones de stack de producción y límites mantenibles -- no minimalismo ingenioso por moda.",
+    principles: [
+      {
+        name: "YAGNI",
+        desc: "Cuestiona cada feature y abstracción antes de shippear. La escalera de abajo es el filtro.",
+      },
+      {
+        name: "KISS",
+        desc: "Stdlib, APIs de plataforma y one-liners aburridos ganan a dependencias nuevas.",
+      },
+      {
+        name: "DRY",
+        desc: "Un catálogo skills/. Los hosts enrutan comandos -- no bifurcan comportamiento.",
+      },
+      {
+        name: "SOLID",
+        desc: "Límites claros en módulos y servicios. Sin abstracciones que nadie pidió.",
+      },
+    ],
+    ladderTitle: "La escalera de decisión",
+    ladderSubtitle:
       "Antes de escribir código, detente en el primer escalón que sostenga.",
     rungs: [
       "Esto necesita existir? (YAGNI)",
@@ -55,7 +76,7 @@
   hosts: {
     title: "Funciona donde programas",
     subtitle:
-      "Adaptadores delgados. Una fuente de skills. skills/ es el nucleo.",
+      "Adaptadores delgados. Una fuente de skills. skills/ es el núcleo -- los principios viven centralizados, los hosts se mantienen tontos.",
     headHost: "Host",
     headLevel: "Nivel",
     headEntry: "Punto de entrada",
@@ -66,7 +87,7 @@
       { host: "Gemini CLI", level: "full", entry: "gemini-extension.json" },
       { host: "pi", level: "full", entry: "pi-extension/" },
       { host: "Codex", level: "full", entry: ".codex-plugin/ + AGENTS.md" },
-      { host: "Cursor", level: "rules", entry: ".cursor/rules/lexis-two.mdc" },
+      { host: "Cursor", level: "full", entry: ".cursor/rules/ + .cursor/skills/" },
       { host: "Windsurf / Cline / Kiro", level: "rules", entry: "lexis-two.md en la carpeta rules del host" },
       { host: "Cualquier agente", level: "rules", entry: "AGENTS.md o skills/*/SKILL.md" },
     ],
@@ -136,16 +157,20 @@
   },
   suggested: {
     title: "Proyectos relacionados",
-    subtitle: "Del cual se forked y vale la pena revisar ideas complementarias.",
+    subtitle: "Repos complementarios -- benchmarks, patrones tempranos y extensiones por host.",
     items: [
-      { name: "ponytail", url: "https://github.com/DietrichGebert/ponytail", desc: "Proyecto base del cual lexis-two fue forked y extendido." },
+      {
+        name: "ponytail",
+        url: "https://github.com/DietrichGebert/ponytail",
+        desc: "Harness de benchmarks y patrones tempranos de escalera de decisión sobre los que crece este ecosistema (MIT).",
+      },
       { name: "my-cursor-skills", url: "https://github.com/nitdraig/my-cursor-skills", desc: "Colección de skills de Cursor para revisar features complementarias." },
     ],
   },
   ecosystem: {
     title: "Ecosistema",
     subtitle:
-      "Lexis-Two es el paquete público portable. Lexis-One es privado. Lexis-Zero es el futuro.",
+      "Lexis-Two es el paquete portable público -- principios, skills y adaptadores. Lexis-One es orquestación privada. Lexis-Core es futuro.",
   },
   footer: {
     license: "Licencia MIT",

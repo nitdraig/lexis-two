@@ -1,6 +1,6 @@
 {
   "name": "@draig/lexis-two",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
   "bin": {
     "lexis-two": "bin/lexis-two.js"

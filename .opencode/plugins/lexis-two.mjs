@@ -26,11 +26,8 @@ try {
   }
 }
 
-const {
-  getLexisInstructions,
-  getDefaultMode,
-  normalizePersistedMode,
-} = lexisInstructionsModule;
+const { getLexisInstructions, getDefaultMode, normalizePersistedMode } =
+  lexisInstructionsModule;
 
 // OpenCode has no flag-file convention of its own; keep mode beside its config.
 const statePath = path.join(
@@ -69,17 +66,17 @@ function createServerHooks({ client } = {}) {
     "experimental.chat.system.transform": async (_input, output) => {
       const mode = readMode();
       if (mode === "off") return;
-      output.system.push(getLexisInstructions(mode));
-    },
 
-    // Persist `/lexis <level>` or `/lexis-two <level>` so the next turn's injection follows it.
-    "command.execute.before": async (input) => {
-      if (!input || (input.command !== "lexis-two" && input.command !== "lexis")) return;
-      const firstArg = String(input.arguments || "").trim().split(/\s+/)[0];
-      // `off` is persisted like any mode; the transform reads it and stays silent.
-      const mode = normalizePersistedMode(firstArg) || getDefaultMode();
-      writeMode(mode);
-      log("info", "lexis-two " + mode);
+      const model = _input?.model?.id || _input?.model || "";
+      const isLocal =
+        typeof model === "string" &&
+        (model.includes("lmstudio") ||
+          model.includes("ollama") ||
+          model.includes("local") ||
+          model.includes("127.0.0.1"));
+      if (isLocal) return;
+
+      output.system.push(getLexisInstructions(mode));
     },
   };
 }

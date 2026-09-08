@@ -4,6 +4,11 @@ interface Props {
   commands: {
     title: string;
     subtitle: string;
+    guideLink: string;
+    filterAll: string;
+    filterLexis: string;
+    filterSpecxis: string;
+    results: string;
     items: readonly {
       name: string;
       desc: string;
@@ -12,6 +17,12 @@ interface Props {
 }
 
 const { locale, commands } = Astro.props;
+
+const categories = commands.items.map((cmd) => {
+  if (cmd.name.startsWith("/lexis")) return "code";
+  if (cmd.name.startsWith("/specxis")) return "specs";
+  return "other";
+});
 ---
 
 <section id="commands">
@@ -20,21 +31,128 @@ const { locale, commands } = Astro.props;
       <h2>{commands.title}</h2>
       <p>{commands.subtitle}</p>
     </div>
+
+    <div class="cmd-toolbar">
+      <div class="cmd-filters" role="group" aria-label="Filter commands by family">
+        <button class="filter-btn is-active" type="button" data-filter="all" aria-pressed="true">
+          {commands.filterAll}
+        </button>
+        <button class="filter-btn" type="button" data-filter="code" aria-pressed="false">
+          {commands.filterLexis}
+        </button>
+        <button class="filter-btn" type="button" data-filter="specs" aria-pressed="false">
+          {commands.filterSpecxis}
+        </button>
+      </div>
+      <p class="cmd-results" aria-live="polite" aria-atomic="true">
+        {commands.results.replace("{count}", String(commands.items.length))}
+      </p>
+    </div>
+
     <div class="cmd-grid">
       {
-        commands.items.map((cmd) => (
-          <div class="cmd-card">
+        commands.items.map((cmd, i) => (
+          <div class="cmd-card" data-category={categories[i]}>
             <code>{cmd.name}</code>
             <p>{cmd.desc}</p>
           </div>
         ))
       }
     </div>
-    <a class="guide-link" href={locale === "es" ? "/es/guide" : "/guide"}>{commands.guideLink}</a>
+    <a class="guide-link" href={locale === "es" ? "/es/guide" : "/guide"}>
+      {commands.guideLink}
+    </a>
   </div>
 </section>
 
+<script define:vars={{ resultsTemplate: commands.results }}>
+  (function () {
+    var section = document.getElementById("commands");
+    if (!section) return;
+
+    var filters = section.querySelectorAll("[data-filter]");
+    var cards = section.querySelectorAll("[data-category]");
+    var results = section.querySelector(".cmd-results");
+
+    function update(filter) {
+      var visible = 0;
+
+      cards.forEach(function (card) {
+        var match = filter === "all" || card.dataset.category === filter;
+        card.hidden = !match;
+        if (match) visible++;
+      });
+
+      filters.forEach(function (btn) {
+        var active = btn.dataset.filter === filter;
+        btn.classList.toggle("is-active", active);
+        btn.setAttribute("aria-pressed", String(active));
+      });
+
+      if (results) results.textContent = resultsTemplate.replace("{count}", String(visible));
+    }
+
+    filters.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        update(btn.dataset.filter || "all");
+      });
+    });
+  })();
+</script>
+
 <style>
+  .cmd-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cmd-filters {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .filter-btn {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .filter-btn:hover {
+    border-color: var(--accent-dim);
+    color: var(--text);
+  }
+
+  .filter-btn.is-active {
+    border-color: var(--accent-dim);
+    color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  .cmd-results {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .cmd-card[hidden] {
+    display: none;
+  }
+
   .guide-link {
     display: inline-block;
     margin-top: 1.5rem;

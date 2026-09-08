@@ -100,6 +100,10 @@
     subtitle:
       "En hosts con adaptadores de comandos: OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
     guideLink: "Guía de uso completa",
+    filterAll: "Todos",
+    filterLexis: "Código",
+    filterSpecxis: "Specs",
+    results: "{count} comandos",
     items: [
       { name: "/lexis status", desc: "Muestra el estado actual del plugin, nivel de intensidad activo y configuración por defecto." },
       { name: "/lexis <lite|full|ultra|off>", desc: "Cambia el nivel de intensidad de las reglas de pereza inteligente para el agente de IA." },

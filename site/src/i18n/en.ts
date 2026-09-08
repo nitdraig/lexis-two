@@ -99,6 +99,10 @@ export default {
     subtitle:
       "On hosts with command adapters: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.",
     guideLink: "Full usage guide",
+    filterAll: "All",
+    filterLexis: "Code",
+    filterSpecxis: "Specs",
+    results: "{count} commands",
     items: [
       { name: "/lexis status", desc: "Shows the current plugin status, active intensity level, and default configuration." },
       { name: "/lexis <lite|full|ultra|off>", desc: "Switches the intensity level of the smart-lazy ruleset for the AI agent." },

@@ -1,0 +1,250 @@
+---
+import { getDictionary, type Locale } from "../i18n/index.js";
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+import Footer from "./Footer.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+// lexis: guide is fully typed by Dictionary (typeof en) — no extra interface needed
+const t = getDictionary(locale);
+const guide = t.guide;
+const homeHref = locale === "es" ? "/es" : "/";
+---
+
+<a class="skip-link" href="#main">{t.nav.skipLink}</a>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href={homeHref}>
+      <img src="/assets/logo.png" width="220" height="48" alt="Lexis-Two" />
+      <span class="brand-text">Lexis-Two</span>
+    </a>
+    <nav class="topbar-nav" aria-label="Primary">
+      <a href={homeHref}>{guide.backHome}</a>
+      <LanguageSwitcher locale={locale} />
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="guide-page">
+  <div class="wrap">
+    <div class="section-head">
+      <h1>{guide.title}</h1>
+      <p>{guide.subtitle}</p>
+    </div>
+
+    <p class="availability">{guide.availability}</p>
+    <p class="guide-summary">{guide.summary}</p>
+
+    <section>
+      <div class="section-head">
+        <h2>{guide.levelsTitle}</h2>
+        <p>{guide.levelsSubtitle}</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>{guide.colLevel}</th>
+              <th>{guide.colWhen}</th>
+              <th>{guide.colWhat}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              guide.levels.map((level) => (
+                <tr>
+                  <td>
+                    <code>{`/lexis ${level.name}`}</code>
+                  </td>
+                  <td>{level.when}</td>
+                  <td>{level.desc}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>{guide.workflowTitle}</h2>
+        <p>{guide.workflowSubtitle}</p>
+      </div>
+      <div class="guide-grid">
+        {
+          guide.items.map((item) => (
+            <article class="guide-card">
+              <code>{item.name}</code>
+              <p>{item.desc}</p>
+              <pre><code>{item.example}</code></pre>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>{guide.specxisTitle}</h2>
+        <p>{guide.specxisSubtitle}</p>
+      </div>
+      <ol class="specxis-steps">
+        {
+          guide.specxisItems.map((item) => (
+            <li>
+              <code>{item.name}</code>
+              <p>{item.desc}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="sdd-hint">{guide.sddHint}</p>
+    </section>
+  </div>
+</main>
+
+<Footer footer={t.footer} />
+
+<style>
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .topbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .topbar-nav a {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .topbar-nav a:hover {
+    color: var(--accent);
+  }
+
+  .guide-page {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+
+  .guide-page section {
+    margin-top: 3rem;
+  }
+
+  .availability {
+    max-width: 42rem;
+    margin-top: -0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .guide-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  }
+
+  .guide-card {
+    padding: 1rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .guide-card > code {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+  }
+
+  .guide-card p {
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .guide-card pre {
+    margin: 0.75rem 0 0;
+    padding: 0.6rem 0.75rem;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) / 2);
+  }
+
+  .specxis-steps {
+    max-width: 48rem;
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .specxis-steps li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .specxis-steps li:last-child {
+    border-bottom: none;
+  }
+
+  .specxis-steps code {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+  }
+
+  .specxis-steps p {
+    margin: 0.35rem 0 0;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .sdd-hint {
+    max-width: 42rem;
+    margin: 1.5rem 0 0;
+    padding: 0.85rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .guide-summary {
+    max-width: 42rem;
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+</style>

@@ -92,13 +92,14 @@
       { host: "Cualquier agente", level: "rules", entry: "AGENTS.md o skills/*/SKILL.md" },
     ],
     levelFull: "Completo",
-    levelSoon: "Proximamente",
+    levelSoon: "Próximamente",
     levelRules: "Reglas",
   },
   commands: {
     title: "Slash commands",
     subtitle:
       "En hosts con adaptadores de comandos: OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
+    guideLink: "Guía de uso completa",
     items: [
       { name: "/lexis status", desc: "Muestra el estado actual del plugin, nivel de intensidad activo y configuración por defecto." },
       { name: "/lexis <lite|full|ultra|off>", desc: "Cambia el nivel de intensidad de las reglas de pereza inteligente para el agente de IA." },
@@ -145,14 +146,14 @@
   },
   stacks: {
     title: "Stacks enfocados",
-    subtitle: "Patrones optimizados para los stacks de producción mas comunes.",
+    subtitle: "Patrones optimizados para los stacks de producción más comunes.",
     items: [
       { name: "TypeScript / Node.js", desc: "Next.js, React, Express, Fastify, tipos estrictos" },
       { name: "MongoDB / Mongoose", desc: "Schemas, índices, agregacion, transacciones" },
       { name: "Tailwind CSS", desc: "Utility-first, modo oscuro, responsivo" },
       { name: "Python", desc: "FastAPI, Django, dataclasses, type hints" },
       { name: "PostgreSQL / Prisma", desc: "Relaciones, migraciones, prevención de N+1" },
-      { name: "Redis", desc: "Cacheo, sesiones, rate limiting, pub/sub" },
+      { name: "Redis", desc: "Caché, sesiones, rate limiting, pub/sub" },
     ],
   },
   suggested: {
@@ -204,5 +205,59 @@
     description: "Este proyecto forma parte de Excelso Open, nuestra rama de código abierto enfocada en la comunidad, impulsando tecnología colaborativa y proyectos de impacto social.",
     linkText: "Visita excelso.xyz",
     url: "https://excelso.xyz",
+  },
+  guide: {
+    title: "Cómo usar las herramientas",
+    subtitle:
+      "Guía práctica de los comandos /lexis y /specxis -- qué hace cada uno, cuándo usarlo y un ejemplo para copiar y pegar.",
+    summary:
+      "Lexis-Two ofrece dos familias de comandos slash: /lexis para controlar la intensidad y ejecutar un flujo disciplinado, y /specxis para gestionar el desarrollo dirigido por specs en features complejas. Usalos en OpenCode, Gemini CLI, pi, Claude Code o GitHub Copilot.",
+    availability:
+      "Disponibles en los hosts con adaptador de comandos: OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
+    levelsTitle: "Niveles de intensidad",
+    levelsSubtitle:
+      "/lexis <modo> cambia la agresividad con la que las reglas frenan a tu agente. El nivel activo se inyecta en cada system prompt hasta que lo cambies.",
+    colLevel: "Nivel",
+    colWhen: "Usalo para",
+    levels: [
+      { name: "lite", when: "Specs estrictas e innegociables", desc: "Construye exactamente lo pedido y luego sugiere una alternativa más perezosa en una línea." },
+      { name: "full", when: "Trabajo diario (por defecto)", desc: "Aplica la escalera de decisión: YAGNI, stdlib, plataforma nativa, dependencias ya instaladas, una línea, build minimo." },
+      { name: "ultra", when: "Sprints de refactor y limpieza", desc: "YAGNI extremista: cuestiona requisitos, borra codigo primero y prefiere one-liners." },
+      { name: "off", when: "Sesiones sin reglas", desc: "Desactiva por completo las reglas Lexis hasta que vuelvas a activarlas." },
+    ],
+    workflowTitle: "Comandos de flujo /lexis",
+    workflowSubtitle:
+      "Un comando por paso del ciclo disciplinado: planificar, aclarar, implementar, revisar, entregar.",
+    colCommand: "Comando",
+    colWhat: "Que hace",
+    colExample: "Ejemplo",
+    items: [
+      { name: "/lexis plan", desc: "Produce un plan técnico paso a paso para una feature antes de escribir codigo, aplicando la jerarquía perezosa para que no se diseñe sobre-ingeniería.", example: "/lexis plan agregar exportacion CSV a la pagina de ordenes" },
+      { name: "/lexis review", desc: "Analiza los cambios recientes de git buscando sobre-ingeniería, código muerto y stdlib reinventada -- usalo antes de cada commit o PR.", example: "/lexis r" },
+      { name: "/lexis audit", desc: "Auditoría de solo lectura de todo el repositorio: dependencias sin usar, features especulativas, boilerplate redundante.", example: "/lexis a" },
+      { name: "/lexis debt", desc: "Recolecta cada comentario // lexis: del código en un registro de deuda priorizado (inmediata / próximo sprint / backlog / permanente).", example: "/lexis d" },
+      { name: "/lexis security", desc: "Auditoria de seguridad enfocada en tu stack: inyección, XSS, middleware faltante, secretos hardcodeados, inputs sin validar.", example: "/lexis s" },
+      { name: "/lexis doubt", desc: "Aclara requisitos ambiguos con tres preguntas como máximo -- nada de código hasta que los requisitos esten claros.", example: "/lexis doubt" },
+      { name: "/lexis incremental", desc: "Entrega primero la porción vertical más pequeña de la feature y deja el resto para después -- un paso deployable por vez.", example: "/lexis inc" },
+      { name: "/lexis debug", desc: "Repro minimo, fix mas pequeno, verificar. Sin refactors de paso mientras arregla un bug.", example: "/lexis triage el webhook de pagos falla en los reintentos" },
+      { name: "/lexis source", desc: "Ancla el diseño al código real del repo y a la documentación oficial antes de inventar APIs.", example: "/lexis src rate limiting con express-rate-limit" },
+      { name: "/lexis predict", desc: "Compara tu enfoque propuesto contra el perezoso (LOC, dependencias, mantenimiento) antes de que te comprometas.", example: "/lexis predict clase de caché custom vs lru-cache" },
+      { name: "/lexis scenario", desc: "Recorre los caminos feliz, de borde y de fallo antes del diseño, para que los casos borde aparezcan cuando todavía son baratos.", example: "/lexis scenario flujo de checkout" },
+      { name: "/lexis help", desc: "Tarjeta de referencia rápida con todos los comandos, niveles y opciones de configuración.", example: "/lexis h" },
+    ],
+    specxisTitle: "El ciclo /specxis",
+    specxisSubtitle:
+      "Desarrollo dirigido por specs para features que tocan 3+ archivos. La spec vive en .specxis/active/<slug>/ como Markdown plano que cualquiera del equipo puede leer.",
+    specxisItems: [
+      { name: "/specxis new <slug>", desc: "Crea .specxis/active/<slug>/proposal.md desde la plantilla y abre con el check perezoso: hace falta esta feature y cuál es el mínimo absoluto?" },
+      { name: "/specxis plan <slug>", desc: "Convierte la propuesta en spec.md (MUST / SHOULD / MAY) y tasks.md -- máximo 10 tareas, cada una mapeada a un solo archivo o función." },
+      { name: "/specxis implement <slug>", desc: "Implementa exactamente una tarea pendiente por corrida, siguiendo los MUST de spec.md y las reglas de tu AGENTS.md. Control total, sin sorpresas." },
+      { name: "/specxis review <slug>", desc: "Evaluación de solo lectura contra la spec; los hallazgos (severidad, ubicación, problema, fix) se escriben en review.md." },
+      { name: "/specxis close <slug>", desc: "Verifica que todas las tareas estén hechas y no queden hallazgos Critical/High, archiva la spec y lleva los comentarios // lexis: al registro de deuda." },
+      { name: "/specxis debt", desc: "Sincroniza cada comentario // lexis: del codigo con .specxis/debt.md mediante un script Node portable." },
+    ],
+    sddHint:
+      "Regla práctica: implementación directa para menos de 3 archivos; Specxis para lo que necesite coordinación. Más detalle en docs/specxis.md.",
+    backHome: "Volver al inicio",
   },
 } as const;

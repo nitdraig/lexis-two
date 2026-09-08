@@ -62,6 +62,16 @@ function createServerHooks({ client } = {}) {
   };
 
   return {
+    // Persist /lexis <mode> switches. Subcommands (plan, review, help, ...)
+    // keep the current mode - only a valid intensity argument writes the flag.
+    "command.execute.before": async (input) => {
+      if (!input || (input.command !== "lexis" && input.command !== "lexis-two"))
+        return;
+      const mode = normalizePersistedMode((input.arguments || "").trim());
+      if (!mode) return;
+      writeMode(mode);
+      log("info", "lexis-two " + mode);
+    },
     // Append the ruleset to the system prompt every turn.
     "experimental.chat.system.transform": async (_input, output) => {
       const mode = readMode();

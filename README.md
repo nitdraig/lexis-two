@@ -167,6 +167,7 @@ cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc
 More hosts (Windsurf, Gemini CLI, pi, Copilot): see [docs/portability.md](./docs/portability.md).
 
 **Site:** [lexis-two.excelso.xyz](https://lexis-two.excelso.xyz) (GitHub Pages — [setup guide](./docs/site.md)).
+**Command usage guide:** [lexis-two.excelso.xyz/guide](https://lexis-two.excelso.xyz/guide) — detailed explanations for every `/lexis` and `/specxis` command.
 
 ---
 
@@ -394,7 +395,7 @@ built for the Lexis philosophy.
 
 When the ecosystem is stable and has adoption.
 
-- [ ] GitHub Actions CI: validates that adapters stay in sync when `AGENTS.md` changes
+- [x] GitHub Actions CI: validates that adapters stay in sync when `AGENTS.md` changes
 - [ ] Strict semantic versioning + automated changelog
 - [ ] Community-verified skill registry
 - [ ] Migration guides between versions

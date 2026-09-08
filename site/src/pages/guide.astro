@@ -1,0 +1,39 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Guide from "../components/Guide.astro";
+import { getDictionary } from "../i18n/index.js";
+
+const locale = "en" as const;
+const t = getDictionary(locale);
+const guide = t.guide;
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: guide.title,
+  description: guide.subtitle,
+  totalTime: "PT10M",
+  step: [
+    ...guide.items.map((item) => ({
+      "@type": "HowToStep",
+      name: item.name,
+      text: item.desc,
+    })),
+    ...guide.specxisItems.map((item) => ({
+      "@type": "HowToStep",
+      name: item.name,
+      text: item.desc,
+    })),
+  ],
+};
+---
+
+<Layout
+  locale={locale}
+  canonicalPath="/guide"
+  title={guide.title}
+  description={guide.subtitle}
+  extraSchema={howToSchema}
+>
+  <Guide locale={locale} />
+</Layout>

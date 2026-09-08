@@ -4,6 +4,27 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 ## [Unreleased]
 
+### Added
+
+- Site: `/guide` and `/es/guide` pages with detailed usage explanations for `/lexis` and `/specxis` commands, HowTo structured data, and per-page meta titles/descriptions.
+- README: link to the command usage guide at `lexis-two.excelso.xyz/guide`.
+
+### Fixed
+
+- OpenCode plugin: restore `command.execute.before` hook so `/lexis <lite|full|ultra|off>` persists the active mode. The hook now only writes the flag when the argument is a valid mode.
+- Spanish localization: add missing accents across the guide and the shared language switcher.
+- Release notes: correct `docs/releases/v1.2.2.md` title/version and add `docs/releases/v1.2.3.md`.
+
+### Changed
+
+- README: mark v1.0 CI roadmap item as completed.
+
+## [1.2.3] - 2026-06-27
+
+### Changed
+
+- Bumped version to `1.2.3` across `package.json`, `package-lock.json`, `opencode.json`, `gemini-extension.json`, `pi-extension/package.json`, and other host manifests so installed copies report the same version.
+
 ## [1.2.2] - 2026-06-21
 
 ### Added

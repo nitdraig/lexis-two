@@ -98,6 +98,7 @@ export default {
     title: "Slash commands",
     subtitle:
       "On hosts with command adapters: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.",
+    guideLink: "Full usage guide",
     items: [
       { name: "/lexis status", desc: "Shows the current plugin status, active intensity level, and default configuration." },
       { name: "/lexis <lite|full|ultra|off>", desc: "Switches the intensity level of the smart-lazy ruleset for the AI agent." },
@@ -202,5 +203,59 @@ export default {
     description: "This project is proud to be part of Excelso Open, our open-source and community-focused branch, championing collaborative technology and social impact projects.",
     linkText: "Visit excelso.xyz",
     url: "https://excelso.xyz",
+  },
+  guide: {
+    title: "How to use the tools",
+    subtitle:
+      "A practical guide to the /lexis and /specxis slash commands -- what each one does, when to reach for it, and a copy-paste example.",
+    summary:
+      "Lexis-Two gives you two families of slash commands: /lexis to control intensity and run a disciplined workflow, and /specxis to manage spec-driven development for complex features. Use them on OpenCode, Gemini CLI, pi, Claude Code, or GitHub Copilot.",
+    availability:
+      "Available on hosts with command adapters: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.",
+    levelsTitle: "Intensity levels",
+    levelsSubtitle:
+      "/lexis <mode> switches how aggressively the ruleset gates your agent. The active level is injected into every system prompt until you switch again.",
+    colLevel: "Level",
+    colWhen: "Use it for",
+    levels: [
+      { name: "lite", when: "Strict, non-negotiable specs", desc: "Builds exactly what is asked, then suggests a lazier alternative in one line." },
+      { name: "full", when: "Day-to-day work (default)", desc: "Enforces the decision ladder: YAGNI, stdlib, native platform, installed deps, one line, minimum build." },
+      { name: "ultra", when: "Refactor and cleanup sprints", desc: "YAGNI extremist: challenges requirements, deletes code first, prefers one-liners." },
+      { name: "off", when: "Raw sessions", desc: "Fully deactivates Lexis rules until you switch back." },
+    ],
+    workflowTitle: "/lexis workflow commands",
+    workflowSubtitle:
+      "One command per step of a disciplined loop: plan, clarify, implement, review, ship.",
+    colCommand: "Command",
+    colWhat: "What it does",
+    colExample: "Example",
+    items: [
+      { name: "/lexis plan", desc: "Produces a step-by-step technical plan for a feature before any code, applying the lazy hierarchy so no over-engineering gets designed.", example: "/lexis plan add CSV export to the orders page" },
+      { name: "/lexis review", desc: "Analyzes recent git changes for over-engineering, dead code, and reinvented stdlib -- run it before every commit or PR.", example: "/lexis r" },
+      { name: "/lexis audit", desc: "Read-only audit of the whole repository: unused dependencies, speculative features, redundant boilerplate.", example: "/lexis a" },
+      { name: "/lexis debt", desc: "Collects every // lexis: comment in the codebase into a prioritized debt ledger (immediate / next sprint / backlog / permanent).", example: "/lexis d" },
+      { name: "/lexis security", desc: "Focused security audit for your stack: injection, XSS, missing middleware, hardcoded secrets, unvalidated inputs.", example: "/lexis s" },
+      { name: "/lexis doubt", desc: "Clarifies ambiguous requirements with at most three questions -- no code until requirements are clear.", example: "/lexis doubt" },
+      { name: "/lexis incremental", desc: "Ships the smallest vertical slice of a feature first and defers the rest -- one deployable step at a time.", example: "/lexis inc" },
+      { name: "/lexis debug", desc: "Minimal repro, smallest fix, verify. No drive-by refactors while fixing a bug.", example: "/lexis triage payment webhook fails on retries" },
+      { name: "/lexis source", desc: "Grounds the design in actual repo code and official docs before inventing APIs.", example: "/lexis src rate limiting with express-rate-limit" },
+      { name: "/lexis predict", desc: "Compares your proposed approach against the lazy one (LOC, dependencies, maintenance) before you commit to it.", example: "/lexis predict custom cache class vs lru-cache" },
+      { name: "/lexis scenario", desc: "Walks happy, edge, and failure paths before any design, so edge cases surface while they are still cheap.", example: "/lexis scenario checkout flow" },
+      { name: "/lexis help", desc: "Quick reference card with all commands, levels, and configuration options.", example: "/lexis h" },
+    ],
+    specxisTitle: "The /specxis lifecycle",
+    specxisSubtitle:
+      "Spec-driven development for features that touch 3+ files. The spec lives in .specxis/active/<slug>/ as plain Markdown anyone on the team can read.",
+    specxisItems: [
+      { name: "/specxis new <slug>", desc: "Creates .specxis/active/<slug>/proposal.md from the template and opens with the lazy check: does this feature need to exist, and what is the absolute minimum?" },
+      { name: "/specxis plan <slug>", desc: "Turns the proposal into spec.md (MUST / SHOULD / MAY) and tasks.md -- max 10 tasks, each mapped to exactly one file or function." },
+      { name: "/specxis implement <slug>", desc: "Implements exactly one unchecked task per run, following spec.md MUSTs and your AGENTS.md rules. Full control, no surprises." },
+      { name: "/specxis review <slug>", desc: "Read-only evaluation against the spec; findings (severity, location, issue, fix) are written to review.md." },
+      { name: "/specxis close <slug>", desc: "Verifies all tasks are done and no Critical/High findings remain, archives the spec, and harvests // lexis: comments into the debt ledger." },
+      { name: "/specxis debt", desc: "Syncs every // lexis: comment in the codebase with .specxis/debt.md via a portable Node script." },
+    ],
+    sddHint:
+      "Rule of thumb: direct implementation for anything under 3 files; Specxis for anything that needs coordination. More in docs/specxis.md.",
+    backHome: "Back to home",
   },
 } as const;

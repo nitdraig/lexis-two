@@ -5,10 +5,15 @@ import { getDictionary } from "../i18n/index.js";
 interface Props {
   locale: Locale;
   canonicalPath: string;
+  title?: string;
+  description?: string;
+  extraSchema?: Record<string, unknown>;
 }
 
-const { locale, canonicalPath } = Astro.props;
+const { locale, canonicalPath, title, description, extraSchema } = Astro.props;
 const t = getDictionary(locale);
+const pageTitle = title ?? t.meta.title;
+const pageDescription = description ?? t.meta.description;
 
 // lexis: simple i18n path mapping — add when locale count exceeds 2
 const alternateEn = canonicalPath.startsWith("/es")
@@ -22,7 +27,7 @@ const structuredData = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   name: "Lexis-Two",
-  description: t.meta.description,
+  description: pageDescription,
   url: `https://lexis-two.excelso.xyz${canonicalPath}`,
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Cross-platform",
@@ -44,16 +49,16 @@ const structuredData = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{t.meta.title}</title>
-    <meta name="description" content={t.meta.description} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
     <meta name="theme-color" content="#0b0d0c" />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="nitdraig" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={t.meta.title} />
-    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
     <meta
       property="og:url"
       content={`https://lexis-two.excelso.xyz${canonicalPath}`}
@@ -66,8 +71,8 @@ const structuredData = {
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={t.meta.title} />
-    <meta name="twitter:description" content={t.meta.description} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
     <meta
       name="twitter:image"
       content="https://lexis-two.excelso.xyz/assets/lexis-two-nobg.png"
@@ -99,6 +104,12 @@ const structuredData = {
       type="application/ld+json"
       set:html={JSON.stringify(structuredData)}
     />
+    {extraSchema && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(extraSchema)}
+      />
+    )}
 
     <link rel="icon" href="/assets/logo.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

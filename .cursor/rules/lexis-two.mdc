@@ -149,9 +149,19 @@ Running `/lexis debt` (or `/lexis d`) will scan the codebase and surface all `le
 
 ---
 
+## Discovery and Specxis
+
+Vague product or the next stage after an MVP: `/discx` (full `/discovery`) — see DISCOVERY.md. Specs: `/specx` (full `/specxis`). Intensity: `/lexis`. Skip Discovery for bugs and one-file fixes.
+
+Public `/lexis` verbs: intensity (`lite|full|ultra|off`), `status`, `plan`, `review`, `audit`, `debt`, `security`, `help`. `/lexis plan` already clarifies (max 3 questions), grounds in repo/docs, compares proposed vs lazy, and walks happy/edge/failure. Implement the smallest vertical slice; bugs: repro then smallest fix, no drive-by refactors. Old names (`doubt`, `incremental`, `debug`, `source`, `predict`, `scenario`) redirect to `/lexis plan`. Product framing is `/discx`.
+
+---
+
 ## Agent Ecosystem
 
-This file applies to all Lexis agents. Each agent has an additional scope:
+This npm package ships rules, skills, and host adapters — not those agents.
+The names below are Lexis ecosystem roles (some private; see docs/portability.md).
+This ruleset still applies when those agents load it.
 
 | Agent              | Scope                                            |
 | ------------------ | ------------------------------------------------ |

@@ -1,6 +1,6 @@
 {
   "name": "@draig/lexis-two",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
   "bin": {
     "lexis-two": "bin/lexis-two.js"
@@ -17,6 +17,10 @@
   ],
   "files": [
     "AGENTS.md",
+    "DISCOVERY.md",
+    "SPECXIS.md",
+    "docs/discovery.md",
+    "docs/specxis.md",
     ".cursor/rules/lexis-two.mdc",
     ".windsurf/rules/lexis-two.md",
     ".clinerules/lexis-two.md",
@@ -46,7 +50,7 @@
   "scripts": {
     "postinstall": "node scripts/opencode-wrapper-postinstall.mjs",
     "lexis-two": "node scripts/install.js",
-    "test": "node --test tests/*.test.js && npm test --prefix pi-extension",
+    "test": "node scripts/check-rule-copies.js && node --test tests/*.test.js && npm test --prefix pi-extension",
     "benchmark:opencode-go": "node benchmarks/benchmark-opencode-go.js --repeat 3 --write-md",
     "benchmark:report": "node benchmarks/render-opencode-go-report.js",
     "site:dev": "npm run dev --prefix site",

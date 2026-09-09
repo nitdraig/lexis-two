@@ -1,0 +1,3 @@
+name = "specx"
+description = "Specxis short alias — Spec-Driven Development lifecycle (same as /specxis)"
+skill = "../skills/specxis/SKILL.md"

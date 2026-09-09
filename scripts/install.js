@@ -169,7 +169,7 @@ const HINT_HOSTS = {
         'pi reads extensions from package.json "pi" field.',
         'Install: npm install -g @draig/lexis-two',
         'Or from clone: npm install -g . at the repo root',
-        'After install: run /lexis status and /specxis status in pi.',
+        'After install: run /lexis status, /discx <slug>, and /specx status in pi.',
         `Docs: ${REPO_URL}/blob/main/docs/setup.md#pi`,
       ];
     },
@@ -280,7 +280,7 @@ function listOpencodeCommandFiles() {
     .filter(
       (name) =>
         name.endsWith('.md') &&
-        (name.startsWith('lexis') || name.startsWith('specxis')),
+        (name.startsWith('lexis') || name.startsWith('specx') || name.startsWith('disc')),
     )
     .map((name) => ({
       name,

@@ -15,7 +15,7 @@ skills/                    ← source of truth (behavior, prompts, checklists)
 hooks/                     ← shared lifecycle (mode flags, instruction injection)
 commands/*.toml            ← thin Gemini / Claude dispatchers → skills/
 .opencode/commands/*.md     ← thin OpenCode dispatchers → skills/
-pi-extension/index.js      ← pi command router (/lexis, /specxis, deprecated aliases)
+pi-extension/index.js      ← pi command router (/lexis, /discx, /specx, deprecated aliases)
 instruction-tier copies    ← AGENTS.md mirrored into Cursor, Windsurf, Cline, Kiro
 plugin manifests           ← gemini-extension.json, .claude-plugin/, .codex-plugin/, .github/plugin/
 ```
@@ -46,10 +46,11 @@ Does the host load skills or hooks?
 ### Steps
 
 1. Add a rule file under the host's convention (e.g. `.cursor/rules/lexis-two.mdc`).
-2. If it must stay identical to `AGENTS.md`, add the path to `scripts/check-rule-copies.js` `COPIES` array.
-3. Register the host in `scripts/install.js` `RULE_HOSTS` (see `cursor`, `windsurf`, `cline`, `kiro`, `agents`, `copilot-repo`).
-4. Update the host table in [docs/portability.md](./docs/portability.md).
-5. Run `node scripts/check-rule-copies.js` after any `AGENTS.md` edit.
+2. If it must stay identical to `AGENTS.md`, add the path to `scripts/check-rule-copies.js` `COPIES` array. Copilot repo instructions stay a short file: they must include the load-bearing phrases (`INVARIANT_ONLY`), not the full body.
+3. After adding a skill under `skills/<name>/SKILL.md`, copy it to `.cursor/skills/<name>/SKILL.md` (the integrity script compares them).
+4. Register the host in `scripts/install.js` `RULE_HOSTS` (see `cursor`, `windsurf`, `cline`, `kiro`, `agents`, `copilot-repo`).
+5. Update the host table in [docs/portability.md](./docs/portability.md).
+6. Run `npm test` after any `AGENTS.md` or `skills/` edit.
 
 **Template (markdown rule):** copy `AGENTS.md` verbatim. Cursor uses `.mdc` frontmatter:
 
@@ -117,13 +118,13 @@ Calibration material: [examples/](./examples/) — reference in the skill body w
 
 ### Registration (preferred)
 
-Add a **subcommand** under `/lexis`, not a new top-level slash command:
+Add a **subcommand** under `/lexis`, not a new top-level slash command. Prefer folding into `/lexis plan` over a new public verb.
 
 1. Create `skills/lexis-two-<action>/SKILL.md`.
 2. Extend the `/lexis` handler in [pi-extension/index.js](./pi-extension/index.js) (`plan`, `review`, `audit`, … pattern).
 3. Update the `prompt` in [commands/lexis.toml](./commands/lexis.toml) and [.opencode/commands/lexis.md](./.opencode/commands/lexis.md).
 
-For Specxis (SDD) workflows, extend `/specxis` and [skills/specxis/SKILL.md](./skills/specxis/SKILL.md) instead.
+For Specxis (SDD) workflows, extend `/specx` (alias `/specxis`) and [skills/specxis/SKILL.md](./skills/specxis/SKILL.md) instead.
 
 ### Legacy alias (only if a host cannot do subcommands)
 
@@ -164,11 +165,10 @@ Verify: `npm test` (includes `all versioned manifests share the same version`).
 
 ## Pull request checklist
 
-- [ ] `npm test` passes
-- [ ] If `AGENTS.md` changed: `node scripts/check-rule-copies.js` passes
+- [ ] `npm test` passes (includes `scripts/check-rule-copies.js`)
 - [ ] If a host was added or changed: [docs/portability.md](./docs/portability.md) host table updated
 - [ ] If install paths changed: [docs/setup.md](./docs/setup.md) updated
-- [ ] If a skill/command was added: subcommand under `/lexis` or `/specxis` preferred; adapter files for every `pi.registerCommand`
+- [ ] If a skill/command was added: `/discx`, `/specx`, or `/lexis` family; adapter files for every `pi.registerCommand`
 - [ ] No duplicated logic across adapters — behavior belongs in `skills/` or `hooks/`
 - [ ] No new npm dependency unless unavoidable (justify in PR)
 

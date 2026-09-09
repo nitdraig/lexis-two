@@ -19,6 +19,11 @@ const howToSchema = {
       name: item.name,
       text: item.desc,
     })),
+    ...guide.discoveryItems.map((item) => ({
+      "@type": "HowToStep",
+      name: item.name,
+      text: item.desc,
+    })),
     ...guide.specxisItems.map((item) => ({
       "@type": "HowToStep",
       name: item.name,

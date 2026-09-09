@@ -1,0 +1,3 @@
+name = "discx"
+description = "Discovery short alias — product framing before Specxis (same as /discovery)"
+skill = "../skills/discovery/SKILL.md"

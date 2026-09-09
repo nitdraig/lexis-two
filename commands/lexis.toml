@@ -1,3 +1,3 @@
 name = "lexis"
 description = "Manage Lexis senior dev mode, intensity levels, and quality/security tools"
-prompt = "Manage Lexis senior dev mode. Handle the requested subcommand: plan (p), review (r), audit (a), debt (d), security (s), doubt, incremental (inc), debug (triage), source (src), predict, scenario, help (h), status, or intensity level (lite/full/ultra/off)."
+prompt = "Manage Lexis senior dev mode. Public: intensity lite|full|ultra|off, status, plan (p), review (r), audit (a), debt (d), security (s), help (h). Old names doubt, incremental, debug, source, predict, scenario redirect to plan. /lexis discx redirects to Discovery (prefer /discx)."

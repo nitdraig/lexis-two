@@ -27,6 +27,8 @@ npx @draig/lexis-two install --host cursor --scope project --dry-run --yes
 
 `npx` resolves the **local** `package.json` when you run commands from the repo root. On Windows that skips creating `node_modules/.bin/lexis-two.cmd`, so `npx @draig/lexis-two install` can fail with *"lexis-two" is not recognized*.
 
+The `devDependency` `"@draig/lexis-two": "file:."` is a junction (or copy) back to the repo root so `npx @draig/lexis-two` uses this tree. Do not recurse into `node_modules/@draig/lexis-two` — it *is* the repo. Prefer `node scripts/install.js` for scripts.
+
 From the repo root, use either:
 
 ```bash
@@ -126,7 +128,8 @@ Global slash commands (optional manual step):
 ```bash
 mkdir -p ~/.config/opencode/commands
 cp node_modules/@draig/lexis-two/.opencode/commands/lexis*.md ~/.config/opencode/commands/
-cp node_modules/@draig/lexis-two/.opencode/commands/specxis*.md ~/.config/opencode/commands/
+cp node_modules/@draig/lexis-two/.opencode/commands/specx*.md ~/.config/opencode/commands/
+cp node_modules/@draig/lexis-two/.opencode/commands/disc*.md ~/.config/opencode/commands/
 ```
 
 ---

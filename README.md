@@ -8,7 +8,7 @@
 
 <p align="center">
   <em>The simple way to obtain the best code.</em><br>
-  <small>Portable rules, skills, and slash commands — grounded in YAGNI, KISS, DRY, and SOLID, not bloat.</small>
+  <small>Portable rules, skills, and slash commands — YAGNI, KISS, DRY, SOLID. <code>/discx</code> what to build, <code>/specx</code> how to ship it, <code>/lexis</code> how lean to code.</small>
 </p>
 
 <p align="center">
@@ -40,9 +40,11 @@ Lexis is a multi-agent ecosystem for shipping production web apps with **enginee
 
 It coordinates specialized agents — planning, implementation, review, refactor, security — around one portable ruleset and a shared `skills/` catalog. The default stance is skeptical: prove the feature belongs, pick the simplest stack-native solution, and write the minimum that holds under real constraints.
 
+**This package** (`@draig/lexis-two`) publishes that ruleset, `skills/`, and host adapters. Named coding agents (`lexis-one`, etc.) are a separate Lexis ecosystem layer — some private, none in this tarball. See [docs/portability.md](./docs/portability.md).
+
 **See it in code:** [examples/](./examples/) — nine before/after pairs across Next.js, Express, and FastAPI.
 
-### The Agents
+### Ecosystem agent roles
 
 | Agent              | Role                 | Scope                                |
 | ------------------ | -------------------- | ------------------------------------ |
@@ -76,6 +78,16 @@ Before writing any code, stop at the first rung that holds:
 4. Does an already-installed dependency solve it?
 5. Can this be one line?
 6. Only then: write the minimum code that works.
+
+---
+
+## Three-stage workflow
+
+1. **[/discx](./DISCOVERY.md)** (`/discovery`) — this MVP + `06-post-mvp.md`; later `/discx <next-slug>` to scale. Scaffold: `node scripts/discovery-init.js <slug>`
+2. **[/specx](./SPECXIS.md)** (`/specxis`) — agree proposal + tasks, implement one task at a time
+3. **`/lexis`** — keep intensity lean (review / debt / security)
+
+Skip Discovery for clear bugs and one-line fixes.
 
 ---
 
@@ -132,7 +144,8 @@ To enable the slash commands globally in any project:
 ```bash
 mkdir -p ~/.config/opencode/commands
 cp .opencode/commands/lexis*.md ~/.config/opencode/commands/
-cp .opencode/commands/specxis*.md ~/.config/opencode/commands/
+cp .opencode/commands/specx*.md ~/.config/opencode/commands/
+cp .opencode/commands/disc*.md ~/.config/opencode/commands/
 ```
 
 ### OpenCode (Local development / manual)
@@ -167,15 +180,28 @@ cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc
 More hosts (Windsurf, Gemini CLI, pi, Copilot): see [docs/portability.md](./docs/portability.md).
 
 **Site:** [lexis-two.excelso.xyz](https://lexis-two.excelso.xyz) (GitHub Pages — [setup guide](./docs/site.md)).
-**Command usage guide:** [lexis-two.excelso.xyz/guide](https://lexis-two.excelso.xyz/guide) — detailed explanations for every `/lexis` and `/specxis` command.
+**Command usage guide:** [lexis-two.excelso.xyz/guide](https://lexis-two.excelso.xyz/guide) — `/discx`, `/specx`, and `/lexis`.
 
 ---
 
 ## Commands
 
-Once installed, these unified slash commands are available in OpenCode, Gemini CLI, and pi. They are designed to streamline your development process, enforce the minimalist Lexis philosophy, and manage technical debt.
+Once installed, these slash commands are available in OpenCode, Gemini CLI, and pi.
 
-### 1. `/lexis` — Core Lexis Commands
+### 1. `/discx` — Discovery (alias `/discovery`)
+
+Product framing **before** Specxis. Output: `docs/discovery/<slug>/` (seven files, including `06-post-mvp.md`). No product code.
+
+* **`/discx <slug>`**
+  * **What it does:** Asks B1–B8 in batches, fills brief / MVP / priorities / constraints / questions / map / post-MVP. Gate: continue to `/specx new <slug>`?
+  * **When to use:** New product, vague feature, or **scale** after an MVP. For scale, use a **new** slug seeded from the previous `06-post-mvp.md` — do not overwrite the old folder.
+  * **Skip:** bugs, typos, hotfixes, one-file changes. Bypass later Specxis with `sin discovery`.
+
+Scaffold without an LLM: `node scripts/discovery-init.js <slug>`
+
+---
+
+### 2. `/lexis` — Core Lexis Commands
 Manage Lexis senior dev mode, intensity levels, and quality/security tools under a single unified command.
 
 #### Subcommands in Detail:
@@ -193,8 +219,8 @@ Manage Lexis senior dev mode, intensity levels, and quality/security tools under
   * **When to use:** Use `ultra` when starting a refactoring or cleanup sprint; use `lite` when you have strict, non-negotiable specifications.
 
 * **`/lexis plan` (Shortcut: `/lexis p`)**
-  * **What it does:** Produces a step-by-step technical plan for a requested feature *before* writing any code. It strictly applies the lazy decision hierarchy to ensure no over-engineering is designed.
-  * **When to use:** Run this before starting any new feature to align with the agent on the simplest possible implementation path.
+  * **What it does:** Step-by-step technical plan *before* code: lazy ladder, plus clarify (max 3 questions), repo/docs sources, proposed vs lazy, and happy/edge/failure. One shippable slice; defer the rest.
+  * **When to use:** Before any new feature so you agree the simplest path.
 
 * **`/lexis review` (Shortcut: `/lexis r`)**
   * **What it does:** Analyzes your recent git changes (`git diff HEAD`) specifically for over-engineering, dead code, speculative features, reinvented standard libraries, or unnecessary abstractions.
@@ -213,51 +239,42 @@ Manage Lexis senior dev mode, intensity levels, and quality/security tools under
   * **When to use:** Run this before any production deployment or security review.
 
 * **`/lexis help` (Shortcut: `/lexis h`)**
-  * **What it does:** Displays a quick reference card with all commands, levels, and configuration options.
+  * **What it does:** Displays a quick reference card with public commands, levels, and configuration.
 
-#### Workflow skills (v1.2)
-
-* **`/lexis doubt`** — Clarify ambiguous requirements (max 3 questions, no code).
-* **`/lexis incremental` (or `inc`)** — Ship the smallest vertical slice; defer the rest.
-* **`/lexis debug` (or `triage`)** — Repro, smallest fix, verify — no drive-by refactors.
-* **`/lexis source` (or `src`)** — Ground in repo code and official docs before inventing APIs.
-* **`/lexis predict`** — Compare proposed vs lazy approach (LOC, deps, maintenance).
-* **`/lexis scenario`** — Happy, edge, and failure scenarios before design.
-
-_(Skill folders remain `skills/lexis-two-*`. Legacy `/lexis-two-*` slash names still work with a deprecation notice.)_
+Bugs: smallest repro and fix (no drive-by refactors). Those habits live in `plan` / AGENTS — old v1.2 slash names (`doubt`, `inc`, `debug`, `source`, `predict`, `scenario`) redirect to `/lexis plan`. Prefer `/discx` over `/lexis discovery`. Folded skill folders remain; their standalone slash adapters are gone. Legacy `/lexis-two-review` (etc.) still work with a deprecation notice. Skill folders remain `skills/lexis-two-*`. Legacy `/lexis-two-*` slash names still work with a deprecation notice.
 
 ---
 
-### 2. `/specxis` — Spec-Driven Development (v0.5)
-Manage the complete Specxis SDD lifecycle for complex features. Specxis ensures that developer-agent agreements are persisted as lightweight Markdown files in your repository, keeping requirements lean and focused.
+### 3. `/specx` — Spec-Driven Development (alias `/specxis`)
+Manage the Specxis SDD lifecycle. Short command **`/specx`**. Same subcommands as `/specxis`.
 
 #### Subcommands in Detail:
 
-* **`/specxis status` (Shortcut: `/specxis`)**
+* **`/specx status` (also `/specxis`)**
   * **What it does:** Lists all active specifications in `.specxis/active/`, displaying their current status (draft/agreed/implementing/done), task completion progress (e.g., `3/5 tasks checked`), and whether a review has been completed. It also shows a summary of archived specs and open debt.
   * **When to use:** Use this as your central dashboard to see what features are currently in development and their progress.
 
-* **`/specxis new <slug>`**
-  * **What it does:** Creates a new spec folder at `.specxis/active/[slug]/` and initializes a `proposal.md` file from the Specxis template. It prompts you with the *lazy check* ("Does this feature need to exist? What is the absolute minimum?") to challenge the requirement before planning.
-  * **When to use:** Run this when starting a complex feature that touches 3+ files or requires UX/backend coordination.
+* **`/specx new <slug>`** (also `/specxis new`)
+  * **What it does:** Creates `.specxis/active/[slug]/proposal.md`. Lazy check plus **Discovery soft gate**: vague products without `docs/discovery/<slug>/01-mvp.md` are pointed at `/discx` first (`sin discovery` bypasses). Cites Discovery source when present.
+  * **When to use:** Complex feature (3+ files) or UX/backend coordination — after Discovery when the idea was vague.
 
-* **`/specxis plan <slug>`**
+* **`/specx plan <slug>`**
   * **What it does:** Reads your `proposal.md`, applies the lazy decision hierarchy, and generates `spec.md` (MUST/SHOULD/MAY) and `tasks.md` (a technical task list, max 10 tasks, with each task mapping to exactly one file or function).
   * **When to use:** Run this once the initial proposal is aligned to generate a structured, actionable implementation plan.
 
-* **`/specxis implement <slug>`**
+* **`/specx implement <slug>`**
   * **What it does:** Finds the first unchecked task in your `tasks.md`, implements it following the `spec.md` MUST requirements and `AGENTS.md` rules, and marks the task as completed (`- [x]`). It implements exactly one task per run to ensure maximum control and quality.
   * **When to use:** Use this to guide the AI agent step-by-step through the implementation of your feature.
 
-* **`/specxis review <slug>`**
+* **`/specx review <slug>`**
   * **What it does:** Runs a read-only evaluation of the current implementation against the requirements in `spec.md` and the rules of `AGENTS.md`. It writes its findings (Severity, Location, Issue, Fix) to `review.md`.
   * **When to use:** Run this after implementing your tasks to verify that the feature is fully compliant and clean before closing.
 
-* **`/specxis close <slug>`**
+* **`/specx close <slug>`**
   * **What it does:** Verifies that all tasks are completed and no Critical/High findings are open. It then moves the spec folder to `.specxis/archive/[slug]/`, harvests any `// lexis:` comments added during development, and appends them to your global `.specxis/debt.md` ledger.
   * **When to use:** Run this when your feature is fully implemented, tested, and ready to be archived.
 
-* **`/specxis debt`**
+* **`/specx debt`**
   * **What it does:** Recursively scans the codebase for `// lexis:` comments and synchronizes them with `.specxis/debt.md` using a highly portable Node.js script.
   * **When to use:** Run this to keep your technical debt ledger perfectly in sync with your codebase.
 
@@ -388,6 +405,17 @@ built for the Lexis philosophy.
 - [x] `templates/specxis/` — proposal, spec, and tasks templates
 - [x] `docs/specxis.md` — when to use SDD vs direct implementation
 - [ ] Integration guide for Lexis-One private config
+
+---
+
+### v1.3 — Discovery (product framing)
+
+MVP cut and map **before** Specxis. Output: `docs/discovery/<slug>/`.
+
+- [x] `templates/discovery/` + `DISCOVERY.md` / `docs/discovery.md`
+- [x] `scripts/discovery-init.js` + tests
+- [x] Slash commands `/discx` (`/discovery`) + skill + installer copy
+- [x] Specxis soft gate + proposal “Discovery source” section
 
 ---
 

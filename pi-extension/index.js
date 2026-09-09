@@ -52,7 +52,7 @@ export function parseLexisCommand(text, defaultMode = DEFAULT_MODE) {
 
 export { writeDefaultMode };
 
-/** @type {Record<string, string>} Maps /lexis subcommand (and short alias) → skill id */
+/** @type {Record<string, string>} Public /lexis subcommand (and short alias) → skill id */
 const LEXIS_SKILL_ROUTES = {
   plan: "lexis-two-plan",
   p: "lexis-two-plan",
@@ -66,15 +66,21 @@ const LEXIS_SKILL_ROUTES = {
   s: "lexis-two-security",
   help: "lexis-two-help",
   h: "lexis-two-help",
-  doubt: "lexis-two-doubt-driven",
-  incremental: "lexis-two-incremental-impl",
-  inc: "lexis-two-incremental-impl",
-  debug: "lexis-two-debug-triage",
-  triage: "lexis-two-debug-triage",
-  source: "lexis-two-source-driven",
-  src: "lexis-two-source-driven",
-  predict: "lexis-two-predict",
-  scenario: "lexis-two-scenario",
+};
+
+/** @type {Record<string, { skillId: string, prefer: string }>} Old names — warn and redirect */
+const LEXIS_COMPAT_ROUTES = {
+  doubt: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
+  incremental: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
+  inc: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
+  debug: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
+  triage: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
+  source: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
+  src: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
+  predict: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
+  scenario: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
+  discovery: { skillId: "discovery", prefer: "/discx" },
+  discx: { skillId: "discovery", prefer: "/discx" },
 };
 
 /** @type {Array<{ command: string, lexisSubcommand: string }>} */
@@ -85,12 +91,6 @@ const DEPRECATED_LEXIS_SKILL_COMMANDS = [
   { command: "lexis-two-plan", lexisSubcommand: "plan" },
   { command: "lexis-two-security", lexisSubcommand: "security" },
   { command: "lexis-two-help", lexisSubcommand: "help" },
-  { command: "lexis-two-doubt-driven", lexisSubcommand: "doubt" },
-  { command: "lexis-two-incremental-impl", lexisSubcommand: "incremental" },
-  { command: "lexis-two-debug-triage", lexisSubcommand: "debug" },
-  { command: "lexis-two-source-driven", lexisSubcommand: "source" },
-  { command: "lexis-two-predict", lexisSubcommand: "predict" },
-  { command: "lexis-two-scenario", lexisSubcommand: "scenario" },
 ];
 
 export default function lexisExtension(pi) {
@@ -143,6 +143,13 @@ export default function lexisExtension(pi) {
         return;
       }
 
+      const compat = LEXIS_COMPAT_ROUTES[subcommand];
+      if (compat) {
+        ctx?.ui?.notify?.(`[Deprecated] Prefer '${compat.prefer}'. Still running this skill.`, "warning");
+        sendAlias(`/skill:${compat.skillId}`, restArgs, ctx);
+        return;
+      }
+
       const parsed = parseLexisCommand(parsedArgs, configuredDefaultMode);
 
       if (parsed.type === "set-default") {
@@ -174,6 +181,7 @@ export default function lexisExtension(pi) {
       const validSubcommands = [
         "status",
         ...Object.keys(LEXIS_SKILL_ROUTES),
+        ...Object.keys(LEXIS_COMPAT_ROUTES),
         "lite",
         "full",
         "ultra",
@@ -191,8 +199,23 @@ export default function lexisExtension(pi) {
   });
 
   pi.registerCommand("specxis", {
-    description: "Manage the Specxis Spec-Driven Development lifecycle (new, plan, implement, review, close, debt, status)",
+    description: "Manage the Specxis Spec-Driven Development lifecycle (new, plan, implement, review, close, debt, status). Short alias: /specx",
     handler: (args, ctx) => sendAlias("/skill:specxis", args, ctx),
+  });
+
+  pi.registerCommand("specx", {
+    description: "Specxis short alias (same as /specxis)",
+    handler: (args, ctx) => sendAlias("/skill:specxis", args, ctx),
+  });
+
+  pi.registerCommand("discovery", {
+    description: "Discovery — product framing before Specxis. Short alias: /discx",
+    handler: (args, ctx) => sendAlias("/skill:discovery", args, ctx),
+  });
+
+  pi.registerCommand("discx", {
+    description: "Discovery short alias (same as /discovery)",
+    handler: (args, ctx) => sendAlias("/skill:discovery", args, ctx),
   });
 
   const makeDeprecatedHandler = (lexisSubcommand, skillCommand) => {

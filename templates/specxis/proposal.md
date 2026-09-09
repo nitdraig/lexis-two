@@ -9,6 +9,12 @@ Answer before writing any code:
 - Does stdlib, the framework, or an installed dep already cover it?
 - What is the absolute minimum that satisfies the requirement?
 
+## Discovery source
+- Path: docs/discovery/<slug>/ (or N/A)
+- MVP one-liner:
+- P0 items to cover:
+- Previous post-MVP (scale, if any):
+
 ## Context
 - Affected domain / feature folder:
 - Related existing files:

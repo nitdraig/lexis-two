@@ -44,8 +44,9 @@ instructions, keep its rule text aligned with `AGENTS.md`.
 
 **Contributing:** See [CONTRIBUTING.md](../CONTRIBUTING.md) for how to add a host, skill, or command without duplicating logic.
 
-Run `node scripts/check-rule-copies.js` after editing `AGENTS.md` to verify
-instruction-tier copies (Cursor, Windsurf, Cline, Kiro) have not drifted.
+Run `npm test` after editing `AGENTS.md` or `skills/` to verify
+instruction-tier copies (Cursor, Windsurf, Cline, Kiro), Cursor skill copies,
+and Copilot invariants have not drifted.
 
 ## Slash Commands
 
@@ -63,20 +64,18 @@ npx @draig/lexis-two install --host opencode --scope project --yes
 | ------- | ------------ | -------- |
 | `/lexis` or `/lexis status` | — | Report active + default mode |
 | `/lexis lite` \| `full` \| `ultra` \| `off` | `skills/lexis-two/` | Switch ruleset intensity |
-| `/lexis plan` (or `p`) | `skills/lexis-two-plan/` | Plan before coding |
+| `/lexis plan` (or `p`) | `skills/lexis-two-plan/` | Plan before coding (clarify, sources, compare, scenarios) |
 | `/lexis review` (or `r`) | `skills/lexis-two-review/` | Diff review for over-engineering |
 | `/lexis audit` (or `a`) | `skills/lexis-two-audit/` | Full repo audit |
 | `/lexis debt` (or `d`) | `skills/lexis-two-debt/` | Harvest `// lexis:` comments |
 | `/lexis security` (or `s`) | `skills/lexis-two-security/` | Security audit (Node/TS default) |
-| `/lexis doubt` | `skills/lexis-two-doubt-driven/` | Clarify ambiguous requirements |
-| `/lexis incremental` (or `inc`) | `skills/lexis-two-incremental-impl/` | Smallest vertical slice first |
-| `/lexis debug` (or `triage`) | `skills/lexis-two-debug-triage/` | Minimal repro and fix |
-| `/lexis source` (or `src`) | `skills/lexis-two-source-driven/` | Docs and repo-grounded design |
-| `/lexis predict` | `skills/lexis-two-predict/` | Proposed vs lazy comparison |
-| `/lexis scenario` | `skills/lexis-two-scenario/` | Happy / edge / failure scenarios |
-| `/lexis help` (or `h`) | `skills/lexis-two-help/` | Quick reference |
+| `/lexis help` (or `h`) | `commands/lexis-two-help.toml`, `.opencode/commands/lexis-two-help.md` | Quick reference |
 
 Modes: [modes.md](./modes.md).
+
+### Redirects (no separate slash)
+
+`/lexis doubt|incremental|debug|source|predict|scenario` warn and run `/lexis plan`. `/lexis discx` / `discovery` warn and run Discovery (`/discx`). Folded skill folders remain for `@skill`; their `commands/*.toml` adapters are gone.
 
 ### Legacy aliases (deprecated)
 
@@ -88,19 +87,21 @@ Modes: [modes.md](./modes.md).
 | `/lexis-two-debt` | `/lexis debt` |
 | `/lexis-two-plan` | `/lexis plan` |
 | `/lexis-two-security` | `/lexis security` |
-| `/lexis-two-doubt-driven` | `/lexis doubt` |
-| `/lexis-two-incremental-impl` | `/lexis incremental` |
-| `/lexis-two-debug-triage` | `/lexis debug` |
-| `/lexis-two-source-driven` | `/lexis source` |
-| `/lexis-two-predict` | `/lexis predict` |
-| `/lexis-two-scenario` | `/lexis scenario` |
 | `/lexis-two-help` | `/lexis help` |
 
 ### Specxis (SDD)
 
 | Command | Skill |
 | ------- | ----- |
-| `/specxis` | `skills/specxis/` — see [specxis.md](./specxis.md) |
+| `/specx` (full `/specxis`) | `skills/specxis/` — see [specxis.md](./specxis.md) |
+
+### Discovery (product framing)
+
+| Command | Skill |
+| ------- | ----- |
+| `/discx` (full `/discovery`) | `skills/discovery/` — see [discovery.md](./discovery.md) |
+
+Also `/lexis discx` / `/lexis discovery`.
 
 Adapter files: Gemini `commands/*.toml`, OpenCode `.opencode/commands/*.md`, pi `pi-extension/index.js`.
 
@@ -112,14 +113,16 @@ Adapter files: Gemini `commands/*.toml`, OpenCode `.opencode/commands/*.md`, pi 
 | `skills/lexis-two-review/` | Diff review for over-engineering |
 | `skills/lexis-two-audit/` | Full repo audit |
 | `skills/lexis-two-debt/` | Harvest `// lexis:` comments into debt ledger |
-| `skills/lexis-two-plan/` | Feature planning before coding |
+| `skills/lexis-two-plan/` | Feature planning before coding (includes clarify / sources / compare / scenarios) |
 | `skills/lexis-two-security/` | Security audit (default: Node.js / Next.js / MongoDB) |
-| `skills/lexis-two-doubt-driven/` | Clarify requirements before code |
-| `skills/lexis-two-incremental-impl/` | Vertical-slice delivery |
-| `skills/lexis-two-debug-triage/` | Minimal bug triage |
-| `skills/lexis-two-source-driven/` | Source- and doc-grounded design |
-| `skills/lexis-two-predict/` | Approach comparison (LOC, deps, maintenance) |
-| `skills/lexis-two-scenario/` | Scenario walkthrough before build |
+| `skills/lexis-two-doubt-driven/` | No slash — folded into plan; `@skill` still works |
+| `skills/lexis-two-incremental-impl/` | No slash — folded into plan; `@skill` still works |
+| `skills/lexis-two-debug-triage/` | No slash — folded into plan; `@skill` still works |
+| `skills/lexis-two-source-driven/` | No slash — folded into plan; `@skill` still works |
+| `skills/lexis-two-predict/` | No slash — folded into plan; `@skill` still works |
+| `skills/lexis-two-scenario/` | No slash — folded into plan; `@skill` still works |
+| `skills/specxis/` | Specxis SDD lifecycle (`/specx`) |
+| `skills/discovery/` | Discovery MVP framing (`/discx`) |
 
 Adapt skill shell commands for other stacks — see README **Adapting Lexis-Two to Any Stack**.
 

@@ -1,6 +1,7 @@
 # Specxis — Spec-Driven Development for Lexis
 
 Specxis is the lightweight SDD (Spec-Driven Development) layer built into Lexis-Two.
+Short command: **`/specx`** (full `/specxis`). Product framing first: [DISCOVERY.md](./DISCOVERY.md) (`/discx`).
 It persists agreements between developer and AI agent as Markdown files in the repository, ensuring that context, architectural decisions, and requirements survive across chat resets, model switches, and multi-day sessions.
 
 The core Lexis philosophy still applies: **the best code is the code never written**. Specxis ensures that even when a feature is complex enough to warrant formal planning, the resulting specifications are kept as lean and minimal as possible.

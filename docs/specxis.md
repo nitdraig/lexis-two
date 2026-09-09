@@ -14,7 +14,24 @@ Inspired by OpenSpec and GitHub Spec Kit, adapted to the Lexis philosophy.
 | Style or naming change | No |
 | Adding tests to existing code | No |
 
+Vague product ideas belong in [Discovery](./discovery.md) first (`docs/discovery/<slug>/`). Skip it for bugs and one-line fixes.
+
+### When Discovery is required / optional
+
+OSS default is **optional**. `/specx new` (and `/specxis new`) **warns**, it does not hard-block.
+
+| Situation | What Specxis should do |
+|-----------|------------------------|
+| `docs/discovery/<slug>/01-mvp.md` exists | Proceed; cite it in the proposal |
+| Vague new product / “from scratch” / MVP and no MVP file | Suggest `/discx <slug>`; wait for confirm or Discovery |
+| User said `sin discovery` | Proceed; note `N/A — sin discovery` in the proposal |
+| Bug, hotfix, rename, one-file | Proceed; Discovery N/A — do not nag |
+| Scale: new slug seeded from a previous `06-post-mvp.md` | Same as first cycle for that new slug |
+| Existing Specxis-only repo with no `docs/discovery/` | Keep working as before |
+
 ## Workflow
+
+Same subcommands as **`/specx`**.
 
 ```
 /specxis new <slug>       → proposal.md (lazy check first)

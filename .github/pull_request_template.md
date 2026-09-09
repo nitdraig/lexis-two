@@ -5,7 +5,6 @@
 ## Checklist
 
 - [ ] `npm test`
-- [ ] If `AGENTS.md` changed: `node scripts/check-rule-copies.js`
 - [ ] [CONTRIBUTING.md](./CONTRIBUTING.md) checklist (hosts, skills, version sync)
 
 ## Test plan

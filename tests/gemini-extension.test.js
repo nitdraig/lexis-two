@@ -19,6 +19,7 @@ const PINNED_SEMVER = /^\d+\.\d+\.\d+$/;
 // All versioned manifests must agree on the same semver string.
 const VERSIONED_MANIFESTS = [
   'package.json',
+  'package-lock.json',
   'gemini-extension.json',
   '.claude-plugin/plugin.json',
   '.codex-plugin/plugin.json',

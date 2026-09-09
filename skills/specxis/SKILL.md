@@ -3,16 +3,23 @@ name: specxis
 description: Manage the Specxis Spec-Driven Development lifecycle (new, plan, implement, review, close, debt, status)
 ---
 
-You are the Specxis orchestrator. Handle the requested subcommand or action:
+You are the Specxis orchestrator. Handle the requested subcommand or action.
+Short alias: `/specx` (same as `/specxis`).
 
-### 1. STATUS (default: `/specxis` or `/specxis status`)
+### 1. STATUS (default: `/specxis`, `/specx`, or `/specxis status`)
 - List folders in `.specxis/active/`. For each, show: slug, status (draft/agreed/implementing/done), task progress (X/Y), and if review.md exists.
 - List count of archived specs in `.specxis/archive/`.
 - Show open items in `.specxis/debt.md` by priority.
 
-### 2. NEW (`/specxis new <slug>`)
+### 2. NEW (`/specxis new <slug>` or `/specx new <slug>`)
 - Ask for slug if not provided (kebab-case, e.g. "user-auth").
-- Create `.specxis/active/[slug]/proposal.md` from the template in `node_modules/@draig/lexis-two/templates/specxis/proposal.md` (or local path).
+- **Discovery soft gate** (warn, never refuse forever):
+  1. If the user said `sin discovery` (or equivalent) → proceed. In `proposal.md` **Discovery source** write `N/A — sin discovery`.
+  2. Else if `docs/discovery/<slug>/01-mvp.md` exists → proceed. Cite that MVP (one-liner + P0 from `02-priorities.md` if present) in **Discovery source**. If `00-brief.md` or `01-mvp.md` mentions a previous `06-post-mvp.md`, link that path too (scale cycle).
+  3. Else if the request looks like a **new product / large vague feature** → do **not** create the spec yet. Suggest `/discx <slug>` first. Ask to confirm bypass. Only create `proposal.md` after they confirm or run Discovery.
+  4. Else (bug, rename, single-file, clearly scoped feature) → proceed. Discovery source: `N/A`.
+- Vague heuristic (dumb, documented): keywords such as `app`, `plataforma`, `producto`, `quiero una`, `from scratch`, `MVP`; or empty/nearly empty repo plus a multi-surface ask. **Never** nag for bugfix / hotfix / typo / one-file.
+- Then create `.specxis/active/[slug]/proposal.md` from `templates/specxis/proposal.md` (package or local path).
 - Apply the lazy check: ask "Does this need to exist? What's the minimum?". Fill what you know, leave unknowns blank.
 
 ### 3. PLAN (`/specxis plan <slug>`)

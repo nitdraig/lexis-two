@@ -43,5 +43,7 @@ Before writing any code, stop at the first rung that holds:
 
 ## Never Lazy About
 
-Input validation, error handling that prevents data loss, security,
-accessibility, TypeScript types, tests for new behavior.
+Input validation at trust boundaries, error handling that prevents data loss,
+security, accessibility, TypeScript types, tests for new behavior.
+
+Vague product or next-stage scale: `/discx`. Specs: `/specx`. Intensity: `/lexis` (`plan`, `review`, `audit`, `debt`, `security`, `help`).

@@ -231,6 +231,8 @@ test('CLI install writes opencode.json and slash commands', () => {
   assert.ok(config.plugin.includes('@draig/lexis-two'));
   assert.equal(fs.existsSync(path.join(temp, '.opencode', 'commands', 'lexis.md')), true);
   assert.equal(fs.existsSync(path.join(temp, '.opencode', 'commands', 'specxis.md')), true);
+  assert.equal(fs.existsSync(path.join(temp, '.opencode', 'commands', 'specx.md')), true);
+  assert.equal(fs.existsSync(path.join(temp, '.opencode', 'commands', 'discx.md')), true);
 });
 
 test('buildUninstallPlan removes cursor file installed by the tool', () => {

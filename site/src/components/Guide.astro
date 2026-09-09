@@ -91,6 +91,24 @@ const homeHref = locale === "es" ? "/es" : "/";
 
     <section>
       <div class="section-head">
+        <h2>{guide.discoveryTitle}</h2>
+        <p>{guide.discoverySubtitle}</p>
+      </div>
+      <div class="guide-grid">
+        {
+          guide.discoveryItems.map((item) => (
+            <article class="guide-card">
+              <code>{item.name}</code>
+              <p>{item.desc}</p>
+              <pre><code>{item.example}</code></pre>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
         <h2>{guide.specxisTitle}</h2>
         <p>{guide.specxisSubtitle}</p>
       </div>

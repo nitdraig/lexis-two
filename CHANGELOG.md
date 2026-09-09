@@ -6,18 +6,42 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 ### Added
 
+- Discovery: `/discx` (alias `/discovery`), `skills/discovery/`, init script, templates.
+- Short aliases: `/specx` → Specxis, `/lexis` stays the intensity command.
+- Specxis soft gate on `new`: suggest `/discx` when the feature is vague and `01-mvp.md` is missing; `sin discovery` bypasses.
+- Discovery `06-post-mvp.md` plus scale cycle: `/discx <next-slug>` after the current Specxis ships.
+- README, landing, and `/guide`: three pillars `/discx` `/specx` `/lexis`; npm `files` include Discovery/Specxis docs.
+- Public `/lexis` surface: intensity, `plan`, `review`, `audit`, `debt`, `security`, `help`. `plan` absorbs clarify/sources/compare/scenarios.
+
+### Changed
+
+- pi `/lexis` old names (`doubt`, `discx`, …) warn and redirect to `/lexis plan` or Discovery; folded `lexis-two-*` slash adapters removed.
+
+### Removed
+
+- Slash adapters for `lexis-two-doubt-driven`, `incremental-impl`, `debug-triage`, `source-driven`, `predict`, and `scenario` (skills remain for `@skill`).
+
+## [1.2.4] - 2026-09-09
+
+### Added
+
 - Site: `/guide` and `/es/guide` pages with detailed usage explanations for `/lexis` and `/specxis` commands, HowTo structured data, and per-page meta titles/descriptions.
 - README: link to the command usage guide at `lexis-two.excelso.xyz/guide`.
+- Integrity check: Cursor `skills/` copies and Copilot load-bearing phrases in `scripts/check-rule-copies.js`.
 
 ### Fixed
 
 - OpenCode plugin: restore `command.execute.before` hook so `/lexis <lite|full|ultra|off>` persists the active mode. The hook now only writes the flag when the argument is a valid mode.
 - Spanish localization: add missing accents across the guide and the shared language switcher.
 - Release notes: correct `docs/releases/v1.2.2.md` title/version and add `docs/releases/v1.2.3.md`.
+- Version drift: host plugin manifests and `package-lock.json` now match `package.json` (`1.2.4`).
 
 ### Changed
 
 - README: mark v1.0 CI roadmap item as completed.
+- README and `AGENTS.md`: ecosystem agent names are not part of this npm package.
+- `/lexis help` docs point at command adapters, not a missing skill folder.
+- `npm test` runs `scripts/check-rule-copies.js` first.
 
 ## [1.2.3] - 2026-06-27
 

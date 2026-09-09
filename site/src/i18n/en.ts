@@ -2,7 +2,7 @@ export default {
   meta: {
     title: "Lexis-Two -- The simple way to obtain the best code.",
     description:
-      "Portable rules, skills, and slash commands for AI agents -- YAGNI, KISS, DRY, and SOLID applied before every line of code.",
+      "Portable rules, skills, and slash commands for AI agents -- YAGNI, KISS, DRY, SOLID. /discx (what to build), /specx (how to ship), /lexis (how lean).",
   },
   nav: {
     philosophy: "Philosophy",
@@ -18,7 +18,7 @@ export default {
     badge: "LEXIS-TWO",
     title: "The simple way to obtain the best code.",
     tagline:
-      "Portable rules, skills, and slash commands -- YAGNI, KISS, DRY, and SOLID before every line of code. Multi-agent workflows, one skill source, thin adapters.",
+      "Portable rules, skills, and slash commands -- YAGNI, KISS, DRY, and SOLID before every line of code. /discx (what to build), /specx (how to ship it), /lexis (how lean to code).",
     benchmark:
       "Benchmark with your OpenCode Go models, then publish results --",
     benchmarkLink: "OpenCode Go harness",
@@ -97,29 +97,26 @@ export default {
   commands: {
     title: "Slash commands",
     subtitle:
-      "On hosts with command adapters: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.",
+      "Three families: /discx (product), /specx (specs), /lexis (intensity). On OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.",
     guideLink: "Full usage guide",
     filterAll: "All",
     filterLexis: "Code",
+    filterDiscovery: "Product",
     filterSpecxis: "Specs",
     results: "{count} commands",
     items: [
       { name: "/lexis status", desc: "Shows the current plugin status, active intensity level, and default configuration." },
       { name: "/lexis <lite|full|ultra|off>", desc: "Switches the intensity level of the smart-lazy ruleset for the AI agent." },
-      { name: "/lexis plan (or /lexis p)", desc: "Plans a technical solution step-by-step applying the minimalist hierarchy before writing code." },
+      { name: "/lexis plan (or /lexis p)", desc: "Lazy plan before code: hierarchy plus clarify, sources, compare, and scenarios. One vertical slice." },
       { name: "/lexis review (or /lexis r)", desc: "Reviews recent git changes (diff) to detect over-engineering and suggest simplifications." },
       { name: "/lexis audit (or /lexis a)", desc: "Audits the entire repository for dead code, unnecessary dependencies, or premature abstractions." },
       { name: "/lexis debt (or /lexis d)", desc: "Harvests and prioritizes all // lexis: comments across the codebase into a tracked debt ledger." },
       { name: "/lexis security (or /lexis s)", desc: "Runs a focused security audit targeting vulnerabilities in the stack (Node.js/Next.js/MongoDB)." },
-      { name: "/lexis doubt", desc: "Clarifies ambiguous requirements with up to three questions — no code." },
-      { name: "/lexis incremental (or /lexis inc)", desc: "Ships the smallest vertical slice first; defers the rest." },
-      { name: "/lexis debug (or /lexis triage)", desc: "Minimal repro, smallest fix, verify — no drive-by refactors." },
-      { name: "/lexis source (or /lexis src)", desc: "Grounds design in repo code and official docs before inventing APIs." },
-      { name: "/lexis predict", desc: "Compares proposed vs lazy approach (LOC, dependencies, maintenance)." },
-      { name: "/lexis scenario", desc: "Walks happy, edge, and failure scenarios before design." },
-      { name: "/lexis help (or /lexis h)", desc: "Displays the quick reference card with all commands and levels." },
-      { name: "/specxis status", desc: "Monitors the status, task progress, and technical debt of active specifications." },
-      { name: "/specxis new <slug>", desc: "Creates a new spec folder and proposal.md applying the initial lazy check to validate if the feature should exist." },
+      { name: "/lexis help (or /lexis h)", desc: "Displays the quick reference card with public commands and levels." },
+      { name: "/discx <slug>", desc: "Discovery: MVP, priorities, map, and 06-post-mvp.md. No product code. Scale later with a new slug seeded from post-MVP. Alias: /discovery." },
+      { name: "/specx", desc: "Short alias for /specxis — same Spec-Driven Development lifecycle." },
+      { name: "/specxis status", desc: "Monitors the status, task progress, and technical debt of active specifications. Alias: /specx." },
+      { name: "/specxis new <slug>", desc: "Creates proposal.md with a lazy check. Soft gate: vague products without 01-mvp.md are pointed at /discx first (bypass: sin discovery)." },
       { name: "/specxis plan <slug>", desc: "Generates spec.md (MUST/SHOULD/MAY) and tasks.md (technical task list) from the proposal." },
       { name: "/specxis implement <slug>", desc: "Guides the agent to implement the next unchecked task, one by one, in a controlled manner." },
       { name: "/specxis review <slug>", desc: "Evaluates the current implementation against the specification requirements and AGENTS.md rules." },
@@ -211,9 +208,9 @@ export default {
   guide: {
     title: "How to use the tools",
     subtitle:
-      "A practical guide to the /lexis and /specxis slash commands -- what each one does, when to reach for it, and a copy-paste example.",
+      "A practical guide to /discx, /specx, and /lexis -- what each one does, when to reach for it, and a copy-paste example.",
     summary:
-      "Lexis-Two gives you two families of slash commands: /lexis to control intensity and run a disciplined workflow, and /specxis to manage spec-driven development for complex features. Use them on OpenCode, Gemini CLI, pi, Claude Code, or GitHub Copilot.",
+      "Three pillars: /discx defines the MVP and the next stage (06-post-mvp.md), /specx (alias /specxis) turns that into a spec and tasks, /lexis keeps intensity lean. Use them on OpenCode, Gemini CLI, pi, Claude Code, or GitHub Copilot.",
     availability:
       "Available on hosts with command adapters: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.",
     levelsTitle: "Intensity levels",
@@ -227,39 +224,40 @@ export default {
       { name: "ultra", when: "Refactor and cleanup sprints", desc: "YAGNI extremist: challenges requirements, deletes code first, prefers one-liners." },
       { name: "off", when: "Raw sessions", desc: "Fully deactivates Lexis rules until you switch back." },
     ],
-    workflowTitle: "/lexis workflow commands",
+    workflowTitle: "/lexis commands",
     workflowSubtitle:
-      "One command per step of a disciplined loop: plan, clarify, implement, review, ship.",
+      "Seven public verbs. plan already clarifies, grounds in sources, compares, and walks scenarios. Extra v1.2 names still route.",
     colCommand: "Command",
     colWhat: "What it does",
     colExample: "Example",
     items: [
-      { name: "/lexis plan", desc: "Produces a step-by-step technical plan for a feature before any code, applying the lazy hierarchy so no over-engineering gets designed.", example: "/lexis plan add CSV export to the orders page" },
+      { name: "/lexis plan", desc: "Technical plan before code: lazy ladder plus clarify (max 3 questions), repo/docs, proposed vs lazy, happy/edge/failure. One shippable slice.", example: "/lexis plan add CSV export to the orders page" },
       { name: "/lexis review", desc: "Analyzes recent git changes for over-engineering, dead code, and reinvented stdlib -- run it before every commit or PR.", example: "/lexis r" },
       { name: "/lexis audit", desc: "Read-only audit of the whole repository: unused dependencies, speculative features, redundant boilerplate.", example: "/lexis a" },
       { name: "/lexis debt", desc: "Collects every // lexis: comment in the codebase into a prioritized debt ledger (immediate / next sprint / backlog / permanent).", example: "/lexis d" },
       { name: "/lexis security", desc: "Focused security audit for your stack: injection, XSS, missing middleware, hardcoded secrets, unvalidated inputs.", example: "/lexis s" },
-      { name: "/lexis doubt", desc: "Clarifies ambiguous requirements with at most three questions -- no code until requirements are clear.", example: "/lexis doubt" },
-      { name: "/lexis incremental", desc: "Ships the smallest vertical slice of a feature first and defers the rest -- one deployable step at a time.", example: "/lexis inc" },
-      { name: "/lexis debug", desc: "Minimal repro, smallest fix, verify. No drive-by refactors while fixing a bug.", example: "/lexis triage payment webhook fails on retries" },
-      { name: "/lexis source", desc: "Grounds the design in actual repo code and official docs before inventing APIs.", example: "/lexis src rate limiting with express-rate-limit" },
-      { name: "/lexis predict", desc: "Compares your proposed approach against the lazy one (LOC, dependencies, maintenance) before you commit to it.", example: "/lexis predict custom cache class vs lru-cache" },
-      { name: "/lexis scenario", desc: "Walks happy, edge, and failure paths before any design, so edge cases surface while they are still cheap.", example: "/lexis scenario checkout flow" },
-      { name: "/lexis help", desc: "Quick reference card with all commands, levels, and configuration options.", example: "/lexis h" },
+      { name: "/lexis help", desc: "Quick reference: public commands, levels, and configuration.", example: "/lexis h" },
     ],
-    specxisTitle: "The /specxis lifecycle",
+    discoveryTitle: "The /discx cycle",
+    discoverySubtitle:
+      "Product framing before Specxis. Docs live in docs/discovery/<slug>/. After this cycle ships, run /discx again with the next slug from 06-post-mvp.md.",
+    discoveryItems: [
+      { name: "/discx <slug>", desc: "First cycle: B1–B8, fill 00–06 (MVP + post-MVP next stage). No product code. Alias: /discovery.", example: "/discx family-shared-expenses" },
+      { name: "/discx <next-slug>", desc: "Scale cycle: do not overwrite the previous folder. Seed 01-mvp.md from the prior 06-post-mvp.md, then write a new post-MVP.", example: "/discx family-settlements" },
+    ],
+    specxisTitle: "The /specx lifecycle",
     specxisSubtitle:
-      "Spec-driven development for features that touch 3+ files. The spec lives in .specxis/active/<slug>/ as plain Markdown anyone on the team can read.",
+      "Spec-driven development for features that touch 3+ files. Short command /specx (full /specxis). The spec lives in .specxis/active/<slug>/ as plain Markdown.",
     specxisItems: [
-      { name: "/specxis new <slug>", desc: "Creates .specxis/active/<slug>/proposal.md from the template and opens with the lazy check: does this feature need to exist, and what is the absolute minimum?" },
-      { name: "/specxis plan <slug>", desc: "Turns the proposal into spec.md (MUST / SHOULD / MAY) and tasks.md -- max 10 tasks, each mapped to exactly one file or function." },
-      { name: "/specxis implement <slug>", desc: "Implements exactly one unchecked task per run, following spec.md MUSTs and your AGENTS.md rules. Full control, no surprises." },
-      { name: "/specxis review <slug>", desc: "Read-only evaluation against the spec; findings (severity, location, issue, fix) are written to review.md." },
-      { name: "/specxis close <slug>", desc: "Verifies all tasks are done and no Critical/High findings remain, archives the spec, and harvests // lexis: comments into the debt ledger." },
-      { name: "/specxis debt", desc: "Syncs every // lexis: comment in the codebase with .specxis/debt.md via a portable Node script." },
+      { name: "/specx new <slug>", desc: "Creates .specxis/active/<slug>/proposal.md. Soft gate: if the idea is a vague new product and docs/discovery/<slug>/01-mvp.md is missing, suggest /discx first (bypass: sin discovery)." },
+      { name: "/specx plan <slug>", desc: "Turns the proposal into spec.md (MUST / SHOULD / MAY) and tasks.md -- max 10 tasks, each mapped to exactly one file or function. Prefer 02-priorities.md when Discovery exists." },
+      { name: "/specx implement <slug>", desc: "Implements exactly one unchecked task per run, following spec.md MUSTs and your AGENTS.md rules. Full control, no surprises." },
+      { name: "/specx review <slug>", desc: "Read-only evaluation against the spec; findings (severity, location, issue, fix) are written to review.md." },
+      { name: "/specx close <slug>", desc: "Verifies all tasks are done and no Critical/High findings remain, archives the spec, and harvests // lexis: comments into the debt ledger." },
+      { name: "/specx debt", desc: "Syncs every // lexis: comment in the codebase with .specxis/debt.md via a portable Node script." },
     ],
     sddHint:
-      "Rule of thumb: direct implementation for anything under 3 files; Specxis for anything that needs coordination. More in docs/specxis.md.",
+      "Rule of thumb: /discx for vague products and scale; /specx for 3+ file coordination; /lexis for intensity. Skip Discovery for bugs and one-file fixes. More in DISCOVERY.md and docs/specxis.md.",
     backHome: "Back to home",
   },
 } as const;

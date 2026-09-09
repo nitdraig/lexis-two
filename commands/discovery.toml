@@ -1,0 +1,3 @@
+name = "discovery"
+description = "Discovery — product framing, MVP, priorities, map (no product code). Short alias: /discx"
+skill = "../skills/discovery/SKILL.md"

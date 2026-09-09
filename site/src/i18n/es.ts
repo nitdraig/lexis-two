@@ -2,7 +2,7 @@
   meta: {
     title: "Lexis-Two -- La forma simple de obtener el mejor código.",
     description:
-      "Reglas, skills y slash commands portables -- YAGNI, KISS, DRY y SOLID antes de cada línea de código.",
+      "Reglas, skills y slash commands portables -- YAGNI, KISS, DRY y SOLID. /discx (qué construir), /specx (cómo shippear), /lexis (qué tan lean).",
   },
   nav: {
     philosophy: "Filosofía",
@@ -18,7 +18,7 @@
     badge: "LEXIS-TWO",
     title: "La forma simple de obtener el mejor código.",
     tagline:
-      "Reglas, skills y slash commands portables -- YAGNI, KISS, DRY y SOLID antes de cada línea de código. Flujos multi-agente, una fuente de skills, adaptadores delgados.",
+      "Reglas, skills y slash commands portables -- YAGNI, KISS, DRY y SOLID antes de cada línea de código. /discx (qué construir), /specx (cómo shippearlo), /lexis (qué tan lean).",
     benchmark:
       "Haz benchmarks con tus modelos OpenCode Go, luego publica resultados --",
     benchmarkLink: "OpenCode Go harness",
@@ -98,29 +98,26 @@
   commands: {
     title: "Slash commands",
     subtitle:
-      "En hosts con adaptadores de comandos: OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
+      "Tres familias: /discx (producto), /specx (specs), /lexis (intensidad). En OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
     guideLink: "Guía de uso completa",
     filterAll: "Todos",
     filterLexis: "Código",
+    filterDiscovery: "Producto",
     filterSpecxis: "Specs",
     results: "{count} comandos",
     items: [
       { name: "/lexis status", desc: "Muestra el estado actual del plugin, nivel de intensidad activo y configuración por defecto." },
       { name: "/lexis <lite|full|ultra|off>", desc: "Cambia el nivel de intensidad de las reglas de pereza inteligente para el agente de IA." },
-      { name: "/lexis plan (o /lexis p)", desc: "Diseña una solución técnica paso a paso aplicando la jerarquía minimalista antes de escribir código." },
+      { name: "/lexis plan (o /lexis p)", desc: "Plan perezoso antes de codear: jerarquía más aclarar, fuentes, comparar y escenarios. Un slice vertical." },
       { name: "/lexis review (o /lexis r)", desc: "Revisa los cambios recientes en git (diff) para detectar sobreingeniería y sugerir simplificaciones." },
       { name: "/lexis audit (o /lexis a)", desc: "Escanea todo el repositorio en busca de código muerto, dependencias innecesarias o abstracciones prematuras." },
       { name: "/lexis debt (o /lexis d)", desc: "Cosecha y prioriza todos los comentarios // lexis: del código en un ledger de deuda técnica." },
       { name: "/lexis security (o /lexis s)", desc: "Realiza una auditoría de seguridad enfocada en vulnerabilidades del stack (Node.js/Next.js/MongoDB)." },
-      { name: "/lexis doubt", desc: "Aclara requisitos ambiguos con hasta tres preguntas — sin escribir código." },
-      { name: "/lexis incremental (o /lexis inc)", desc: "Entrega el slice vertical más pequeño primero; difiere el resto." },
-      { name: "/lexis debug (o /lexis triage)", desc: "Repro mínimo, arreglo más pequeño, verificar — sin refactors colaterales." },
-      { name: "/lexis source (o /lexis src)", desc: "Ancla el diseño en código del repo y docs oficiales antes de inventar APIs." },
-      { name: "/lexis predict", desc: "Compara enfoque propuesto vs lazy (LOC, dependencias, mantenimiento)." },
-      { name: "/lexis scenario", desc: "Recorre escenarios feliz, borde y fallo antes del diseño." },
-      { name: "/lexis help (o /lexis h)", desc: "Despliega la tarjeta de referencia rápida con todos los comandos y niveles." },
-      { name: "/specxis status", desc: "Monitorea el estado, progreso de tareas y deuda técnica de las especificaciones activas." },
-      { name: "/specxis new <slug>", desc: "Crea una nueva propuesta aplicando el lazy check inicial para validar si la feature realmente debe existir." },
+      { name: "/lexis help (o /lexis h)", desc: "Despliega la tarjeta de referencia rápida con los comandos públicos y niveles." },
+      { name: "/discx <slug>", desc: "Discovery: MVP, prioridades, mapa y 06-post-mvp.md. Sin código de producto. Escala después con un slug nuevo alimentado por el post-MVP. Alias: /discovery." },
+      { name: "/specx", desc: "Alias corto de /specxis — el mismo ciclo de Spec-Driven Development." },
+      { name: "/specxis status", desc: "Monitorea el estado, progreso de tareas y deuda técnica de las especificaciones activas. Alias: /specx." },
+      { name: "/specxis new <slug>", desc: "Crea proposal.md con lazy check. Puerta blanda: productos vagos sin 01-mvp.md se mandan a /discx (bypass: sin discovery)." },
       { name: "/specxis plan <slug>", desc: "Genera los archivos spec.md (MUST/SHOULD/MAY) y tasks.md (lista de tareas técnicas) a partir de la propuesta." },
       { name: "/specxis implement <slug>", desc: "Guía al agente para implementar la siguiente tarea pendiente, una por una, de forma controlada." },
       { name: "/specxis review <slug>", desc: "Evalúa la implementación actual contra los requisitos de la especificación y las reglas de AGENTS.md." },
@@ -213,9 +210,9 @@
   guide: {
     title: "Cómo usar las herramientas",
     subtitle:
-      "Guía práctica de los comandos /lexis y /specxis -- qué hace cada uno, cuándo usarlo y un ejemplo para copiar y pegar.",
+      "Guía práctica de /discx, /specx y /lexis -- qué hace cada uno, cuándo usarlo y un ejemplo para copiar y pegar.",
     summary:
-      "Lexis-Two ofrece dos familias de comandos slash: /lexis para controlar la intensidad y ejecutar un flujo disciplinado, y /specxis para gestionar el desarrollo dirigido por specs en features complejas. Usalos en OpenCode, Gemini CLI, pi, Claude Code o GitHub Copilot.",
+      "Tres pilares: /discx define el MVP y la siguiente etapa (06-post-mvp.md), /specx (alias /specxis) lo convierte en spec y tareas, /lexis mantiene la intensidad. Usalos en OpenCode, Gemini CLI, pi, Claude Code o GitHub Copilot.",
     availability:
       "Disponibles en los hosts con adaptador de comandos: OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
     levelsTitle: "Niveles de intensidad",
@@ -229,39 +226,40 @@
       { name: "ultra", when: "Sprints de refactor y limpieza", desc: "YAGNI extremista: cuestiona requisitos, borra codigo primero y prefiere one-liners." },
       { name: "off", when: "Sesiones sin reglas", desc: "Desactiva por completo las reglas Lexis hasta que vuelvas a activarlas." },
     ],
-    workflowTitle: "Comandos de flujo /lexis",
+    workflowTitle: "Comandos /lexis",
     workflowSubtitle:
-      "Un comando por paso del ciclo disciplinado: planificar, aclarar, implementar, revisar, entregar.",
+      "Siete verbos públicos. plan ya aclara, ancla en fuentes, compara y recorre escenarios. Los nombres v1.2 siguen enrutados.",
     colCommand: "Comando",
     colWhat: "Que hace",
     colExample: "Ejemplo",
     items: [
-      { name: "/lexis plan", desc: "Produce un plan técnico paso a paso para una feature antes de escribir codigo, aplicando la jerarquía perezosa para que no se diseñe sobre-ingeniería.", example: "/lexis plan agregar exportacion CSV a la pagina de ordenes" },
+      { name: "/lexis plan", desc: "Plan tecnico antes de codigo: escalera perezosa mas aclarar (max 3 preguntas), repo/docs, propuesto vs lazy, feliz/borde/fallo. Un slice entregable.", example: "/lexis plan agregar exportacion CSV a la pagina de ordenes" },
       { name: "/lexis review", desc: "Analiza los cambios recientes de git buscando sobre-ingeniería, código muerto y stdlib reinventada -- usalo antes de cada commit o PR.", example: "/lexis r" },
       { name: "/lexis audit", desc: "Auditoría de solo lectura de todo el repositorio: dependencias sin usar, features especulativas, boilerplate redundante.", example: "/lexis a" },
       { name: "/lexis debt", desc: "Recolecta cada comentario // lexis: del código en un registro de deuda priorizado (inmediata / próximo sprint / backlog / permanente).", example: "/lexis d" },
       { name: "/lexis security", desc: "Auditoria de seguridad enfocada en tu stack: inyección, XSS, middleware faltante, secretos hardcodeados, inputs sin validar.", example: "/lexis s" },
-      { name: "/lexis doubt", desc: "Aclara requisitos ambiguos con tres preguntas como máximo -- nada de código hasta que los requisitos esten claros.", example: "/lexis doubt" },
-      { name: "/lexis incremental", desc: "Entrega primero la porción vertical más pequeña de la feature y deja el resto para después -- un paso deployable por vez.", example: "/lexis inc" },
-      { name: "/lexis debug", desc: "Repro minimo, fix mas pequeno, verificar. Sin refactors de paso mientras arregla un bug.", example: "/lexis triage el webhook de pagos falla en los reintentos" },
-      { name: "/lexis source", desc: "Ancla el diseño al código real del repo y a la documentación oficial antes de inventar APIs.", example: "/lexis src rate limiting con express-rate-limit" },
-      { name: "/lexis predict", desc: "Compara tu enfoque propuesto contra el perezoso (LOC, dependencias, mantenimiento) antes de que te comprometas.", example: "/lexis predict clase de caché custom vs lru-cache" },
-      { name: "/lexis scenario", desc: "Recorre los caminos feliz, de borde y de fallo antes del diseño, para que los casos borde aparezcan cuando todavía son baratos.", example: "/lexis scenario flujo de checkout" },
-      { name: "/lexis help", desc: "Tarjeta de referencia rápida con todos los comandos, niveles y opciones de configuración.", example: "/lexis h" },
+      { name: "/lexis help", desc: "Referencia rapida: comandos publicos, niveles y configuracion.", example: "/lexis h" },
     ],
-    specxisTitle: "El ciclo /specxis",
+    discoveryTitle: "El ciclo /discx",
+    discoverySubtitle:
+      "Enmarque de producto antes de Specxis. Los docs viven en docs/discovery/<slug>/. Cuando este ciclo se shippea, corre /discx de nuevo con el next-slug de 06-post-mvp.md.",
+    discoveryItems: [
+      { name: "/discx <slug>", desc: "Primer ciclo: B1–B8, llena 00–06 (MVP + post-MVP). Sin código de producto. Alias: /discovery.", example: "/discx family-shared-expenses" },
+      { name: "/discx <next-slug>", desc: "Ciclo de escala: no pisa la carpeta anterior. Siembra 01-mvp.md desde el 06-post-mvp.md previo y escribe un post-MVP nuevo.", example: "/discx family-settlements" },
+    ],
+    specxisTitle: "El ciclo /specx",
     specxisSubtitle:
-      "Desarrollo dirigido por specs para features que tocan 3+ archivos. La spec vive en .specxis/active/<slug>/ como Markdown plano que cualquiera del equipo puede leer.",
+      "Desarrollo dirigido por specs para features que tocan 3+ archivos. Comando corto /specx (completo /specxis). La spec vive en .specxis/active/<slug>/ como Markdown plano.",
     specxisItems: [
-      { name: "/specxis new <slug>", desc: "Crea .specxis/active/<slug>/proposal.md desde la plantilla y abre con el check perezoso: hace falta esta feature y cuál es el mínimo absoluto?" },
-      { name: "/specxis plan <slug>", desc: "Convierte la propuesta en spec.md (MUST / SHOULD / MAY) y tasks.md -- máximo 10 tareas, cada una mapeada a un solo archivo o función." },
-      { name: "/specxis implement <slug>", desc: "Implementa exactamente una tarea pendiente por corrida, siguiendo los MUST de spec.md y las reglas de tu AGENTS.md. Control total, sin sorpresas." },
-      { name: "/specxis review <slug>", desc: "Evaluación de solo lectura contra la spec; los hallazgos (severidad, ubicación, problema, fix) se escriben en review.md." },
-      { name: "/specxis close <slug>", desc: "Verifica que todas las tareas estén hechas y no queden hallazgos Critical/High, archiva la spec y lleva los comentarios // lexis: al registro de deuda." },
-      { name: "/specxis debt", desc: "Sincroniza cada comentario // lexis: del codigo con .specxis/debt.md mediante un script Node portable." },
+      { name: "/specx new <slug>", desc: "Crea .specxis/active/<slug>/proposal.md. Puerta blanda: si la idea es un producto vago y falta docs/discovery/<slug>/01-mvp.md, sugiere /discx primero (bypass: sin discovery)." },
+      { name: "/specx plan <slug>", desc: "Convierte la propuesta en spec.md (MUST / SHOULD / MAY) y tasks.md -- máximo 10 tareas, cada una mapeada a un solo archivo o función. Prefiere 02-priorities.md si hay Discovery." },
+      { name: "/specx implement <slug>", desc: "Implementa exactamente una tarea pendiente por corrida, siguiendo los MUST de spec.md y las reglas de tu AGENTS.md. Control total, sin sorpresas." },
+      { name: "/specx review <slug>", desc: "Evaluación de solo lectura contra la spec; los hallazgos (severidad, ubicación, problema, fix) se escriben en review.md." },
+      { name: "/specx close <slug>", desc: "Verifica que todas las tareas estén hechas y no queden hallazgos Critical/High, archiva la spec y lleva los comentarios // lexis: al registro de deuda." },
+      { name: "/specx debt", desc: "Sincroniza cada comentario // lexis: del codigo con .specxis/debt.md mediante un script Node portable." },
     ],
     sddHint:
-      "Regla práctica: implementación directa para menos de 3 archivos; Specxis para lo que necesite coordinación. Más detalle en docs/specxis.md.",
+      "Regla práctica: /discx para producto vago y escala; /specx para coordinación de 3+ archivos; /lexis para intensidad. Salta Discovery en bugs y cambios de un archivo. Más en DISCOVERY.md y docs/specxis.md.",
     backHome: "Volver al inicio",
   },
 } as const;

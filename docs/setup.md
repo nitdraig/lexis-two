@@ -73,6 +73,16 @@ These print setup steps instead of modifying marketplace manifests:
 npx @draig/lexis-two install --host claude,gemini,copilot --yes
 ```
 
+## Command Code (`cmd`)
+
+Separate TUI — not an installer `--host`. Seed OpenCode/Cursor, then `/import` inside Command Code. Full guide: [commandcode.md](./commandcode.md).
+
+```bash
+npx @draig/lexis-two install --host agents,opencode,cursor --scope global --yes --force
+```
+
+In `cmd`: `/import opencode` then `/import cursor`, then `/reload`. Use `/lexis plan` — not Command Code’s built-in `/plan`.
+
 ### Installer flags
 
 | Flag | Description |

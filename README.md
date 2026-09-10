@@ -177,7 +177,7 @@ Or globally:
 cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc
 ```
 
-More hosts (Windsurf, Gemini CLI, pi, Copilot): see [docs/portability.md](./docs/portability.md).
+More hosts (Windsurf, Gemini CLI, pi, Copilot, Command Code): see [docs/portability.md](./docs/portability.md) and [docs/commandcode.md](./docs/commandcode.md).
 
 **Site:** [lexis-two.excelso.xyz](https://lexis-two.excelso.xyz) (GitHub Pages — [setup guide](./docs/site.md)).
 **Command usage guide:** [lexis-two.excelso.xyz/guide](https://lexis-two.excelso.xyz/guide) — `/discx`, `/specx`, and `/lexis`.
@@ -186,7 +186,7 @@ More hosts (Windsurf, Gemini CLI, pi, Copilot): see [docs/portability.md](./docs
 
 ## Commands
 
-Once installed, these slash commands are available in OpenCode, Gemini CLI, and pi.
+Once installed, these slash commands are available in OpenCode, Gemini CLI, pi, and [Command Code](./docs/commandcode.md).
 
 ### 1. `/discx` — Discovery (alias `/discovery`)
 

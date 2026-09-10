@@ -11,6 +11,7 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 - Specxis soft gate on `new`: suggest `/discx` when the feature is vague and `01-mvp.md` is missing; `sin discovery` bypasses.
 - Discovery `06-post-mvp.md` plus scale cycle: `/discx <next-slug>` after the current Specxis ships.
 - README, landing, and `/guide`: three pillars `/discx` `/specx` `/lexis`; npm `files` include Discovery/Specxis docs.
+- Command Code harness: [docs/commandcode.md](./docs/commandcode.md) (`/import` + manual copy).
 - Public `/lexis` surface: intensity, `plan`, `review`, `audit`, `debt`, `security`, `help`. `plan` absorbs clarify/sources/compare/scenarios.
 
 ### Changed

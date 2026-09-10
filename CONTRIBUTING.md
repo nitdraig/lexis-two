@@ -27,7 +27,7 @@ plugin manifests           ← gemini-extension.json, .claude-plugin/, .codex-pl
 | `hooks/` | Mode persistence and instruction loading shared across Claude, Codex, Copilot, OpenCode. |
 | Instruction-tier hosts | Static copies of `AGENTS.md` — never fork the philosophy per host. |
 
-See [docs/portability.md](./docs/portability.md) for the host matrix and install paths.
+See [docs/portability.md](./docs/portability.md) for the host matrix and install paths. Command Code: [docs/commandcode.md](./docs/commandcode.md).
 
 ---
 

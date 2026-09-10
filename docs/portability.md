@@ -35,6 +35,7 @@ Slash commands: **`/lexis`** is canonical (subcommands below). Skill folders and
 | VS Code + Codex | `AGENTS.md` or `~/.codex/AGENTS.md` | Rules — instruction tier |
 | Antigravity | `AGENTS.md` or `.agents/rules/` | Rules — instruction tier |
 | Generic agents | `AGENTS.md` or `skills/*/SKILL.md` | Rules — copy and load |
+| Command Code (`cmd`) | `AGENTS.md` + `.commandcode/skills/` + `.commandcode/commands/` or `/import` | Skills + markdown commands — [commandcode.md](./commandcode.md). No OpenCode plugin / mode persist |
 
 ### Adapter rule
 

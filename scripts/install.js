@@ -267,10 +267,11 @@ function isLexisPluginEntry(entry) {
   if (typeof entry !== 'string') {
     return false;
   }
-  return (
-    entry === OPENCODE_PLUGIN_ENTRY ||
-    entry.includes('lexis-two') && entry.includes('plugin')
-  );
+  // npm plugin ids: "@draig/lexis-two" or "@draig/lexis-two@1.3.0"
+  if (entry === OPENCODE_PLUGIN_ENTRY || entry.startsWith(`${OPENCODE_PLUGIN_ENTRY}@`)) {
+    return true;
+  }
+  return entry.includes('lexis-two') && entry.includes('plugin');
 }
 
 function listOpencodeCommandFiles() {

@@ -16,6 +16,7 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 ### Changed
 
 - pi `/lexis` old names (`doubt`, `discx`, …) warn and redirect to `/lexis plan` or Discovery; folded `lexis-two-*` slash adapters removed.
+- OpenCode installer treats `@draig/lexis-two@x.y.z` as already configured (does not add a second unpinned plugin).
 
 ### Removed
 

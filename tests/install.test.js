@@ -209,6 +209,25 @@ test('buildPlan skips opencode merge when lexis plugin already configured', () =
   assert.equal(mergeAction.reason, 'already-configured');
 });
 
+test('buildPlan skips opencode merge for versioned @draig/lexis-two@x.y.z', () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-install-opencode-pin-'));
+  const configPath = path.join(temp, 'opencode.json');
+  fs.writeFileSync(
+    configPath,
+    JSON.stringify({ plugin: ['@draig/lexis-two@1.3.0'] }, null, 2),
+    'utf8',
+  );
+
+  const ctx = createContext(temp);
+  const actions = buildPlan(['opencode'], { scope: 'project', force: false }, ctx);
+  const mergeAction = actions.find(
+    (action) => action.host === 'opencode' && action.to === configPath,
+  );
+
+  assert.equal(mergeAction.type, 'skip');
+  assert.equal(mergeAction.reason, 'already-configured');
+});
+
 test('CLI install writes opencode.json and slash commands', () => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-install-opencode-cli-'));
   const result = runCli(

@@ -64,6 +64,9 @@ cp node_modules/@draig/lexis-two/.opencode/commands/discx.md .commandcode/comman
 cp node_modules/@draig/lexis-two/.opencode/commands/discovery.md .commandcode/commands/
 cp node_modules/@draig/lexis-two/.opencode/commands/specx.md .commandcode/commands/
 cp node_modules/@draig/lexis-two/.opencode/commands/specxis.md .commandcode/commands/
+cp node_modules/@draig/lexis-two/.opencode/commands/desx.md .commandcode/commands/
+cp node_modules/@draig/lexis-two/.opencode/commands/desx-audit.md .commandcode/commands/
+cp node_modules/@draig/lexis-two/.opencode/commands/desx-apply.md .commandcode/commands/
 ```
 
 **User (all projects)** — same files under `~/.commandcode/skills/` and `~/.commandcode/commands/` (Windows: `%USERPROFILE%\.commandcode\`). Optional user memory: `~/.commandcode/AGENTS.md`.

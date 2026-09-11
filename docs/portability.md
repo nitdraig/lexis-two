@@ -104,6 +104,15 @@ Modes: [modes.md](./modes.md).
 
 Also `/lexis discx` / `/lexis discovery`.
 
+### Desx (design audit)
+
+| Command | Skill |
+| ------- | ----- |
+| `/desx` / `/desx audit` (`/desx-audit`) | `skills/desx/` — read-only except `DESIGN-AUDIT.md` |
+| `/desx apply` (`/desx-apply`) | `skills/desx-apply/` — implementer applies fixes |
+
+See [desx.md](./desx.md). Not a Specxis phase. This package does not ship a host agent named `design-auditor`; Lexis-One may add that mapping.
+
 Adapter files: Gemini `commands/*.toml`, OpenCode `.opencode/commands/*.md`, pi `pi-extension/index.js`.
 
 ## Portable Skills
@@ -124,6 +133,8 @@ Adapter files: Gemini `commands/*.toml`, OpenCode `.opencode/commands/*.md`, pi 
 | `skills/lexis-two-scenario/` | No slash — folded into plan; `@skill` still works |
 | `skills/specxis/` | Specxis SDD lifecycle (`/specx`) |
 | `skills/discovery/` | Discovery MVP framing (`/discx`) |
+| `skills/desx/` | Design-auditor (`/desx audit`) |
+| `skills/desx-apply/` | Apply `DESIGN-AUDIT.md` (`/desx apply`) |
 
 Adapt skill shell commands for other stacks — see README **Adapting Lexis-Two to Any Stack**.
 

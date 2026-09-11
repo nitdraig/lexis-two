@@ -53,6 +53,7 @@ It coordinates specialized agents — planning, implementation, review, refactor
 | `ui-architect`     | UX/UI architect      | Consults on design, never implements |
 | `refactor-agent`   | Refactor specialist  | Large-scale code restructuring       |
 | `security-auditor` | Security analyst     | Read-only, runs audit tools          |
+| `design-auditor`   | Visual slop + tokens | Read-only except `DESIGN-AUDIT.md`   |
 | `explorer`         | Codebase mapper      | Read-only, fast local model          |
 
 ### Principles
@@ -86,8 +87,9 @@ Before writing any code, stop at the first rung that holds:
 1. **[/discx](./DISCOVERY.md)** (`/discovery`) — this MVP + `06-post-mvp.md`; later `/discx <next-slug>` to scale. Scaffold: `node scripts/discovery-init.js <slug>`
 2. **[/specx](./SPECXIS.md)** (`/specxis`) — agree proposal + tasks, implement one task at a time
 3. **`/lexis`** — keep intensity lean (review / debt / security)
+4. **[/desx](./DESX.md)** — optional pass after UI work: audit visual slop, then `/desx apply`
 
-Skip Discovery for clear bugs and one-line fixes.
+Skip Discovery for clear bugs and one-line fixes. `/desx` is beside that loop, not a fourth SDD phase.
 
 ---
 
@@ -180,7 +182,7 @@ cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc
 More hosts (Windsurf, Gemini CLI, pi, Copilot, Command Code): see [docs/portability.md](./docs/portability.md) and [docs/commandcode.md](./docs/commandcode.md).
 
 **Site:** [lexis-two.excelso.xyz](https://lexis-two.excelso.xyz) (GitHub Pages — [setup guide](./docs/site.md)).
-**Command usage guide:** [lexis-two.excelso.xyz/guide](https://lexis-two.excelso.xyz/guide) — `/discx`, `/specx`, and `/lexis`.
+**Command usage guide:** [lexis-two.excelso.xyz/guide](https://lexis-two.excelso.xyz/guide) — `/discx`, `/specx`, `/lexis`, and `/desx`.
 
 ---
 
@@ -277,6 +279,21 @@ Manage the Specxis SDD lifecycle. Short command **`/specx`**. Same subcommands a
 * **`/specx debt`**
   * **What it does:** Recursively scans the codebase for `// lexis:` comments and synchronizes them with `.specxis/debt.md` using a highly portable Node.js script.
   * **When to use:** Run this to keep your technical debt ledger perfectly in sync with your codebase.
+
+---
+
+### 4. `/desx` — Design audit
+Beside the SDD loop (not a Specxis phase). Stack-agnostic detector + optional model polish.
+
+* **`/desx` / `/desx audit`** (also `/desx-audit`)
+  * **What it does:** Role `design-auditor`. Runs `scripts/desx-audit.js` (no API key) and writes only `DESIGN-AUDIT.md`.
+  * **When to use:** After UI generation, before a commit, or when the UI looks like generic AI slop.
+
+* **`/desx apply`** (also `/desx-apply`)
+  * **What it does:** Implementer reads the audit file, applies P0→P1→P2/P3, ticks only what it fixed, re-runs the detector.
+  * **When to use:** After you agree the findings. Not the auditor.
+
+More: [DESX.md](./DESX.md).
 
 ---
 
@@ -416,6 +433,12 @@ MVP cut and map **before** Specxis. Output: `docs/discovery/<slug>/`.
 - [x] `scripts/discovery-init.js` + tests
 - [x] Slash commands `/discx` (`/discovery`) + skill + installer copy
 - [x] Specxis soft gate + proposal “Discovery source” section
+
+---
+
+### v1.3.x — Desx (design audit)
+
+- [x] `/desx` audit/apply + `scripts/desx-audit.js` + `DESIGN-AUDIT.md`
 
 ---
 

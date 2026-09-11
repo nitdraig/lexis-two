@@ -46,4 +46,4 @@ Before writing any code, stop at the first rung that holds:
 Input validation at trust boundaries, error handling that prevents data loss,
 security, accessibility, TypeScript types, tests for new behavior.
 
-Vague product or next-stage scale: `/discx`. Specs: `/specx`. Intensity: `/lexis` (`plan`, `review`, `audit`, `debt`, `security`, `help`).
+Vague product or next-stage scale: `/discx`. Specs: `/specx`. Intensity: `/lexis` (`plan`, `review`, `audit`, `debt`, `security`, `help`). After UI: `/desx`.

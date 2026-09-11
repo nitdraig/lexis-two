@@ -26,7 +26,7 @@ const VERSIONED_MANIFESTS = [
   '.github/plugin/plugin.json',
 ];
 // Gemini auto-discovers these by directory; the manifest is only useful if they exist.
-const REUSED_COMMANDS = ['commands/lexis-two.toml', 'commands/lexis-two-review.toml'];
+const REUSED_COMMANDS = ['commands/lexis-two.toml', 'commands/lexis-two-review.toml', 'commands/desx.toml'];
 const REUSED_SKILLS = ['skills/lexis-two/SKILL.md'];
 // Same load-bearing phrases asserted by scripts/check-rule-copies.js: the file
 // contextFileName points at must actually carry the rules, not just exist.

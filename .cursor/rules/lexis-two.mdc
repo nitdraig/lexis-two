@@ -151,7 +151,7 @@ Running `/lexis debt` (or `/lexis d`) will scan the codebase and surface all `le
 
 ## Discovery and Specxis
 
-Vague product or the next stage after an MVP: `/discx` (full `/discovery`) — see DISCOVERY.md. Specs: `/specx` (full `/specxis`). Intensity: `/lexis`. Skip Discovery for bugs and one-file fixes.
+Vague product or the next stage after an MVP: `/discx` (full `/discovery`) — see DISCOVERY.md. Specs: `/specx` (full `/specxis`). Intensity: `/lexis`. Visual slop / design-system drift after UI work: `/desx` — see DESX.md. Skip Discovery for bugs and one-file fixes.
 
 Public `/lexis` verbs: intensity (`lite|full|ultra|off`), `status`, `plan`, `review`, `audit`, `debt`, `security`, `help`. `/lexis plan` already clarifies (max 3 questions), grounds in repo/docs, compares proposed vs lazy, and walks happy/edge/failure. Implement the smallest vertical slice; bugs: repro then smallest fix, no drive-by refactors. Old names (`doubt`, `incremental`, `debug`, `source`, `predict`, `scenario`) redirect to `/lexis plan`. Product framing is `/discx`.
 
@@ -170,6 +170,7 @@ This ruleset still applies when those agents load it.
 | `ui-architect`     | UX/UI decisions — consults, never implements     |
 | `refactor-agent`   | Large-scale refactors — rewrites, not greenfield |
 | `security-auditor` | Security analysis — read-only, runs audit tools  |
+| `design-auditor`   | Visual slop + design-system drift — read-only except `DESIGN-AUDIT.md` |
 | `explorer`         | Codebase mapping — read-only, local model        |
 
 When in doubt about scope: ask, don't assume.

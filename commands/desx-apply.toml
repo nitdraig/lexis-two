@@ -1,0 +1,3 @@
+name = "desx-apply"
+description = "Apply DESIGN-AUDIT.md fixes (implementer, not design-auditor)"
+skill = "../skills/desx-apply/SKILL.md"

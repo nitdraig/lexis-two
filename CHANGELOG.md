@@ -4,6 +4,8 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-09-11
+
 ### Added
 
 - Discovery: `/discx` (alias `/discovery`), `skills/discovery/`, init script, templates.
@@ -13,6 +15,7 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 - README, landing, and `/guide`: three pillars `/discx` `/specx` `/lexis`; npm `files` include Discovery/Specxis docs.
 - Command Code harness: [docs/commandcode.md](./docs/commandcode.md) (`/import` + manual copy).
 - Public `/lexis` surface: intensity, `plan`, `review`, `audit`, `debt`, `security`, `help`. `plan` absorbs clarify/sources/compare/scenarios.
+- Design audit: `/desx` (`audit` / `apply`), `design-auditor` role, `scripts/desx-audit.js` (no model), `DESIGN-AUDIT.md`.
 
 ### Changed
 

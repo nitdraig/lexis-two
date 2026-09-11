@@ -1,6 +1,6 @@
 {
   "name": "@draig/lexis-two",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
   "bin": {
     "lexis-two": "bin/lexis-two.js"
@@ -18,8 +18,10 @@
   "files": [
     "AGENTS.md",
     "DISCOVERY.md",
+    "DESX.md",
     "SPECXIS.md",
     "docs/discovery.md",
+    "docs/desx.md",
     "docs/specxis.md",
     "docs/commandcode.md",
     ".cursor/rules/lexis-two.mdc",

@@ -15,7 +15,7 @@ skills/                    ← source of truth (behavior, prompts, checklists)
 hooks/                     ← shared lifecycle (mode flags, instruction injection)
 commands/*.toml            ← thin Gemini / Claude dispatchers → skills/
 .opencode/commands/*.md     ← thin OpenCode dispatchers → skills/
-pi-extension/index.js      ← pi command router (/lexis, /discx, /specx, deprecated aliases)
+pi-extension/index.js      ← pi command router (/lexis, /discx, /specx, /desx, deprecated aliases)
 instruction-tier copies    ← AGENTS.md mirrored into Cursor, Windsurf, Cline, Kiro
 plugin manifests           ← gemini-extension.json, .claude-plugin/, .codex-plugin/, .github/plugin/
 ```
@@ -168,7 +168,7 @@ Verify: `npm test` (includes `all versioned manifests share the same version`).
 - [ ] `npm test` passes (includes `scripts/check-rule-copies.js`)
 - [ ] If a host was added or changed: [docs/portability.md](./docs/portability.md) host table updated
 - [ ] If install paths changed: [docs/setup.md](./docs/setup.md) updated
-- [ ] If a skill/command was added: `/discx`, `/specx`, or `/lexis` family; adapter files for every `pi.registerCommand`
+- [ ] If a skill/command was added: `/discx`, `/specx`, `/desx`, or `/lexis` family; adapter files for every `pi.registerCommand`
 - [ ] No duplicated logic across adapters — behavior belongs in `skills/` or `hooks/`
 - [ ] No new npm dependency unless unavoidable (justify in PR)
 

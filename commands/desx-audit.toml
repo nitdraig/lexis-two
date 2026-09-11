@@ -1,0 +1,3 @@
+name = "desx-audit"
+description = "Run design-auditor — writes DESIGN-AUDIT.md only, never edits UI"
+skill = "../skills/desx/SKILL.md"

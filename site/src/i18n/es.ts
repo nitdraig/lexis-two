@@ -115,6 +115,8 @@
       { name: "/lexis security (o /lexis s)", desc: "Realiza una auditoría de seguridad enfocada en vulnerabilidades del stack (Node.js/Next.js/MongoDB)." },
       { name: "/lexis help (o /lexis h)", desc: "Despliega la tarjeta de referencia rápida con los comandos públicos y niveles." },
       { name: "/discx <slug>", desc: "Discovery: MVP, prioridades, mapa y 06-post-mvp.md. Sin código de producto. Escala después con un slug nuevo alimentado por el post-MVP. Alias: /discovery." },
+      { name: "/desx audit", desc: "Auditoría de diseño de solo lectura: slop visual y deriva de tokens. Solo escribe DESIGN-AUDIT.md. Alias: /desx." },
+      { name: "/desx apply", desc: "El implementador aplica DESIGN-AUDIT.md (P0 y luego P1). No es design-auditor." },
       { name: "/specx", desc: "Alias corto de /specxis — el mismo ciclo de Spec-Driven Development." },
       { name: "/specxis status", desc: "Monitorea el estado, progreso de tareas y deuda técnica de las especificaciones activas. Alias: /specx." },
       { name: "/specxis new <slug>", desc: "Crea proposal.md con lazy check. Puerta blanda: productos vagos sin 01-mvp.md se mandan a /discx (bypass: sin discovery)." },
@@ -258,8 +260,15 @@
       { name: "/specx close <slug>", desc: "Verifica que todas las tareas estén hechas y no queden hallazgos Critical/High, archiva la spec y lleva los comentarios // lexis: al registro de deuda." },
       { name: "/specx debt", desc: "Sincroniza cada comentario // lexis: del codigo con .specxis/debt.md mediante un script Node portable." },
     ],
+    desxTitle: "La pasada /desx",
+    desxSubtitle:
+      "Al costado del loop, como security-auditor. Después de UI: detectar slop y luego aplicar. No es una fase de Specxis.",
+    desxItems: [
+      { name: "/desx audit", desc: "design-auditor. Detector sin modelo y pulido opcional. Solo escribe DESIGN-AUDIT.md.", example: "/desx audit" },
+      { name: "/desx apply", desc: "El implementador aplica P0 y luego P1, tilda solo lo resuelto y vuelve a correr el detector.", example: "/desx apply" },
+    ],
     sddHint:
-      "Regla práctica: /discx para producto vago y escala; /specx para coordinación de 3+ archivos; /lexis para intensidad. Salta Discovery en bugs y cambios de un archivo. Más en DISCOVERY.md y docs/specxis.md.",
+      "Regla práctica: /discx para producto vago y escala; /specx para coordinación de 3+ archivos; /lexis para intensidad; /desx después de UI. Salta Discovery en bugs y cambios de un archivo. Más en DISCOVERY.md, docs/specxis.md y DESX.md.",
     backHome: "Volver al inicio",
   },
 } as const;

@@ -218,6 +218,36 @@ export default function lexisExtension(pi) {
     handler: (args, ctx) => sendAlias("/skill:discovery", args, ctx),
   });
 
+  const sendDesx = (args, ctx) => {
+    const parsed = String(args || "").trim();
+    const [sub, ...rest] = parsed.split(/\s+/);
+    const restArgs = rest.join(" ");
+    if (!sub || sub === "audit") {
+      sendAlias("/skill:desx", restArgs, ctx);
+      return;
+    }
+    if (sub === "apply") {
+      sendAlias("/skill:desx-apply", restArgs, ctx);
+      return;
+    }
+    sendAlias("/skill:desx", parsed, ctx);
+  };
+
+  pi.registerCommand("desx", {
+    description: "Design audit: visual slop + design-system drift. Subcommands: audit, apply",
+    handler: (args, ctx) => sendDesx(args, ctx),
+  });
+
+  pi.registerCommand("desx-audit", {
+    description: "Run design-auditor (read-only). Writes DESIGN-AUDIT.md only",
+    handler: (args, ctx) => sendAlias("/skill:desx", args, ctx),
+  });
+
+  pi.registerCommand("desx-apply", {
+    description: "Apply DESIGN-AUDIT.md fixes (implementer, not design-auditor)",
+    handler: (args, ctx) => sendAlias("/skill:desx-apply", args, ctx),
+  });
+
   const makeDeprecatedHandler = (lexisSubcommand, skillCommand) => {
     return (args, ctx) => {
       ctx?.ui?.notify?.(`[Deprecated] Use '/lexis ${lexisSubcommand}' instead.`, "warning");

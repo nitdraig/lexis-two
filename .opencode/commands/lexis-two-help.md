@@ -6,7 +6,7 @@ Show the lexis-two quick reference. One shot, change nothing: do not switch mode
 
 Levels: `/lexis lite`, `/lexis full` (default), `/lexis ultra`, `/lexis off`.
 
-Pillars: `/discx` Discovery · `/specx` Specxis · `/lexis` intensity + quality.
+Pillars: `/discx` Discovery · `/specx` Specxis · `/lexis` intensity + quality · `/desx` design audit (beside the loop).
 
 Public `/lexis` (canonical):
 - `status` — active + default mode

@@ -281,7 +281,10 @@ function listOpencodeCommandFiles() {
     .filter(
       (name) =>
         name.endsWith('.md') &&
-        (name.startsWith('lexis') || name.startsWith('specx') || name.startsWith('disc')),
+        (name.startsWith('lexis') ||
+          name.startsWith('specx') ||
+          name.startsWith('disc') ||
+          name.startsWith('desx')),
     )
     .map((name) => ({
       name,

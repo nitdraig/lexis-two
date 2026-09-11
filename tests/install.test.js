@@ -252,6 +252,7 @@ test('CLI install writes opencode.json and slash commands', () => {
   assert.equal(fs.existsSync(path.join(temp, '.opencode', 'commands', 'specxis.md')), true);
   assert.equal(fs.existsSync(path.join(temp, '.opencode', 'commands', 'specx.md')), true);
   assert.equal(fs.existsSync(path.join(temp, '.opencode', 'commands', 'discx.md')), true);
+  assert.equal(fs.existsSync(path.join(temp, '.opencode', 'commands', 'desx.md')), true);
 });
 
 test('buildUninstallPlan removes cursor file installed by the tool', () => {

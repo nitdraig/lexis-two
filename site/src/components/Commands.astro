@@ -21,6 +21,7 @@ const { locale, commands } = Astro.props;
 
 const categories = commands.items.map((cmd) => {
   if (cmd.name.startsWith("/lexis")) return "code";
+  if (cmd.name.startsWith("/desx")) return "code";
   if (cmd.name.startsWith("/specx")) return "specs";
   if (cmd.name.startsWith("/disc")) return "product";
   return "other";

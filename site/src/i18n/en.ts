@@ -114,6 +114,8 @@ export default {
       { name: "/lexis security (or /lexis s)", desc: "Runs a focused security audit targeting vulnerabilities in the stack (Node.js/Next.js/MongoDB)." },
       { name: "/lexis help (or /lexis h)", desc: "Displays the quick reference card with public commands and levels." },
       { name: "/discx <slug>", desc: "Discovery: MVP, priorities, map, and 06-post-mvp.md. No product code. Scale later with a new slug seeded from post-MVP. Alias: /discovery." },
+      { name: "/desx audit", desc: "Read-only design audit: visual slop and token drift. Writes DESIGN-AUDIT.md only. Alias: /desx." },
+      { name: "/desx apply", desc: "Implementer applies DESIGN-AUDIT.md (P0 then P1). Not design-auditor." },
       { name: "/specx", desc: "Short alias for /specxis — same Spec-Driven Development lifecycle." },
       { name: "/specxis status", desc: "Monitors the status, task progress, and technical debt of active specifications. Alias: /specx." },
       { name: "/specxis new <slug>", desc: "Creates proposal.md with a lazy check. Soft gate: vague products without 01-mvp.md are pointed at /discx first (bypass: sin discovery)." },
@@ -256,8 +258,15 @@ export default {
       { name: "/specx close <slug>", desc: "Verifies all tasks are done and no Critical/High findings remain, archives the spec, and harvests // lexis: comments into the debt ledger." },
       { name: "/specx debt", desc: "Syncs every // lexis: comment in the codebase with .specxis/debt.md via a portable Node script." },
     ],
+    desxTitle: "The /desx pass",
+    desxSubtitle:
+      "Beside the loop, like security-auditor. After UI work: detect slop, then apply. Not a Specxis phase.",
+    desxItems: [
+      { name: "/desx audit", desc: "design-auditor. Detector without a model, then optional prose polish. Writes only DESIGN-AUDIT.md.", example: "/desx audit" },
+      { name: "/desx apply", desc: "Implementer applies P0 then P1, ticks only fixed items, re-runs the detector.", example: "/desx apply" },
+    ],
     sddHint:
-      "Rule of thumb: /discx for vague products and scale; /specx for 3+ file coordination; /lexis for intensity. Skip Discovery for bugs and one-file fixes. More in DISCOVERY.md and docs/specxis.md.",
+      "Rule of thumb: /discx for vague products and scale; /specx for 3+ file coordination; /lexis for intensity; /desx after UI. Skip Discovery for bugs and one-file fixes. More in DISCOVERY.md, docs/specxis.md, and DESX.md.",
     backHome: "Back to home",
   },
 } as const;

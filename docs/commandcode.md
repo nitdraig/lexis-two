@@ -34,7 +34,7 @@ Bare `/import` scans every detected source (Claude, Codex, Cursor, pi, OpenCode,
 
 | Source | What you typically get |
 | ------ | ---------------------- |
-| `/import opencode` | Custom commands from `~/.config/opencode/commands/` and project `.opencode/commands/` (`discx.md` → `/discx`, `lexis.md` → `/lexis`, `specx.md` → `/specx`). Uses `$ARGUMENTS` — same as Command Code. |
+| `/import opencode` | Custom commands from `~/.config/opencode/commands/` and project `.opencode/commands/` (`discx.md` → `/discx`, `lexis.md` → `/lexis`, `specx.md` → `/specx`, `desx.md` → `/desx`). Uses `$ARGUMENTS` — same as Command Code. |
 | `/import cursor` | Skills from `.cursor/skills/` / `~/.cursor/skills/` |
 | `/import claude` | Claude plugin skills + `commands/*.toml` if present |
 | `/import gemini` | Gemini `commands/` + skills if the importer finds them |
@@ -88,6 +88,7 @@ Command Code also auto-discovers `.agents/skills/` and `~/.agents/skills/`. `.co
 | Intensity rules every turn | Project `AGENTS.md` (installer `--host agents`) |
 | Discovery | `/discx <slug>` (custom command) or `/skill:discovery` |
 | Specxis | `/specx` / `/specxis` |
+| Design audit | `/desx` / `/desx audit` / `/desx apply` (or `/skill:desx`, `/skill:desx-apply`) |
 | Lexis quality loop | `/lexis plan`, `/lexis review`, `/lexis audit`, `/lexis debt`, `/lexis security`, `/lexis help` |
 | Skill by folder name | `/lexis-two-plan`, `/discovery`, … or `/skill:<name>` if a built-in shadowed it |
 
@@ -104,6 +105,7 @@ Do **not** create `.commandcode/commands/plan.md` or `review.md`. Command Code a
 
 ## Verify
 
-1. `cmd skills list` — expect `discovery`, `specxis`, `lexis-two-plan`, …
+1. `cmd skills list` — expect `discovery`, `specxis`, `desx`, `desx-apply`, `lexis-two-plan`, …
 2. `/discx demo-slug` in a throwaway folder — should scaffold or ask B1–B8, no product code.
 3. `/lexis help` — public verb card, not Command Code’s `/help`.
+4. `/desx audit` — writes `DESIGN-AUDIT.md` only (detector needs no API key).

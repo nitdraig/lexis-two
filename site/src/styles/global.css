@@ -281,6 +281,13 @@ img {
   font-size: clamp(1.05rem, 2.5vw, 1.35rem);
   color: var(--text-muted);
   max-width: 38rem;
+  margin: 0 auto 0.75rem;
+}
+
+.hero .hero-aside {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 38rem;
   margin: 0 auto 1.25rem;
 }
 

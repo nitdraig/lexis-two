@@ -36,7 +36,7 @@ DNS: CNAME `lexis-two` → `<user>.github.io`.
 | Hero + benchmarks CTA | `site/src/components/Home.astro` + i18n |
 | Philosophy ladder | `site/src/i18n/*.ts` |
 | Hosts / commands / install | i18n dictionaries |
-| Command guide (`/guide`, `/es/guide`) | `Guide.astro` + `guide` keys in i18n (`/discx`, `/specx`, `/lexis`) |
+| Command guide (`/guide`, `/es/guide`) | `Guide.astro` + `guide` keys in i18n (`/discx`, `/specx`, `/lexis`, `/desx`) |
 | Benchmark charts | `site/src/pages/benchmarks.astro` + `site/src/data/opencode-go-benchmark.json` |
 | Portability docs | `docs/portability.md` on GitHub (linked, not duplicated) |
 

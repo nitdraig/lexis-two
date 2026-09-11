@@ -29,6 +29,11 @@ const howToSchema = {
       name: item.name,
       text: item.desc,
     })),
+    ...guide.desxItems.map((item) => ({
+      "@type": "HowToStep",
+      name: item.name,
+      text: item.desc,
+    })),
   ],
 };
 ---

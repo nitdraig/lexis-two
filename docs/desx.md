@@ -6,6 +6,18 @@ Public summary: [DESX.md](../DESX.md). Portability: [portability.md](./portabili
 
 ---
 
+## When to run
+
+| Run | Skip |
+|-----|------|
+| After executor/agent UI work | No markup/CSS in the change |
+| Before commit if screens look generic | Backend-only / API-only |
+| User asked `/desx audit` | You only needed `/lexis review` (over-engineering, not visuals) |
+
+Command: **`/desx`** or **`/desx audit`**. Apply: **`/desx apply`**. Detector: `node scripts/desx-audit.js`.
+
+---
+
 ## Roles
 
 | Role | Command | Allowed writes |

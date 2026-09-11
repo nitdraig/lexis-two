@@ -8,7 +8,7 @@
 
 <p align="center">
   <em>The simple way to obtain the best code.</em><br>
-  <small>Portable rules, skills, and slash commands — YAGNI, KISS, DRY, SOLID. <code>/discx</code> what to build, <code>/specx</code> how to ship it, <code>/lexis</code> how lean to code.</small>
+  <small>Coding agents over-build. A portable ruleset that steers them: prove the feature, prefer the platform, ship the minimum. <code>/discx</code> → <code>/specx</code> → <code>/lexis</code>. After UI, <code>/desx</code> is a design pass beside the loop.</small>
 </p>
 
 <p align="center">
@@ -148,6 +148,7 @@ mkdir -p ~/.config/opencode/commands
 cp .opencode/commands/lexis*.md ~/.config/opencode/commands/
 cp .opencode/commands/specx*.md ~/.config/opencode/commands/
 cp .opencode/commands/disc*.md ~/.config/opencode/commands/
+cp .opencode/commands/desx*.md ~/.config/opencode/commands/
 ```
 
 ### OpenCode (Local development / manual)

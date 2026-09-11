@@ -36,6 +36,7 @@ vague idea
   → /discx <slug>              # this MVP + 06-post-mvp (next stage)
   → /specx new <slug>
   → ship / close
+  → /desx audit                # optional, after UI — beside the loop
   → /discx <next-slug>         # scale: seed from previous 06-post-mvp
   → /specx new <next-slug>
 ```

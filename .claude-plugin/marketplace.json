@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "lexis-two",
-  "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
+  "description": "The simple way to obtain the best code. A portable ruleset that steers coding agents: prove the feature, prefer the platform, ship the minimum.",
   "owner": {
     "name": "Agustin Avellaneda",
     "url": "https://github.com/nitdraig"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "lexis-two",
-      "description": "The simple way to obtain the best code. Portable rules, skills, and slash commands for AI agents with lowest tokens usage.",
+      "description": "The simple way to obtain the best code. A portable ruleset that steers coding agents: prove the feature, prefer the platform, ship the minimum.",
       "source": "./",
       "category": "productivity"
     }

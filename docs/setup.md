@@ -140,6 +140,7 @@ mkdir -p ~/.config/opencode/commands
 cp node_modules/@draig/lexis-two/.opencode/commands/lexis*.md ~/.config/opencode/commands/
 cp node_modules/@draig/lexis-two/.opencode/commands/specx*.md ~/.config/opencode/commands/
 cp node_modules/@draig/lexis-two/.opencode/commands/disc*.md ~/.config/opencode/commands/
+cp node_modules/@draig/lexis-two/.opencode/commands/desx*.md ~/.config/opencode/commands/
 ```
 
 ---

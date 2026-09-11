@@ -2,7 +2,7 @@
   meta: {
     title: "Lexis-Two -- La forma simple de obtener el mejor código.",
     description:
-      "Reglas, skills y slash commands portables -- YAGNI, KISS, DRY y SOLID. /discx (qué construir), /specx (cómo shippear), /lexis (qué tan lean).",
+      "Los agentes de código sobreconstruyen. Un ruleset portable que los encauza: probar la feature, preferir la plataforma, shippear el mínimo.",
   },
   nav: {
     philosophy: "Filosofía",
@@ -18,20 +18,23 @@
     badge: "LEXIS-TWO",
     title: "La forma simple de obtener el mejor código.",
     tagline:
-      "Reglas, skills y slash commands portables -- YAGNI, KISS, DRY y SOLID antes de cada línea de código. /discx (qué construir), /specx (cómo shippearlo), /lexis (qué tan lean).",
+      "Los agentes de código sobreconstruyen. Lexis-Two es un ruleset portable que los obliga a probar que la feature hace falta, preferir la plataforma y shippear el mínimo. /discx qué construir, /specx cómo shippearlo, /lexis qué tan lean quedarse.",
+    aside:
+      "Después de UI, /desx atrapa UI genérica de agente — una pasada de diseño al costado del loop, no una cuarta fase. Bugs: salta Discovery, usa /lexis plan.",
     benchmark:
       "Haz benchmarks con tus modelos OpenCode Go, luego publica resultados --",
     benchmarkLink: "OpenCode Go harness",
     benchmarkCode: "npm run benchmark:opencode-go",
     ctaGitHub: "Star en GitHub",
-    ctaInstall: "Clonar e instalar",
+    ctaInstall: "Instalar",
+    ctaGuide: "Guía de uso",
     ctaDocs: "Docs completas de portabilidad",
     ctaBenchmark: "Ver benchmarks",
   },
   philosophy: {
     title: "Disciplina de ingeniería",
     subtitle:
-      "Lexis-Two trata la simplicidad como método: defaults escépticos, patrones de stack de producción y límites mantenibles -- no minimalismo ingenioso por moda.",
+      "El mejor código es el que no se escribe. La simplicidad es método: defaults escépticos y límites mantenibles — no minimalismo ingenioso.",
     principles: [
       {
         name: "YAGNI",
@@ -65,7 +68,7 @@
   example: {
     title: "Un ejemplo",
     subtitle:
-      'Dialogo de confirmacion. De <a href="https://github.com/nitdraig/lexis-two/tree/main/examples/nextjs/01-modal-library">examples/nextjs/01-modal-library</a>.',
+      "Esta es la escalera de decisión en código. Diálogo de confirmación. De <a href=\"https://github.com/nitdraig/lexis-two/tree/main/examples/nextjs/01-modal-library\">examples/nextjs/01-modal-library</a>.",
     without: "Sin Lexis-Two",
     with: "Con Lexis-Two",
     withoutFoot: "Portal, overlay, bloqueo de scroll y Escape para un si/no.",
@@ -76,7 +79,7 @@
   hosts: {
     title: "Funciona donde programas",
     subtitle:
-      "Adaptadores delgados. Una fuente de skills. skills/ es el núcleo -- los principios viven centralizados, los hosts se mantienen tontos.",
+      "Funciona en el agente que ya usas. Adaptadores delgados. Un catálogo skills/ — los hosts se mantienen tontos.",
     headHost: "Host",
     headLevel: "Nivel",
     headEntry: "Punto de entrada",
@@ -98,12 +101,13 @@
   commands: {
     title: "Slash commands",
     subtitle:
-      "Tres familias: /discx (producto), /specx (specs), /lexis (intensidad). En OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
+      "Loop de tres pasos: /discx (producto), /specx (specs), /lexis (intensidad). /desx es una pasada de diseño después de UI, no una cuarta fase. Referencia completa — empezá por la guía si es tu primera vez.",
     guideLink: "Guía de uso completa",
     filterAll: "Todos",
     filterLexis: "Código",
     filterDiscovery: "Producto",
     filterSpecxis: "Specs",
+    filterDesx: "Diseño",
     results: "{count} comandos",
     items: [
       { name: "/lexis status", desc: "Muestra el estado actual del plugin, nivel de intensidad activo y configuración por defecto." },
@@ -139,8 +143,8 @@
     npxHint: "Detecta Cursor, Windsurf, Cline, Kiro, OpenCode y AGENTS.md. Se puede re-ejecutar sin riesgo.",
   },
   adapt: {
-    title: "Adapta a cualquier stack",
-    subtitle: "Tres archivos para tocar. No se necesita un nuevo framework.",
+    title: "Adapta tu stack",
+    subtitle: "Node/TS tiene la cobertura más profunda hoy; otros ecosistemas se suman. Tres archivos para tocar — sin framework nuevo.",
     cards: [
       { title: "1. AGENTS.md", desc: "Reemplaza los shortcuts del stack (Python stdlib, Rust crates, Go stdlib). Ejecuta node scripts/check-rule-copies.js." },
       { title: "2. skills/", desc: "Apunta los comandos de auditoría a tus herramientas -- cargo audit, pip-audit, golangci-lint." },
@@ -149,7 +153,7 @@
   },
   stacks: {
     title: "Stacks enfocados",
-    subtitle: "Patrones optimizados para los stacks de producción más comunes.",
+    subtitle: "La cobertura más profunda hoy es TypeScript / Node.js. Otros ecosistemas se suman de a poco.",
     items: [
       { name: "TypeScript / Node.js", desc: "Next.js, React, Express, Fastify, tipos estrictos" },
       { name: "MongoDB / Mongoose", desc: "Schemas, índices, agregacion, transacciones" },
@@ -212,9 +216,9 @@
   guide: {
     title: "Cómo usar las herramientas",
     subtitle:
-      "Guía práctica de /discx, /specx y /lexis -- qué hace cada uno, cuándo usarlo y un ejemplo para copiar y pegar.",
+      "Qué hace cada comando, cuándo usarlo y un ejemplo para copiar. Loop de tres pasos más una pasada de diseño después de UI.",
     summary:
-      "Tres pilares: /discx define el MVP y la siguiente etapa (06-post-mvp.md), /specx (alias /specxis) lo convierte en spec y tareas, /lexis mantiene la intensidad. Usalos en OpenCode, Gemini CLI, pi, Claude Code o GitHub Copilot.",
+      "Loop: /discx define este MVP y la siguiente etapa, /specx lo convierte en spec y tareas, /lexis mantiene al agente lean. Después de UI, /desx es una pasada de diseño al costado del loop — no una fase de Specxis. Bugs: salta Discovery, usa /lexis plan.",
     availability:
       "Disponibles en los hosts con adaptador de comandos: OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
     levelsTitle: "Niveles de intensidad",
@@ -268,7 +272,7 @@
       { name: "/desx apply", desc: "El implementador aplica P0 y luego P1, tilda solo lo resuelto y vuelve a correr el detector.", example: "/desx apply" },
     ],
     sddHint:
-      "Regla práctica: /discx para producto vago y escala; /specx para coordinación de 3+ archivos; /lexis para intensidad; /desx después de UI. Salta Discovery en bugs y cambios de un archivo. Más en DISCOVERY.md, docs/specxis.md y DESX.md.",
+      "Loop: /discx para producto vago y escala; /specx para coordinación de 3+ archivos; /lexis para intensidad. Después de UI, /desx es una pasada de diseño. Salta Discovery en bugs y cambios de un archivo. Más en DISCOVERY.md, docs/specxis.md y DESX.md.",
     backHome: "Volver al inicio",
   },
 } as const;

@@ -4,6 +4,10 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 ## [Unreleased]
 
+### Changed
+
+- Landing and `/guide` copy: problem-first hero, three-step loop, `/desx` as a design pass beside the loop. npm/README descriptions drop “lowest tokens” as the product promise.
+
 ## [1.3.3] - 2026-09-11
 
 ### Added
@@ -12,7 +16,7 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 - Short aliases: `/specx` → Specxis, `/lexis` stays the intensity command.
 - Specxis soft gate on `new`: suggest `/discx` when the feature is vague and `01-mvp.md` is missing; `sin discovery` bypasses.
 - Discovery `06-post-mvp.md` plus scale cycle: `/discx <next-slug>` after the current Specxis ships.
-- README, landing, and `/guide`: three pillars `/discx` `/specx` `/lexis`; npm `files` include Discovery/Specxis docs.
+- README, landing, and `/guide`: sequential `/discx` `/specx` `/lexis` plus `/desx` after UI; npm `files` include Discovery/Specxis/Desx docs.
 - Command Code harness: [docs/commandcode.md](./docs/commandcode.md) (`/import` + manual copy).
 - Public `/lexis` surface: intensity, `plan`, `review`, `audit`, `debt`, `security`, `help`. `plan` absorbs clarify/sources/compare/scenarios.
 - Design audit: `/desx` (`audit` / `apply`), `design-auditor` role, `scripts/desx-audit.js` (no model), `DESIGN-AUDIT.md`.

@@ -135,6 +135,7 @@ Next slug (from 06-post-mvp): … or none
 Open blockers: … or none
 Continue to Specxis with slug <slug>?
 Later: /discx <next-slug> after this cycle ships (scale).
+Optional after UI: /desx audit (not a Specxis phase).
 ```
 
 ### Step 5 — Gate (this cycle)

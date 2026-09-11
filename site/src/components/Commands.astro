@@ -9,6 +9,7 @@ interface Props {
     filterLexis: string;
     filterDiscovery: string;
     filterSpecxis: string;
+    filterDesx: string;
     results: string;
     items: readonly {
       name: string;
@@ -21,7 +22,7 @@ const { locale, commands } = Astro.props;
 
 const categories = commands.items.map((cmd) => {
   if (cmd.name.startsWith("/lexis")) return "code";
-  if (cmd.name.startsWith("/desx")) return "code";
+  if (cmd.name.startsWith("/desx")) return "design";
   if (cmd.name.startsWith("/specx")) return "specs";
   if (cmd.name.startsWith("/disc")) return "product";
   return "other";
@@ -48,6 +49,9 @@ const categories = commands.items.map((cmd) => {
         </button>
         <button class="filter-btn" type="button" data-filter="specs" aria-pressed="false">
           {commands.filterSpecxis}
+        </button>
+        <button class="filter-btn" type="button" data-filter="design" aria-pressed="false">
+          {commands.filterDesx}
         </button>
       </div>
       <p class="cmd-results" aria-live="polite" aria-atomic="true">

@@ -92,3 +92,5 @@ Specxis includes a highly portable Node.js script (`scripts/specxis-debt.js`) th
 * **Permanent:** Intentional design decisions that require no future action.
 
 Run `/specxis debt` regularly to ensure your technical debt ledger is perfectly in sync with your codebase.
+
+After UI work, run **[/desx](./DESX.md)** (`/desx audit` then `/desx apply`). It is not a Specxis phase.

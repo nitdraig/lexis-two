@@ -10,6 +10,16 @@ This npm package does **not** register a host agent named `design-auditor`. Lexi
 
 ---
 
+## When to use
+
+| Run `/desx` | Skip |
+|-------------|------|
+| After the agent generated or restyled UI | Backend-only change |
+| Before a commit that touches CSS/markup | Typo / copy-only |
+| Screens look generic (nested cards, weak contrast, heading skips) | No UI files in the diff |
+
+---
+
 ## Commands
 
 | Command | Who | Writes |

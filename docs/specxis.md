@@ -11,10 +11,10 @@ Inspired by OpenSpec and GitHub Spec Kit, adapted to the Lexis philosophy.
 | UX + backend coordination | Yes |
 | Ambiguous requirements | Yes |
 | Bug fix with clear cause | No |
-| Style or naming change | No |
+| Style or naming change | No — after UI, use `/desx` if the issue is visual slop |
 | Adding tests to existing code | No |
 
-Vague product ideas belong in [Discovery](./discovery.md) first (`docs/discovery/<slug>/`). Skip it for bugs and one-line fixes.
+Vague product ideas belong in [Discovery](./discovery.md) first (`docs/discovery/<slug>/`). Skip it for bugs and one-line fixes. Visual consistency: [desx.md](./desx.md).
 
 ### When Discovery is required / optional
 

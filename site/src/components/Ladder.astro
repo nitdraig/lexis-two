@@ -1,0 +1,31 @@
+---
+interface Props {
+  ladder: {
+    eyebrow: string;
+    title: string;
+    steps: { code: string; desc: string }[];
+  };
+}
+
+const { ladder } = Astro.props;
+---
+
+<section class="section" id="ladder">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">{ladder.eyebrow}</div>
+      <h2>{ladder.title}</h2>
+    </div>
+    <div class="ladder reveal">
+      {ladder.steps.map((step, index) => (
+        <div class="ladder-step">
+          <div class="ladder-number">{String(index + 1).padStart(2, "0")}</div>
+          <div class="ladder-content">
+            <strong>{step.code}</strong>
+            <span>{step.desc}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

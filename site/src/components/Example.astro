@@ -1,91 +1,72 @@
 ---
 interface Props {
   example: {
+    eyebrow: string;
     title: string;
-    subtitle: string;
-    without: string;
-    with: string;
-    withoutFoot: string;
-    withFoot: string;
     copy: string;
-    copied: string;
+    withoutTitle: string;
+    withoutLines: string;
+    withoutCode: string;
+    withTitle: string;
+    withLines: string;
+    withCode: string;
+    note: string;
+    copyLabel: string;
+    copiedLabel: string;
   };
 }
 
 const { example } = Astro.props;
-
-const beforeSnippet = `function Modal({ open, onClose, title, children }) {
-  useEffect(() => {
-    document.addEventListener("keydown", onEscape);
-    document.body.style.overflow = "hidden";
-    return () => { /* cleanup */ };
-  }, [open]);
-  return createPortal(
-    <div className="modal-overlay" onClick={onClose}>
-      <div role="dialog" onClick={(e) => e.stopPropagation()}>
-        <h2>{title}</h2>
-        {children}
-      </div>
-    </div>,
-    document.body,
-  );
-}`;
-
-const afterSnippet = `// lexis: native <dialog> — backdrop + focus trap built in
-<dialog ref={dialogRef}>
-  <h2>Confirm delete</h2>
-  <form method="dialog">
-    <button value="cancel">Cancel</button>
-    <button value="confirm">Delete</button>
-  </form>
-</dialog>`;
 ---
 
-<section id="example">
-  <div class="wrap">
-    <div class="section-head">
+<section class="section" id="example">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">{example.eyebrow}</div>
       <h2>{example.title}</h2>
-      <p set:html={example.subtitle} />
+      <p>{example.copy}</p>
     </div>
-    <div class="compare">
-      <article class="panel">
-        <div class="panel-head bad">{example.without}</div>
-        <div class="panel-body">
-          <pre><code>{beforeSnippet}</code></pre>
+
+    <div class="code-grid reveal">
+      <div class="code-panel">
+        <div class="code-head">
+          <span>{example.withoutTitle}</span>
+          <span class="line-count">{example.withoutLines}</span>
         </div>
-        <p class="panel-foot">{example.withoutFoot}</p>
-      </article>
-      <article class="panel">
-        <div class="panel-head good">{example.with}</div>
-        <div class="panel-body">
-          <button
-            data-copied={example.copied}
-            type="button"
-            class="copy-btn"
-            data-copy={afterSnippet}
-          >
-            {example.copy}
+        <div class="code-body"><pre class="code-pre" id="withoutCode">{example.withoutCode}</pre></div>
+      </div>
+      <div class="code-panel">
+        <div class="code-head">
+          <span class="good">{example.withTitle}</span>
+          <span class="line-count">{example.withLines}</span>
+        </div>
+        <div class="code-body">
+          <pre class="code-pre" id="withCodeText">{example.withCode}</pre>
+          <button class="copy-btn" id="copyExampleBtn" data-label={example.copyLabel} data-copied={example.copiedLabel}>
+            {example.copyLabel}
           </button>
-          <pre><code>{afterSnippet}</code></pre>
         </div>
-        <p class="panel-foot"><strong set:html={example.withFoot} /></p>
-      </article>
+      </div>
     </div>
+    <p class="code-note reveal">{example.note}</p>
   </div>
 </section>
 
 <script>
-  document.querySelectorAll(".copy-btn").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var text = btn.getAttribute("data-copy");
-      navigator.clipboard.writeText(text!).then(function () {
-        var prev = btn.textContent;
-        var copiedText = btn.getAttribute("data-copied") || "Copied";
-        btn.textContent = copiedText;
-        setTimeout(function () {
-          btn.textContent = prev;
-        }, 1500);
-      });
+  (function () {
+    var btn = document.getElementById("copyExampleBtn");
+    if (!btn) return;
+    btn.addEventListener("click", async function () {
+      var code = document.getElementById("withCodeText")!.textContent || "";
+      try {
+        await navigator.clipboard.writeText(code.trim());
+        btn.textContent = btn.getAttribute("data-copied");
+      } catch {
+        btn.textContent = "Select";
+      }
+      setTimeout(function () {
+        btn.textContent = btn.getAttribute("data-label");
+      }, 1400);
     });
-  });
+  })();
 </script>

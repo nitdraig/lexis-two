@@ -1,7 +1,5 @@
 <p align="center">
-  <picture>
-    <img src="https://github.com/nitdraig/lexis-two/blob/main/assets/logo.png" width="220" alt="Lexis-two">
-  </picture>
+  <img src="https://github.com/nitdraig/lexis-two/blob/main/site/public/new-logo.png?raw=true" width="160" alt="Lexis-Two">
 </p>
 
 <h1 align="center">Lexis-two</h1>
@@ -23,7 +21,6 @@
 
 ---
 
-Built on [OpenCode](https://opencode.ai) and [Cursor](https://cursor.sh).
 Benchmark harness and attribution: [ponytail](https://github.com/DietrichGebert/ponytail) by DietrichGebert (MIT).
 
 ---

@@ -1,0 +1,49 @@
+---
+interface Props {
+  problem: {
+    eyebrow: string;
+    title: string;
+    copy: string;
+    withoutTitle: string;
+    withoutFlow: string[];
+    withTitle: string;
+    withFlow: string[];
+  };
+}
+
+const { problem } = Astro.props;
+---
+
+<section class="section" id="problem">
+  <div class="container problem-grid reveal">
+    <div class="problem-copy">
+      <div class="eyebrow">{problem.eyebrow}</div>
+      <h2>{problem.title}</h2>
+      <p>{problem.copy}</p>
+    </div>
+    <div class="compare">
+      <div class="compare-card bad">
+        <h3>{problem.withoutTitle}</h3>
+        <div class="flow-line">
+          {problem.withoutFlow.map((item, i) => (
+            <>
+              {i > 0 && <span class="arrow">→</span>}
+              <span>{item}</span>
+            </>
+          ))}
+        </div>
+      </div>
+      <div class="compare-card good">
+        <h3>{problem.withTitle}</h3>
+        <div class="flow-line">
+          {problem.withFlow.map((item, i) => (
+            <>
+              {i > 0 && <span class="arrow">→</span>}
+              <span>{item}</span>
+            </>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

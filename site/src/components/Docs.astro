@@ -1,0 +1,167 @@
+---
+import type { Locale } from "../i18n/index.js";
+import { getDictionary } from "../i18n/index.js";
+import Layout from "../layouts/Layout.astro";
+import Header from "./Header.astro";
+import Footer from "./Footer.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getDictionary(locale);
+const d = t.docs;
+---
+
+<Layout
+  locale={locale}
+  canonicalPath={locale === "es" ? "/es/docs" : "/docs"}
+  title={d.title}
+  description={d.subtitle}
+>
+  <Header locale={locale} nav={t.nav} />
+
+  <main id="main" class="docs-page">
+    <div class="container docs-head">
+      <div class="eyebrow">Lexis-Two</div>
+      <h1>{d.title}</h1>
+      <p>{d.subtitle}</p>
+    </div>
+
+    <div class="container docs-grid">
+      <aside class="docs-toc reveal">
+        <h2>On this page</h2>
+        {d.toc.map((item, index) => (
+          <a href={`#docs-section-${index}`}>{item}</a>
+        ))}
+      </aside>
+
+      <article class="docs-body reveal">
+        <p>{d.summary}</p>
+        <p>{d.availability}</p>
+
+        <h2 id="docs-section-0">{d.levelsTitle}</h2>
+        <p>{d.levelsSubtitle}</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>{d.colLevel}</th>
+                <th>{d.colWhen}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {d.levels.map((level) => (
+                <tr>
+                  <td><code>/lexis {level.name}</code></td>
+                  <td>{level.when} — {level.desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="docs-section-1">{d.workflowTitle}</h2>
+        <p>{d.workflowSubtitle}</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>{d.colCommand}</th>
+                <th>{d.colWhat}</th>
+                <th>{d.colExample}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {d.items.map((item) => (
+                <tr>
+                  <td><code>{item.name}</code></td>
+                  <td>{item.desc}</td>
+                  <td><code>{item.example}</code></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="docs-section-2">{d.discoveryTitle}</h2>
+        <p>{d.discoverySubtitle}</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>{d.colCommand}</th>
+                <th>{d.colWhat}</th>
+                <th>{d.colExample}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {d.discoveryItems.map((item) => (
+                <tr>
+                  <td><code>{item.name}</code></td>
+                  <td>{item.desc}</td>
+                  <td><code>{item.example}</code></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="docs-section-3">{d.specxisTitle}</h2>
+        <p>{d.specxisSubtitle}</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>{d.colCommand}</th>
+                <th>{d.colWhat}</th>
+                <th>{d.colExample}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {d.specxisItems.map((item) => (
+                <tr>
+                  <td><code>{item.name}</code></td>
+                  <td>{item.desc}</td>
+                  <td><code>{item.example}</code></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="docs-section-4">{d.desxTitle}</h2>
+        <p>{d.desxSubtitle}</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>{d.colCommand}</th>
+                <th>{d.colWhat}</th>
+                <th>{d.colExample}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {d.desxItems.map((item) => (
+                <tr>
+                  <td><code>{item.name}</code></td>
+                  <td>{item.desc}</td>
+                  <td><code>{item.example}</code></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin-top: 2rem;">{d.sddHint}</p>
+
+        <p style="margin-top: 2rem;">
+          <a class="button" href={locale === "es" ? "/es" : "/"}>{d.backHome}</a>
+        </p>
+      </article>
+    </div>
+  </main>
+
+  <Footer locale={locale} footer={t.footer} />
+</Layout>

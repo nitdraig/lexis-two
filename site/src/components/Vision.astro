@@ -1,0 +1,37 @@
+---
+interface Props {
+  vision: {
+    eyebrow: string;
+    title: string;
+    copy: string;
+    cards: { tag: string; title: string; desc: string }[];
+    futureTitle: string;
+    futureCopy: string;
+  };
+}
+
+const { vision } = Astro.props;
+---
+
+<section class="section" id="vision">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">{vision.eyebrow}</div>
+      <h2>{vision.title}</h2>
+      <p>{vision.copy}</p>
+    </div>
+    <div class="vision reveal">
+      {vision.cards.map((card) => (
+        <article class="vision-card">
+          <div class="tag">{card.tag}</div>
+          <h3>{card.title}</h3>
+          <p>{card.desc}</p>
+        </article>
+      ))}
+    </div>
+    <div class="future reveal">
+      <h3>{vision.futureTitle}</h3>
+      <p>{vision.futureCopy}</p>
+    </div>
+  </div>
+</section>

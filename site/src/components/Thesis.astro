@@ -1,0 +1,20 @@
+---
+interface Props {
+  thesis: {
+    eyebrow: string;
+    title: string;
+  };
+}
+
+const { thesis } = Astro.props;
+const titleParts = thesis.title.split("<span>");
+const titleBefore = titleParts[0];
+const titleSpan = titleParts[1]?.replace("</span>", "") ?? "";
+---
+
+<section class="thesis">
+  <div class="container thesis-inner reveal">
+    <div class="eyebrow">{thesis.eyebrow}</div>
+    <h2>{titleBefore}<span>{titleSpan}</span></h2>
+  </div>
+</section>

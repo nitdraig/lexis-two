@@ -1,0 +1,94 @@
+---
+interface Props {
+  checkpoint: {
+    eyebrow: string;
+    title: string;
+    copy: string;
+    cardTitle: string;
+    statusPaused: string;
+    statusResuming: string;
+    statusModify: string;
+    statusWaiting: string;
+    prompt: string;
+    optionA: { label: string; desc: string };
+    optionB: { label: string; desc: string };
+    recommendation: string;
+    approve: string;
+    modify: string;
+    ask: string;
+    result: string;
+  };
+}
+
+const { checkpoint } = Astro.props;
+---
+
+<section class="section" id="checkpoint">
+  <div class="container checkpoint">
+    <div class="checkpoint-copy reveal">
+      <div class="eyebrow">{checkpoint.eyebrow}</div>
+      <h2>{checkpoint.title}</h2>
+      <p>{checkpoint.copy}</p>
+    </div>
+
+    <div class="decision-card reveal" id="decisionCard">
+      <div class="decision-top">
+        <span>{checkpoint.cardTitle}</span>
+        <span class="decision-status" id="decisionStatus" data-paused={checkpoint.statusPaused} data-resuming={checkpoint.statusResuming} data-modify={checkpoint.statusModify} data-waiting={checkpoint.statusWaiting}>● {checkpoint.statusPaused}</span>
+      </div>
+      <div class="decision-body">
+        <p>{checkpoint.prompt}</p>
+        <div class="option selected" data-option="A">
+          <strong>{checkpoint.optionA.label}</strong>
+          <p>{checkpoint.optionA.desc}</p>
+        </div>
+        <div class="option" data-option="B">
+          <strong>{checkpoint.optionB.label}</strong>
+          <p>{checkpoint.optionB.desc}</p>
+        </div>
+        <div class="decision-recommendation">
+          {checkpoint.recommendation} <strong id="recommendation">{checkpoint.optionA.label}</strong>
+        </div>
+        <div class="decision-actions">
+          <button class="approve" id="approveBtn">{checkpoint.approve}</button>
+          <button id="modifyBtn">{checkpoint.modify}</button>
+          <button id="askBtn">{checkpoint.ask}</button>
+        </div>
+      </div>
+      <div class="decision-result" id="decisionResult">✓ {checkpoint.result}</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var options = document.querySelectorAll(".option");
+    var recommendation = document.getElementById("recommendation");
+    var decisionCard = document.getElementById("decisionCard");
+    var decisionStatus = document.getElementById("decisionStatus");
+    if (!options.length || !recommendation || !decisionCard || !decisionStatus) return;
+
+    var ds = decisionStatus as HTMLElement;
+    var pausedText = "● " + ds.dataset.paused;
+    options.forEach(function (option) {
+      option.addEventListener("click", function () {
+        options.forEach(function (o) { o.classList.remove("selected"); });
+        option.classList.add("selected");
+        recommendation.textContent = option.querySelector("strong")!.textContent;
+        decisionCard.classList.remove("approved");
+        ds.textContent = pausedText;
+      });
+    });
+
+    document.getElementById("approveBtn")!.addEventListener("click", function () {
+      decisionCard.classList.add("approved");
+      ds.textContent = "✓ " + ds.dataset.resuming;
+    });
+    document.getElementById("modifyBtn")!.addEventListener("click", function () {
+      ds.textContent = "● " + ds.dataset.modify;
+    });
+    document.getElementById("askBtn")!.addEventListener("click", function () {
+      ds.textContent = "● " + ds.dataset.waiting;
+    });
+  })();
+</script>

@@ -1,62 +1,80 @@
 ---
-import type { Locale } from "../i18n/index.js";
-
 interface Props {
-  locale: Locale;
   hero: {
-    badge: string;
+    eyebrow: string;
     title: string;
-    tagline: string;
-    aside: string;
-    benchmark: string;
-    ctaBenchmark: string;
-    benchmarkLink: string;
-    benchmarkCode: string;
+    copy: string;
+    ctaExplore: string;
     ctaGitHub: string;
-    ctaInstall: string;
-    ctaGuide: string;
-    ctaDocs: string;
+    meta: string;
+    install: string;
+    workflow: {
+      humanTop: { label: string; desc: string };
+      discover: { label: string; desc: string };
+      plan: { label: string; desc: string };
+      build: { label: string; desc: string };
+      review: { label: string; desc: string };
+      humanBottom: { label: string; desc: string };
+      status: string;
+      statusNote: string;
+    };
   };
 }
 
-const { locale, hero } = Astro.props;
-const guideHref = locale === "es" ? "/es/guide" : "/guide";
+const { hero } = Astro.props;
+const titleParts = hero.title.split("<em>");
+const titleBefore = titleParts[0];
+const titleEm = titleParts[1]?.replace("</em>", "") ?? "";
 ---
 
-<section class="hero">
-  <div class="wrap">
-    <div class="hero-content">
-      <img src="/assets/logo.png" width="220" height="48" alt="Lexis-Two" />
-      <p class="hero-badge">{hero.badge}</p>
-      <h1>{hero.title}</h1>
+<section class="hero" id="top">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow">{hero.eyebrow}</div>
+      <h1>{titleBefore}<em>{titleEm}</em></h1>
+      <p class="hero-copy">{hero.copy}</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#loop">{hero.ctaExplore}</a>
+        <a class="button" href="https://github.com/nitdraig/lexis-two" target="_blank" rel="noreferrer">{hero.ctaGitHub}</a>
+      </div>
+      <div class="install-line">
+        <span class="prompt">$</span>
+        <code>{hero.install}</code>
+      </div>
+      <div class="hero-meta" style="margin-top: 0.75rem;">{hero.meta}</div>
     </div>
-    <p class="tagline">{hero.tagline}</p>
-    <p class="hero-aside">{hero.aside}</p>
-    <p class="benchmark-note">
-      {hero.benchmark}
-      <a href="#benchmarks">{hero.ctaBenchmark}</a>
-      ·
-      <a href="https://github.com/nitdraig/lexis-two/blob/main/benchmarks/README.md#opencode-go">
-        {hero.benchmarkLink}
-      </a>
-      (<code>{hero.benchmarkCode}</code>).
-    </p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="#install">{hero.ctaInstall}</a>
-      <a class="btn btn-ghost" href={guideHref}>{hero.ctaGuide}</a>
-      <a
-        class="btn btn-ghost"
-        href="https://github.com/nitdraig/lexis-two"
-        rel="noopener noreferrer"
-      >
-        {hero.ctaGitHub}
-      </a>
-      <a
-        class="btn btn-ghost"
-        href="https://github.com/nitdraig/lexis-two/blob/main/docs/portability.md"
-      >
-        {hero.ctaDocs}
-      </a>
+
+    <div class="workflow" aria-label="Lexis workflow">
+      <div class="workflow-grid">
+        <div class="node human">
+          <strong>{hero.workflow.humanTop.label}</strong>
+          <span>{hero.workflow.humanTop.desc}</span>
+        </div>
+        <div class="node">
+          <strong>{hero.workflow.discover.label}</strong>
+          <span>{hero.workflow.discover.desc}</span>
+        </div>
+        <div class="node">
+          <strong>{hero.workflow.plan.label}</strong>
+          <span>{hero.workflow.plan.desc}</span>
+        </div>
+        <div class="node">
+          <strong>{hero.workflow.build.label}</strong>
+          <span>{hero.workflow.build.desc}</span>
+        </div>
+        <div class="node">
+          <strong>{hero.workflow.review.label}</strong>
+          <span>{hero.workflow.review.desc}</span>
+        </div>
+        <div class="node human">
+          <strong>{hero.workflow.humanBottom.label}</strong>
+          <span>{hero.workflow.humanBottom.desc}</span>
+        </div>
+      </div>
+      <div class="workflow-status">
+        <span><span class="pulse"></span>{hero.workflow.status}</span>
+        <span>{hero.workflow.statusNote}</span>
+      </div>
     </div>
   </div>
 </section>

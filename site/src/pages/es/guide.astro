@@ -1,49 +1,15 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import Guide from "../../components/Guide.astro";
-import { getDictionary } from "../../i18n/index.js";
-
-const locale = "es" as const;
-const t = getDictionary(locale);
-const guide = t.guide;
-
-const howToSchema = {
-  "@context": "https://schema.org",
-  "@type": "HowTo",
-  name: guide.title,
-  description: guide.subtitle,
-  totalTime: "PT10M",
-  step: [
-    ...guide.items.map((item) => ({
-      "@type": "HowToStep",
-      name: item.name,
-      text: item.desc,
-    })),
-    ...guide.discoveryItems.map((item) => ({
-      "@type": "HowToStep",
-      name: item.name,
-      text: item.desc,
-    })),
-    ...guide.specxisItems.map((item) => ({
-      "@type": "HowToStep",
-      name: item.name,
-      text: item.desc,
-    })),
-    ...guide.desxItems.map((item) => ({
-      "@type": "HowToStep",
-      name: item.name,
-      text: item.desc,
-    })),
-  ],
-};
+export const prerender = true;
 ---
-
-<Layout
-  locale={locale}
-  canonicalPath="/es/guide"
-  title={guide.title}
-  description={guide.subtitle}
-  extraSchema={howToSchema}
->
-  <Guide locale={locale} />
-</Layout>
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="0; url=/es/docs" />
+    <link rel="canonical" href="https://lexis-two.excelso.xyz/es/docs" />
+    <title>Redirigiendo a Docs</title>
+  </head>
+  <body>
+    <p>Redirigiendo a <a href="/es/docs">/es/docs</a>…</p>
+  </body>
+</html>

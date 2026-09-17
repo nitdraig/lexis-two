@@ -1,185 +1,51 @@
 ---
 interface Props {
   install: {
+    eyebrow: string;
     title: string;
-    subtitle: string;
-    tabNpx: string;
-    tabOpencode: string;
-    tabOpencodeNpm: string;
-    tabCursor: string;
-    tabClone: string;
-    npxHint: string;
+    command: string;
+    copy: string;
+    copied: string;
+    chips: string[];
   };
 }
 
 const { install } = Astro.props;
 ---
 
-<section id="install">
-  <div class="wrap">
-    <div class="section-head">
+<section class="section" id="install">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">{install.eyebrow}</div>
       <h2>{install.title}</h2>
-      <p>{install.subtitle}</p>
     </div>
-    <div class="install-tabs" role="tablist" aria-label="Install instructions">
-      <button
-        type="button"
-        class="tab-btn"
-        role="tab"
-        aria-selected="true"
-        aria-controls="tab-npx"
-        id="tab-btn-npx"
-      >
-        {install.tabNpx}
-      </button>
-      <button
-        type="button"
-        class="tab-btn"
-        role="tab"
-        aria-selected="false"
-        aria-controls="tab-opencode-npm"
-        id="tab-btn-opencode-npm"
-      >
-        {install.tabOpencodeNpm}
-      </button>
-      <button
-        type="button"
-        class="tab-btn"
-        role="tab"
-        aria-selected="false"
-        aria-controls="tab-opencode"
-        id="tab-btn-opencode"
-      >
-        {install.tabOpencode}
-      </button>
-      <button
-        type="button"
-        class="tab-btn"
-        role="tab"
-        aria-selected="false"
-        aria-controls="tab-cursor"
-        id="tab-btn-cursor"
-      >
-        {install.tabCursor}
-      </button>
-      <button
-        type="button"
-        class="tab-btn"
-        role="tab"
-        aria-selected="false"
-        aria-controls="tab-clone"
-        id="tab-btn-clone"
-      >
-        {install.tabClone}
-      </button>
+    <div class="install-box reveal">
+      <code id="installCommand">{install.command}</code>
+      <button id="copyInstallBtn" data-label={install.copy} data-copied={install.copied}>{install.copy}</button>
     </div>
-    <div
-      id="tab-npx"
-      class="tab-panel active"
-      role="tabpanel"
-      aria-labelledby="tab-btn-npx"
-    >
-      <p class="install-hint">{install.npxHint}</p>
-      <pre><code set:html={`# Interactive — from your project directory
-npx @draig/lexis-two install
-
-# Non-interactive: Cursor + OpenCode + AGENTS.md
-npx @draig/lexis-two install --host cursor,opencode,agents --scope project --yes
-
-# Plugin hosts (setup hints for Claude, Copilot, Gemini, pi)
-npx @draig/lexis-two install --host claude,gemini,copilot --yes
-
-# Preview without writing files
-npx @draig/lexis-two install --dry-run --yes
-
-# Uninstall Lexis-Two files from the project
-npx @draig/lexis-two install --uninstall --host cursor,opencode --scope project --yes`} /></pre>
-    </div>
-    <div
-      id="tab-opencode-npm"
-      class="tab-panel"
-      role="tabpanel"
-      aria-labelledby="tab-btn-opencode-npm"
-      hidden
-    >
-      <pre><code set:html={`# Or let the installer merge opencode.json for you:
-npx @draig/lexis-two install --host opencode --scope project --yes
-
-# Manual: add to opencode.json
-{
-  "plugin": ["@draig/lexis-two"]
-}`} /></pre>
-    </div>
-    <div
-      id="tab-opencode"
-      class="tab-panel"
-      role="tabpanel"
-      aria-labelledby="tab-btn-opencode"
-      hidden
-    >
-      <pre><code set:html={`git clone https://github.com/nitdraig/lexis-two.git ~/lexis-two
-
-# opencode.json
-{
-  "plugin": ["~/lexis-two/.opencode/plugins/lexis-two.mjs"],
-  "instructions": ["~/lexis-two/AGENTS.md"]
-}`} /></pre>
-    </div>
-    <div
-      id="tab-cursor"
-      class="tab-panel"
-      role="tabpanel"
-      aria-labelledby="tab-btn-cursor"
-      hidden
-    >
-      <pre><code set:html={`# Or use the installer:
-npx @draig/lexis-two install --host cursor --scope both --yes
-
-# Manual — project:
-cp ~/lexis-two/.cursor/rules/lexis-two.mdc .cursor/rules/lexis-two.mdc
-
-# Manual — global:
-cp ~/lexis-two/.cursor/rules/lexis-two.mdc ~/.cursor/rules/lexis-two.mdc`} /></pre>
-    </div>
-    <div
-      id="tab-clone"
-      class="tab-panel"
-      role="tabpanel"
-      aria-labelledby="tab-btn-clone"
-      hidden
-    >
-      <pre><code set:html={`git clone https://github.com/nitdraig/lexis-two.git ~/lexis-two
-
-# More hosts: docs/portability.md in the repo
-# Default mode: LEXIS_TWO_DEFAULT_MODE=full
-# Or ~/.config/lexis-two/config.json → { "defaultMode": "full" }`} /></pre>
+    <div class="install-meta reveal">
+      {install.chips.map((chip) => (
+        <span class="chip">{chip}</span>
+      ))}
     </div>
   </div>
 </section>
 
-<style>
-  .install-hint {
-    margin: 0 0 0.75rem;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-  }
-</style>
-
 <script>
-  document.querySelectorAll(".tab-btn").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var target = btn.getAttribute("aria-controls");
-      document.querySelectorAll(".tab-btn").forEach(function (b) {
-        b.setAttribute("aria-selected", "false");
-      });
-      document.querySelectorAll(".tab-panel").forEach(function (p) {
-        p.classList.remove("active");
-        p.hidden = true;
-      });
-      btn.setAttribute("aria-selected", "true");
-      var panel = document.getElementById(target!);
-      panel!.classList.add("active");
-      panel!.hidden = false;
+  (function () {
+    var btn = document.getElementById("copyInstallBtn");
+    if (!btn) return;
+    btn.addEventListener("click", async function () {
+      var command = document.getElementById("installCommand")!.textContent || "";
+      try {
+        await navigator.clipboard.writeText(command.trim());
+        btn.textContent = btn.getAttribute("data-copied");
+      } catch {
+        btn.textContent = "Select";
+      }
+      setTimeout(function () {
+        btn.textContent = btn.getAttribute("data-label");
+      }, 1400);
     });
-  });
+  })();
 </script>

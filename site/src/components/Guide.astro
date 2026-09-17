@@ -11,7 +11,7 @@ const { locale } = Astro.props;
 
 // lexis: guide is fully typed by Dictionary (typeof en) — no extra interface needed
 const t = getDictionary(locale);
-const guide = t.guide;
+const guide = t.docs;
 const homeHref = locale === "es" ? "/es" : "/";
 ---
 
@@ -145,7 +145,7 @@ const homeHref = locale === "es" ? "/es" : "/";
   </div>
 </main>
 
-<Footer footer={t.footer} />
+<Footer locale={locale} footer={t.footer} />
 
 <style>
   .topbar {

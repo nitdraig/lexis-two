@@ -1,0 +1,31 @@
+---
+interface Props {
+  principles: {
+    eyebrow: string;
+    title: string;
+    copy: string;
+    items: { code: string; title: string; desc: string }[];
+  };
+}
+
+const { principles } = Astro.props;
+---
+
+<section class="section" id="principles">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">{principles.eyebrow}</div>
+      <h2>{principles.title}</h2>
+      <p>{principles.copy}</p>
+    </div>
+    <div class="principles reveal">
+      {principles.items.map((item) => (
+        <article class="principle">
+          <strong>{item.code}</strong>
+          <h3>{item.title}</h3>
+          <p>{item.desc}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

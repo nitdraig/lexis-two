@@ -1,0 +1,85 @@
+---
+interface Props {
+  loop: {
+    eyebrow: string;
+    title: string;
+    copy: string;
+    modeHuman: string;
+    modeAuto: string;
+    steps: { num: string; title: string; desc: string; tag: string }[];
+    stepsAuto: { num: string; title: string; desc: string; tag: string }[];
+    gateLabel: string;
+    noPauseLabel: string;
+  };
+}
+
+const { loop } = Astro.props;
+---
+
+<section class="section" id="loop">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">{loop.eyebrow}</div>
+      <h2>{loop.title}</h2>
+      <p>{loop.copy}</p>
+    </div>
+
+    <div class="mode-toggle reveal" role="tablist" aria-label="Loop mode">
+      <button class="active" data-mode="human" role="tab" aria-selected="true">{loop.modeHuman}</button>
+      <button data-mode="auto" role="tab" aria-selected="false">{loop.modeAuto}</button>
+    </div>
+
+    <div class="mode-panel active" data-panel="human">
+      <div class="loop reveal">
+        {loop.steps.map((step, index) => (
+          <article class="loop-step">
+            <div class="number">{step.num}</div>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+            {index === 2 && (
+              <div style="position: absolute; top: 1.1rem; right: 1.1rem; font: 0.65rem var(--font-mono); color: var(--gate); background: var(--gate-dim); padding: 0.25rem 0.55rem; border-radius: 999px;">
+                ⏸ {loop.gateLabel}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <div class="mode-panel" data-panel="auto">
+      <div class="loop reveal">
+        {loop.stepsAuto.map((step, index) => (
+          <article class="loop-step">
+            <div class="number">{step.num}</div>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+            {index === 2 && (
+              <div style="position: absolute; top: 1.1rem; right: 1.1rem; font: 0.65rem var(--font-mono); color: var(--text-muted); background: var(--bg-elevated); border: 1px solid var(--border); padding: 0.25rem 0.55rem; border-radius: 999px;">
+                {loop.noPauseLabel}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var toggle = document.querySelector(".mode-toggle");
+    if (!toggle) return;
+    toggle.querySelectorAll("button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        toggle!.querySelectorAll("button").forEach(function (b) {
+          b.classList.toggle("active", b === btn);
+          b.setAttribute("aria-selected", b === btn ? "true" : "false");
+        });
+        var mode = btn.getAttribute("data-mode");
+        document.querySelectorAll(".mode-panel").forEach(function (p) {
+          p.classList.toggle("active", p.getAttribute("data-panel") === mode);
+        });
+      });
+    });
+  })();
+</script>

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lexis-Two — El loop de agentes que vos aprobás</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0c1016;
+  --surface:#12181f;
+  --surface-2:#182029;
+  --line:#28323d;
+  --text:#eef1f4;
+  --text-muted:#93a0ad;
+  --loop:#5fd8c9;      /* automatización / el loop corre solo */
+  --loop-dim:#2a4a47;
+  --gate:#f2a154;      /* human-in-the-loop / gate humano */
+  --gate-dim:#4a3a28;
+  --serif-display:'Space Grotesk', sans-serif;
+  --sans:'IBM Plex Sans', sans-serif;
+  --mono:'IBM Plex Mono', monospace;
+}
+:root:not([data-theme="light"]){ color-scheme: dark; }
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --ink:#f7f5f1; --surface:#ffffff; --surface-2:#f0eee9; --line:#ddd8ce;
+    --text:#181510; --text-muted:#585047; --loop-dim:#cdeee8; --gate-dim:#f9e3c8;
+  }
+}
+:root[data-theme="light"]{
+  --ink:#f7f5f1; --surface:#ffffff; --surface-2:#f0eee9; --line:#ddd8ce;
+  --text:#181510; --text-muted:#585047; --loop-dim:#cdeee8; --gate-dim:#f9e3c8;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--ink); color:var(--text);
+  font-family:var(--sans); line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;}
+.wrap{max-width:1120px; margin:0 auto; padding:0 28px;}
+a{color:inherit;}
+
+/* ---------- NAV ---------- */
+header.nav{
+  position:sticky; top:0; z-index:50;
+  background:color-mix(in srgb, var(--ink) 88%, transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 28px; max-width:1120px; margin:0 auto;
+}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--serif-display); font-weight:600; font-size:1.05rem; text-decoration:none;}
+.brand .dot{width:9px;height:9px;border-radius:50%; background:var(--loop); box-shadow:0 0 0 3px var(--loop-dim);}
+.navlinks{display:flex; gap:28px; font-size:.92rem;}
+.navlinks a{text-decoration:none; color:var(--text-muted); transition:color .15s;}
+.navlinks a:hover{color:var(--text);}
+.navcta{display:flex; gap:10px; align-items:center;}
+.btn{
+  font-family:var(--sans); font-size:.88rem; font-weight:500;
+  padding:9px 16px; border-radius:7px; border:1px solid var(--line);
+  text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+  cursor:pointer; transition:border-color .15s, background .15s;
+  background:transparent; color:var(--text);
+}
+.btn:hover{border-color:var(--text-muted);}
+.btn-primary{background:var(--loop); border-color:var(--loop); color:#04221d; font-weight:600;}
+.btn-primary:hover{filter:brightness(1.08); border-color:var(--loop);}
+@media (max-width:820px){ .navlinks{display:none;} }
+
+/* ---------- HERO ---------- */
+.hero{padding:88px 0 64px; border-bottom:1px solid var(--line);}
+.hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center;}
+@media (max-width:900px){ .hero-grid{grid-template-columns:1fr; gap:44px;} }
+.kicker{
+  font-family:var(--mono); font-size:.82rem; color:var(--gate);
+  display:flex; align-items:center; gap:8px; margin-bottom:18px;
+}
+.kicker::before{content:""; width:14px; height:1px; background:var(--gate);}
+h1{
+  font-family:var(--serif-display); font-weight:600;
+  font-size:clamp(2.1rem, 4.2vw, 3.15rem); line-height:1.08; letter-spacing:-.01em;
+  margin:0 0 22px;
+}
+h1 em{font-style:normal; color:var(--loop);}
+.hero p.lead{
+  font-size:1.1rem; color:var(--text-muted); max-width:52ch; margin:0 0 30px;
+}
+.hero-ctas{display:flex; flex-wrap:wrap; gap:12px; margin-bottom:26px;}
+.install-line{
+  font-family:var(--mono); font-size:.85rem; color:var(--text-muted);
+  background:var(--surface); border:1px solid var(--line); border-radius:7px;
+  padding:11px 14px; display:inline-flex; align-items:center; gap:10px; max-width:100%;
+}
+.install-line span.prompt{color:var(--loop);}
+.install-line code{color:var(--text); overflow-x:auto;}
+
+/* loop diagram */
+.loop-svg-wrap{
+  background:var(--surface); border:1px solid var(--line); border-radius:16px;
+  padding:22px; position:relative;
+}
+.loop-caption{font-family:var(--mono); font-size:.75rem; color:var(--text-muted); margin-top:14px; text-align:center;}
+.loop-caption b{color:var(--gate); font-weight:600;}
+
+/* orbit dot animation, one deliberate motion */
+.orbit-dot{ offset-path: path("M 130 24 A 106 106 0 1 1 129.9 24"); animation: orbit 7s linear infinite; }
+@keyframes orbit{ to { offset-distance: 100%; } }
+@media (prefers-reduced-motion: reduce){ .orbit-dot{ animation:none; } }
+
+/* ---------- SECTION generic ---------- */
+section{padding:76px 0;}
+.section-head{max-width:640px; margin-bottom:44px;}
+.eyebrow{font-family:var(--mono); font-size:.78rem; color:var(--loop); margin:0 0 10px;}
+h2{font-family:var(--serif-display); font-size:clamp(1.6rem,2.8vw,2.15rem); font-weight:600; margin:0 0 14px; letter-spacing:-.01em;}
+.section-head p{color:var(--text-muted); font-size:1.02rem; max-width:56ch;}
+.divider{border:none; border-top:1px solid var(--line); margin:0;}
+
+/* ---------- PROBLEM ---------- */
+.problem-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
+@media (max-width:760px){ .problem-grid{grid-template-columns:1fr;} }
+.problem-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:26px;
+}
+.problem-card h3{font-family:var(--serif-display); font-size:1.12rem; margin:0 0 10px; font-weight:600;}
+.problem-card p{color:var(--text-muted); margin:0; font-size:.96rem;}
+.problem-card.bad{border-color:color-mix(in srgb, var(--gate) 35%, var(--line));}
+.problem-card.bad h3::before{content:"⚠"; margin-right:8px; color:var(--gate);}
+.problem-card.good{border-color:color-mix(in srgb, var(--loop) 40%, var(--line)); background:color-mix(in srgb, var(--loop) 6%, var(--surface));}
+.problem-card.good h3::before{content:"✓"; margin-right:8px; color:var(--loop);}
+
+/* ---------- LOOP STAGES ---------- */
+.stage-list{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+.stage{
+  display:grid; grid-template-columns:64px 1fr auto; gap:20px; align-items:start;
+  padding:24px 26px; border-bottom:1px solid var(--line); background:var(--surface);
+}
+.stage:last-child{border-bottom:none;}
+.stage-num{
+  font-family:var(--mono); font-size:1.5rem; color:var(--text-muted); font-weight:500; opacity:.5;
+}
+.stage h4{font-family:var(--serif-display); font-size:1.08rem; margin:0 0 6px; font-weight:600; display:flex; align-items:center; gap:10px;}
+.stage code.tag{
+  font-family:var(--mono); font-size:.72rem; background:var(--surface-2); border:1px solid var(--line);
+  padding:2px 8px; border-radius:5px; color:var(--loop);
+}
+.stage p{margin:0; color:var(--text-muted); font-size:.94rem; max-width:60ch;}
+.gate-badge{
+  align-self:center; font-family:var(--mono); font-size:.72rem; color:var(--gate);
+  background:var(--gate-dim); border:1px solid color-mix(in srgb, var(--gate) 45%, transparent);
+  padding:6px 10px; border-radius:20px; white-space:nowrap;
+}
+
+/* toggle */
+.mode-toggle{display:inline-flex; border:1px solid var(--line); border-radius:9px; padding:4px; margin-bottom:28px; background:var(--surface);}
+.mode-toggle button{
+  font-family:var(--mono); font-size:.82rem; padding:9px 16px; border-radius:6px; border:none;
+  background:transparent; color:var(--text-muted); cursor:pointer; transition:.15s;
+}
+.mode-toggle button.active{background:var(--surface-2); color:var(--text);}
+.mode-panel{display:none;}
+.mode-panel.active{display:block;}
+
+/* ---------- AGENTS ---------- */
+.agent-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+@media (max-width:860px){ .agent-grid{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:560px){ .agent-grid{grid-template-columns:1fr;} }
+.agent-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px;
+}
+.agent-card .role{font-family:var(--mono); font-size:.72rem; color:var(--text-muted); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;}
+.agent-card .perm{
+  font-size:.66rem; padding:2px 7px; border-radius:20px; font-family:var(--mono);
+}
+.perm.write{background:var(--gate-dim); color:var(--gate);}
+.perm.read{background:var(--loop-dim); color:var(--loop);}
+.agent-card h4{font-family:var(--serif-display); font-size:1rem; margin:0 0 8px; font-weight:600;}
+.agent-card p{margin:0; font-size:.88rem; color:var(--text-muted);}
+
+/* ---------- PRINCIPLES ---------- */
+.principle-row{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+@media (max-width:760px){ .principle-row{grid-template-columns:repeat(2,1fr);} }
+.principle{border-left:2px solid var(--loop); padding-left:16px;}
+.principle h4{font-family:var(--serif-display); margin:0 0 6px; font-size:1rem;}
+.principle p{margin:0; color:var(--text-muted); font-size:.87rem;}
+
+/* ---------- CODE EXAMPLE ---------- */
+.code-compare{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+@media (max-width:820px){ .code-compare{grid-template-columns:1fr;} }
+.code-panel{background:var(--surface); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+.code-panel .code-head{
+  padding:12px 16px; font-family:var(--mono); font-size:.78rem; color:var(--text-muted);
+  border-bottom:1px solid var(--line); display:flex; justify-content:space-between;
+}
+.code-panel.after .code-head{color:var(--loop);}
+.code-panel pre{margin:0; padding:18px 16px; overflow-x:auto; font-family:var(--mono); font-size:.78rem; line-height:1.6;}
+.code-panel.before pre{color:var(--text-muted);}
+.code-result{font-family:var(--mono); font-size:.85rem; color:var(--loop); margin-top:16px;}
+
+/* ---------- VISION timeline ---------- */
+.timeline{display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+@media (max-width:760px){ .timeline{grid-template-columns:1fr;} }
+.timeline > div{padding:30px 28px;}
+.timeline .now{background:var(--surface); border-right:1px solid var(--line);}
+@media (max-width:760px){ .timeline .now{border-right:none; border-bottom:1px solid var(--line);} }
+.timeline .next{background:color-mix(in srgb, var(--gate) 5%, var(--surface));}
+.timeline .tag{font-family:var(--mono); font-size:.74rem; color:var(--text-muted); margin-bottom:12px; display:block;}
+.timeline .next .tag{color:var(--gate);}
+.timeline h4{font-family:var(--serif-display); font-size:1.2rem; margin:0 0 14px;}
+.timeline ul{margin:0; padding-left:18px; color:var(--text-muted); font-size:.92rem;}
+.timeline li{margin-bottom:8px;}
+
+/* ---------- BENCHMARK strip ---------- */
+.bench-strip{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:24px; text-align:left;
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:40px 0;
+}
+@media (max-width:700px){ .bench-strip{grid-template-columns:1fr;} }
+.bench-num{font-family:var(--serif-display); font-size:2.3rem; color:var(--loop); font-weight:600; line-height:1;}
+.bench-label{color:var(--text-muted); font-size:.88rem; margin-top:8px;}
+
+/* ---------- FOOTER CTA ---------- */
+.final-cta{text-align:left; padding:90px 0; border-top:1px solid var(--line);}
+.final-cta h2{max-width:16ch;}
+footer{border-top:1px solid var(--line); padding:36px 0; color:var(--text-muted); font-size:.85rem;}
+.footer-row{display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px;}
+footer a{color:var(--text-muted); text-decoration:underline; text-underline-offset:3px;}
+footer a:hover{color:var(--text);}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand"><span class="dot"></span>Lexis-Two</a>
+    <nav class="navlinks">
+      <a href="#loop">Cómo funciona</a>
+      <a href="#agentes">Agentes</a>
+      <a href="#principios">Principios</a>
+      <a href="#vision">Visión</a>
+    </nav>
+    <div class="navcta">
+      <a class="btn" href="https://github.com/nitdraig/lexis-two">GitHub</a>
+      <a class="btn btn-primary" href="#install">Instalar</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="kicker">framework de orquestación de agentes de código</p>
+      <h1>El agente hace el <em>loop</em>. Vos aprobás cada vuelta.</h1>
+      <p class="lead">
+        Lexis-Two coordina agentes especializados —planificación, implementación, revisión, seguridad—
+        en un loop de trabajo real: descubrir, especificar, construir, revisar. Nada avanza a la
+        siguiente vuelta sin que lo confirmes vos.
+      </p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#loop">Ver el loop en acción</a>
+        <a class="btn" href="#vision">Leer la visión</a>
+      </div>
+      <div class="install-line">
+        <span class="prompt">$</span>
+        <code>npx @draig/lexis-two install</code>
+      </div>
+    </div>
+
+    <div class="loop-svg-wrap">
+      <svg viewBox="0 0 260 260" width="100%" role="img" aria-label="Diagrama del loop: discovery, spec, build, review, con gate humano">
+        <circle cx="130" cy="130" r="106" fill="none" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="2 6"/>
+        <!-- nodes -->
+        <g font-family="IBM Plex Mono" font-size="10.5" fill="var(--text)">
+          <circle cx="130" cy="24" r="26" fill="var(--surface-2)" stroke="var(--loop)" stroke-width="1.5"/>
+          <text x="130" y="21" text-anchor="middle" fill="var(--loop)">discx</text>
+          <text x="130" y="33" text-anchor="middle" font-size="8" fill="var(--text-muted)">discover</text>
+
+          <circle cx="228" cy="130" r="26" fill="var(--surface-2)" stroke="var(--loop)" stroke-width="1.5"/>
+          <text x="228" y="127" text-anchor="middle" fill="var(--loop)">specx</text>
+          <text x="228" y="139" text-anchor="middle" font-size="8" fill="var(--text-muted)">spec</text>
+
+          <circle cx="130" cy="236" r="26" fill="var(--surface-2)" stroke="var(--gate)" stroke-width="1.5"/>
+          <text x="130" y="233" text-anchor="middle" fill="var(--gate)">build</text>
+          <text x="130" y="245" text-anchor="middle" font-size="8" fill="var(--text-muted)">1 tarea</text>
+
+          <circle cx="32" cy="130" r="26" fill="var(--surface-2)" stroke="var(--loop)" stroke-width="1.5"/>
+          <text x="32" y="127" text-anchor="middle" fill="var(--loop)">lexis</text>
+          <text x="32" y="139" text-anchor="middle" font-size="8" fill="var(--text-muted)">review</text>
+        </g>
+        <!-- gate mark near build -->
+        <g transform="translate(130,236)">
+          <circle r="34" fill="none" stroke="var(--gate)" stroke-width="1" stroke-dasharray="3 4"/>
+        </g>
+        <text x="130" y="200" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="var(--gate)">▲ gate humano</text>
+        <!-- orbit dot -->
+        <circle class="orbit-dot" r="4" fill="var(--loop)"/>
+      </svg>
+      <p class="loop-caption">El loop corre solo entre etapas. En <b>build</b>, se detiene y espera tu aprobación por tarea.</p>
+    </div>
+  </div>
+</section>
+
+<section id="problema">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">el problema</p>
+      <h2>Dos extremos, ningún término medio</h2>
+      <p>Hoy elegís entre prompt a prompt (lento, control total) o un agente autónomo suelto en tu
+      repo (rápido, sin frenos). Lexis-Two es el punto intermedio: loop estructurado, con un humano
+      que decide si la vuelta siguiente se ejecuta.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card bad">
+        <h3>Agente 100% autónomo</h3>
+        <p>Sobre-construye, agrega abstracciones que nadie pidió y avanza varios pasos antes de que
+        notes que se fue por las ramas. El costo de revertir crece con cada vuelta sin control.</p>
+      </div>
+      <div class="problem-card good">
+        <h3>Loop con gate humano</h3>
+        <p>El agente ejecuta una tarea, se detiene, mostrás el diff, aprobás o corregís. La siguiente
+        vuelta arranca recién ahí. Velocidad de agente, criterio humano.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="loop">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">cómo funciona</p>
+      <h2>Un loop de cuatro etapas, con freno de mano incorporado</h2>
+      <p>Cada etapa es un comando. El loop las encadena; el gate humano decide si sigue.</p>
+    </div>
+
+    <div class="mode-toggle" role="tablist" aria-label="Modo del loop">
+      <button class="active" data-mode="human" role="tab" aria-selected="true">Con humano en el loop</button>
+      <button data-mode="auto" role="tab" aria-selected="false">Loop autónomo</button>
+    </div>
+
+    <div class="mode-panel active" data-panel="human">
+      <div class="stage-list">
+        <div class="stage">
+          <div class="stage-num">01</div>
+          <div>
+            <h4>Descubrir <code class="tag">/discx</code></h4>
+            <p>Define el MVP, prioridades y límites antes de tocar código. Sin esto, no hay spec que valga.</p>
+          </div>
+          <div></div>
+        </div>
+        <div class="stage">
+          <div class="stage-num">02</div>
+          <div>
+            <h4>Especificar <code class="tag">/specx plan</code></h4>
+            <p>Convierte la propuesta en spec.md (MUST/SHOULD/MAY) y una lista de tareas atómicas, una por archivo o función.</p>
+          </div>
+          <div></div>
+        </div>
+        <div class="stage">
+          <div class="stage-num">03</div>
+          <div>
+            <h4>Construir <code class="tag">/specx implement</code></h4>
+            <p>Implementa exactamente una tarea de la lista. Se detiene. Vos revisás el diff antes de que siga con la próxima.</p>
+          </div>
+          <div class="gate-badge">⏸ espera tu OK</div>
+        </div>
+        <div class="stage">
+          <div class="stage-num">04</div>
+          <div>
+            <h4>Revisar <code class="tag">/lexis review</code> · <code class="tag">/desx</code></h4>
+            <p>Evalúa el diff contra la spec, busca sobre-ingeniería y desliz visual. Vos cerrás o mandás otra vuelta.</p>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mode-panel" data-panel="auto">
+      <div class="stage-list">
+        <div class="stage">
+          <div class="stage-num">01</div>
+          <div>
+            <h4>Descubrir <code class="tag">/discx</code></h4>
+            <p>Igual que en el modo con humano: define el MVP antes de especificar.</p>
+          </div>
+          <div></div>
+        </div>
+        <div class="stage">
+          <div class="stage-num">02</div>
+          <div>
+            <h4>Especificar <code class="tag">/specx plan</code></h4>
+            <p>Genera spec y tareas sin pausa para confirmación intermedia.</p>
+          </div>
+          <div></div>
+        </div>
+        <div class="stage">
+          <div class="stage-num">03</div>
+          <div>
+            <h4>Construir todas las tareas</h4>
+            <p>Ejecuta la lista completa en una corrida, pensado para lotes chicos y bien acotados por Discovery.</p>
+          </div>
+          <div class="gate-badge" style="color:var(--text-muted); background:var(--surface-2); border-color:var(--line);">sin pausa</div>
+        </div>
+        <div class="stage">
+          <div class="stage-num">04</div>
+          <div>
+            <h4>Revisar al final <code class="tag">/lexis audit</code></h4>
+            <p>Una sola revisión sobre todo el lote antes de cerrar. Más rápido; menos puntos de corte.</p>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="agentes">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">el equipo</p>
+      <h2>No es un agente. Es un equipo con roles fijos</h2>
+      <p>Cada rol tiene un permiso explícito. Los auditores son de solo lectura por diseño: no pueden
+      tocar código, solo señalarlo.</p>
+    </div>
+    <div class="agent-grid">
+      <div class="agent-card">
+        <div class="role">lexis-one <span class="perm write">escribe</span></div>
+        <h4>Agente principal</h4>
+        <p>Implementa, edita, corre bash. El que hace el trabajo dentro del gate.</p>
+      </div>
+      <div class="agent-card">
+        <div class="role">lexis-review <span class="perm read">solo lectura</span></div>
+        <h4>Revisor estratégico</h4>
+        <p>Evalúa cambios contra la spec. Nunca edita.</p>
+      </div>
+      <div class="agent-card">
+        <div class="role">ui-architect <span class="perm read">solo lectura</span></div>
+        <h4>Arquitecto UX/UI</h4>
+        <p>Asesora sobre diseño. No implementa — deja la decisión final en manos humanas.</p>
+      </div>
+      <div class="agent-card">
+        <div class="role">refactor-agent <span class="perm write">escribe</span></div>
+        <h4>Especialista en refactor</h4>
+        <p>Reestructuración de código a gran escala, siempre dentro de una tarea acotada.</p>
+      </div>
+      <div class="agent-card">
+        <div class="role">security-auditor <span class="perm read">solo lectura</span></div>
+        <h4>Analista de seguridad</h4>
+        <p>Corre herramientas de auditoría. Reporta, no corrige.</p>
+      </div>
+      <div class="agent-card">
+        <div class="role">design-auditor <span class="perm read">solo lectura</span></div>
+        <h4>Desliz visual + tokens</h4>
+        <p>Detecta UI genérica de IA. Solo puede escribir DESIGN-AUDIT.md.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="principios">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">por qué el loop no se dispara solo</p>
+      <h2>Disciplina de ingeniería en cada vuelta</h2>
+      <p>La simplicidad acá es método, no estética. Antes de escribir código, el agente para en el
+      primer escalón que se sostenga.</p>
+    </div>
+    <div class="principle-row">
+      <div class="principle">
+        <h4>YAGNI</h4>
+        <p>Cuestiona cada feature y abstracción antes de que exista.</p>
+      </div>
+      <div class="principle">
+        <h4>KISS</h4>
+        <p>Stdlib y APIs nativas antes que una dependencia nueva.</p>
+      </div>
+      <div class="principle">
+        <h4>DRY</h4>
+        <p>Un solo catálogo de skills; los adaptadores enrutan, no bifurcan lógica.</p>
+      </div>
+      <div class="principle">
+        <h4>SOLID</h4>
+        <p>Límites de módulo claros — ninguna abstracción que nadie pidió.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="ejemplo">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">la escalera de decisión en código</p>
+      <h2>Un confirm dialog, dos caminos</h2>
+      <p>Mismo requisito, resuelto con y sin la escalera de decisión de Lexis-Two.</p>
+    </div>
+    <div class="code-compare">
+      <div class="code-panel before">
+        <div class="code-head"><span>sin Lexis-Two</span><span>74 líneas</span></div>
+        <pre>function Modal({ open, onClose, title, children }) {
+  useEffect(() => {
+    document.addEventListener("keydown", onEscape);
+    document.body.style.overflow = "hidden";
+    return () => { /* cleanup */ };
+  }, [open]);
+  return createPortal(
+    &lt;div className="modal-overlay" onClick={onClose}&gt;
+      &lt;div role="dialog"&gt;
+        &lt;h2&gt;{title}&lt;/h2&gt;
+        {children}
+      &lt;/div&gt;
+    &lt;/div&gt;,
+    document.body,
+  );
+}</pre>
+      </div>
+      <div class="code-panel after">
+        <div class="code-head"><span>con Lexis-Two</span><span>24 líneas</span></div>
+        <pre>// lexis: &lt;dialog&gt; nativo — focus trap
+// y backdrop ya incluidos
+&lt;dialog ref={dialogRef}&gt;
+  &lt;h2&gt;Confirmar borrado&lt;/h2&gt;
+  &lt;form method="dialog"&gt;
+    &lt;button value="cancel"&gt;Cancelar&lt;/button&gt;
+    &lt;button value="confirm"&gt;Borrar&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/dialog&gt;</pre>
+      </div>
+    </div>
+    <p class="code-result">El agente eligió la plataforma antes que la librería — sin que nadie se lo pidiera vuelta a vuelta.</p>
+  </div>
+</section>
+
+<div class="bench-strip wrap">
+  <div>
+    <div class="bench-num">−68%</div>
+    <div class="bench-label">reducción de LOC vs. baseline, mediana de 5 tareas (OpenCode Go, 2026-06-16)</div>
+  </div>
+  <div>
+    <div class="bench-num">9</div>
+    <div class="bench-label">casos antes/después documentados — Next.js, Express, FastAPI</div>
+  </div>
+  <div>
+    <div class="bench-num">9</div>
+    <div class="bench-label">hosts con soporte completo: Claude Code, Cursor, OpenCode, Copilot y más</div>
+  </div>
+</div>
+
+<section id="vision">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">hacia dónde va esto</p>
+      <h2>Hoy es un ruleset. La dirección es un orquestador.</h2>
+      <p>Lexis-Two es la capa pública y portable. Lexis-One —privado— es donde se prueba cada patrón
+      antes de generalizarlo acá.</p>
+    </div>
+    <div class="timeline">
+      <div class="now">
+        <span class="tag">hoy · v0.5</span>
+        <h4>Ruleset + skills portables</h4>
+        <ul>
+          <li>Loop de 4 etapas: discx → specx → lexis → desx</li>
+          <li>7 roles de agente con permisos fijos</li>
+          <li>9 hosts soportados (Claude Code, Cursor, OpenCode, Copilot...)</li>
+          <li>Benchmarks públicos contra baseline sin Lexis</li>
+        </ul>
+      </div>
+      <div class="next">
+        <span class="tag">próximo · Lexis-Core</span>
+        <h4>Orquestador público</h4>
+        <ul>
+          <li>Guía para armar tu propio ecosistema multiagente sobre Lexis-Two</li>
+          <li>App web para configurar tu loop visualmente</li>
+          <li>Marketplace de skills y adaptadores</li>
+          <li>Lexis-One as a Service: tu configuración privada, en la nube</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <h2>Probá el loop en tu próximo feature</h2>
+    <p style="color:var(--text-muted); max-width:48ch; margin-bottom:28px;">
+      Un comando lo instala en tu proyecto. Vos seguís aprobando cada vuelta desde el primer día.
+    </p>
+    <div class="hero-ctas" id="install">
+      <div class="install-line">
+        <span class="prompt">$</span>
+        <code>npx @draig/lexis-two install</code>
+      </div>
+      <a class="btn" href="https://github.com/nitdraig/lexis-two">Ver el repo</a>
+      <a class="btn" href="https://lexis-two.excelso.xyz/guide">Guía de uso</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <div>Lexis-Two · MIT License · parte de <a href="https://excelso.xyz">Excelso Open</a></div>
+    <div><a href="https://github.com/nitdraig/lexis-two">github.com/nitdraig/lexis-two</a></div>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.mode-toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-toggle button').forEach(b=>{b.classList.remove('active'); b.setAttribute('aria-selected','false');});
+    btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+    const mode = btn.dataset.mode;
+    document.querySelectorAll('.mode-panel').forEach(p=>p.classList.toggle('active', p.dataset.panel===mode));
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+---
+interface Props {
+  finalCta: {
+    eyebrow: string;
+    title: string;
+    ctaStart: string;
+    ctaGitHub: string;
+  };
+}
+
+const { finalCta } = Astro.props;
+---
+
+<section class="final-cta">
+  <div class="container reveal">
+    <div class="eyebrow">{finalCta.eyebrow}</div>
+    <h2>{finalCta.title}</h2>
+    <div class="hero-actions">
+      <a class="button primary" href="#install">{finalCta.ctaStart}</a>
+      <a class="button" href="https://github.com/nitdraig/lexis-two" target="_blank" rel="noreferrer">{finalCta.ctaGitHub}</a>
+    </div>
+  </div>
+</section>

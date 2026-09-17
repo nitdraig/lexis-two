@@ -1,0 +1,43 @@
+---
+interface Props {
+  agents: {
+    eyebrow: string;
+    title: string;
+    copy: string;
+    control: { label: string; name: string };
+    roles: { name: string; perm: "write" | "read"; desc: string }[];
+    permWrite: string;
+    permRead: string;
+  };
+}
+
+const { agents } = Astro.props;
+---
+
+<section class="section" id="agents">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">{agents.eyebrow}</div>
+      <h2>{agents.title}</h2>
+      <p>{agents.copy}</p>
+    </div>
+
+    <div class="agent-map reveal">
+      <div class="agent-node main">
+        <small>{agents.control.label}</small>
+        {agents.control.name}
+      </div>
+      <div class="agent-role-grid">
+        {agents.roles.map((role) => (
+          <div class="agent-role">
+            <div class="role-head">
+              <code>{role.name}</code>
+              <span class={`perm ${role.perm}`}>{role.perm === "write" ? agents.permWrite : agents.permRead}</span>
+            </div>
+            <p>{role.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

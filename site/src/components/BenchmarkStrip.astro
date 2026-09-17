@@ -1,0 +1,32 @@
+---
+interface Props {
+  benchmarks: {
+    eyebrow: string;
+    title: string;
+    copy: string;
+    items: { value: string; label: string }[];
+    foot: string;
+  };
+}
+
+const { benchmarks } = Astro.props;
+---
+
+<section class="section" id="benchmarks">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">{benchmarks.eyebrow}</div>
+      <h2>{benchmarks.title}</h2>
+      <p>{benchmarks.copy}</p>
+    </div>
+    <div class="bench-strip reveal">
+      {benchmarks.items.map((item) => (
+        <div class="bench-card">
+          <div class="bench-num">{item.value}</div>
+          <div class="bench-label">{item.label}</div>
+        </div>
+      ))}
+    </div>
+    <p class="code-note reveal" style="margin-top: 1.25rem;">{benchmarks.foot}</p>
+  </div>
+</section>

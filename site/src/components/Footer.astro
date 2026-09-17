@@ -1,28 +1,63 @@
 ---
+import type { Locale } from "../i18n/index.js";
+
 interface Props {
+  locale: Locale;
   footer: {
+    tagline: string;
     license: string;
     forked: string;
-    built: string;
+    productTitle: string;
+    devTitle: string;
+    projectTitle: string;
+    home: string;
+    docs: string;
+    benchmarks: string;
+    github: string;
+    source: string;
+    issues: string;
+    discussions: string;
+    excelsoUrl: string;
   };
 }
 
-const { footer } = Astro.props;
+const { locale, footer } = Astro.props;
+const prefix = locale === "es" ? "/es" : "";
 ---
 
 <footer class="site-footer">
-  <div class="wrap">
-    <p>
-      <a href="https://github.com/nitdraig/lexis-two"
-        >github.com/nitdraig/lexis-two</a
-      >
-      · {footer.license}
-    </p>
-    <p>
-      {footer.forked}
-      <a href="https://github.com/nitdraig">@nitdraig</a>.
-    </p>
-    <p set:html={footer.built} />
-    <p>Powered by <a href="https://excelso.xyz">Excelso</a></p>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="/new-logo.png" width="48" height="48" alt="Lexis-Two" />
+        <div>Lexis-Two</div>
+        <p>{footer.tagline}</p>
+      </div>
+
+      <div>
+        <h3>{footer.productTitle}</h3>
+        <a href={`${prefix}/`}>{footer.home}</a>
+        <a href={`${prefix}/docs`}>{footer.docs}</a>
+        <a href={`${prefix}/benchmarks`}>{footer.benchmarks}</a>
+      </div>
+
+      <div>
+        <h3>{footer.devTitle}</h3>
+        <a href={`${prefix}/docs`}>{footer.docs}</a>
+        <a href="https://github.com/nitdraig/lexis-two" target="_blank" rel="noreferrer">{footer.github}</a>
+      </div>
+
+      <div>
+        <h3>{footer.projectTitle}</h3>
+        <a href="https://github.com/nitdraig/lexis-two" target="_blank" rel="noreferrer">{footer.source}</a>
+        <a href="https://github.com/nitdraig/lexis-two/issues" target="_blank" rel="noreferrer">{footer.issues}</a>
+        <a href="https://github.com/nitdraig/lexis-two/discussions" target="_blank" rel="noreferrer">{footer.discussions}</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>{footer.license} · <a href={footer.excelsoUrl} target="_blank" rel="noreferrer">Excelso Open</a></span>
+      <span>{footer.forked}</span>
+    </div>
   </div>
 </footer>

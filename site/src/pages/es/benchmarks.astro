@@ -1,4 +1,7 @@
 ---
-// Redirect to main page benchmarks section
-return Astro.redirect("/es/#benchmarks");
+import Benchmarks from "../../components/Benchmarks.astro";
+
+const locale = "es" as const;
 ---
+
+<Benchmarks locale={locale} />

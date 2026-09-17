@@ -5,11 +5,7 @@ import LanguageSwitcher from "./LanguageSwitcher.astro";
 interface Props {
   locale: Locale;
   nav: {
-    philosophy: string;
-    example: string;
-    hosts: string;
-    commands: string;
-    install: string;
+    docs: string;
     benchmarks: string;
     github: string;
     skipLink: string;
@@ -17,16 +13,18 @@ interface Props {
 }
 
 const { locale, nav } = Astro.props;
+const isEs = locale === "es";
 ---
 
 <a class="skip-link" href="#main">{nav.skipLink}</a>
 
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="brand" href="#">
-      <img src="/assets/logo.png" width="220" height="48" alt="Lexis-Two" />
+    <a class="brand" href={isEs ? "/es" : "/"}>
+      <img src="/new-logo.png" width="48" height="48" alt="Lexis-Two" />
       <span class="brand-text">Lexis-Two</span>
     </a>
+
     <button
       type="button"
       class="nav-toggle"
@@ -38,15 +36,29 @@ const { locale, nav } = Astro.props;
       <span class="nav-toggle-bar" aria-hidden="true"></span>
       <span class="nav-toggle-bar" aria-hidden="true"></span>
     </button>
+
     <nav id="site-nav" class="nav" aria-label="Primary">
-      <a href="#philosophy">{nav.philosophy}</a>
-      <a href="#example">{nav.example}</a>
-      <a href="#hosts">{nav.hosts}</a>
-      <a href="#commands">{nav.commands}</a>
-      <a href="#install">{nav.install}</a>
-      <a href="#benchmarks">{nav.benchmarks}</a>
+      <a href={isEs ? "/es/docs" : "/docs"}>{nav.docs}</a>
+      <a href={isEs ? "/es/benchmarks" : "/benchmarks"}>{nav.benchmarks}</a>
       <a href="https://github.com/nitdraig/lexis-two">{nav.github}</a>
-      <LanguageSwitcher locale={locale} />
+      <div class="nav-controls">
+        <LanguageSwitcher locale={locale} />
+        <button
+          type="button"
+          class="theme-toggle"
+          id="themeToggle"
+          aria-label="Toggle theme"
+          title="Toggle theme"
+        >
+          <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
     </nav>
   </div>
 </header>
@@ -56,7 +68,9 @@ const { locale, nav } = Astro.props;
     var header = document.querySelector(".site-header");
     var toggle = document.querySelector(".nav-toggle");
     var nav = document.getElementById("site-nav");
-    if (!header || !toggle || !nav) return;
+    var themeToggle = document.getElementById("themeToggle");
+    var sun = themeToggle?.querySelector(".sun");
+    var moon = themeToggle?.querySelector(".moon");
 
     function setNavOpen(open: boolean) {
       header!.classList.toggle("is-nav-open", open);
@@ -78,10 +92,36 @@ const { locale, nav } = Astro.props;
       if (event.key === "Escape") setNavOpen(false);
     });
 
+    document.addEventListener("click", function (event) {
+      if (!header!.contains(event.target as Node)) setNavOpen(false);
+    });
+
     window
       .matchMedia("(min-width: 768px)")
       .addEventListener("change", function (event) {
         if (event.matches) setNavOpen(false);
       });
+
+    window.addEventListener("scroll", function () {
+      header!.classList.toggle("scrolled", window.scrollY > 8);
+    });
+
+    function updateThemeIcon() {
+      var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+      if (sun && moon) {
+        sun.style.display = isDark ? "block" : "none";
+        moon.style.display = isDark ? "none" : "block";
+      }
+    }
+
+    themeToggle!.addEventListener("click", function () {
+      var current = document.documentElement.getAttribute("data-theme");
+      var next = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("lexis-theme", next);
+      updateThemeIcon();
+    });
+
+    updateThemeIcon();
   })();
 </script>

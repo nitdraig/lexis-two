@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Lexis-Two — framework de agentes con humano en el loop." />
+<title>Lexis-Two — La IA hace el trabajo. Vos decidís lo que importa.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;850&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f3ef;
+  --surface: #fbfaf7;
+  --surface-2: #eceae4;
+  --ink: #151515;
+  --muted: #66645e;
+  --line: #d6d3ca;
+  --success: #27734a;
+  --code-bg: #171717;
+  --code-line: #383838;
+  --code-ink: #e8e7e1;
+  --code-muted: #a9a79f;
+  --max: 1180px;
+  --radius: 18px;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+:root:not([data-theme="light"]){ color-scheme: dark; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121212; --surface: #191919; --surface-2: #232323;
+    --ink: #f2f1ec; --muted: #9a988f; --line: #333230;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121212; --surface: #191919; --surface-2: #232323;
+  --ink: #f2f1ec; --muted: #9a988f; --line: #333230;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; color: var(--ink); background: var(--bg);
+  font-family: var(--sans); line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+button, a { -webkit-tap-highlight-color: transparent; }
+.container { width: min(calc(100% - 40px), var(--max)); margin-inline: auto; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: 700 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase;
+}
+.eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+.section { padding: 120px 0; border-top: 1px solid var(--line); }
+.section-head { max-width: 760px; margin-bottom: 60px; }
+.section-head h2 { margin: 18px 0; font-size: clamp(40px, 6vw, 76px); line-height: .98; letter-spacing: -.045em; }
+.section-head p { max-width: 640px; margin: 0; color: var(--muted); font-size: 18px; }
+
+/* Nav */
+.nav {
+  position: sticky; top: 0; z-index: 50; border-bottom: 1px solid transparent;
+  background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(16px);
+}
+.nav.scrolled { border-color: var(--line); }
+.nav-inner { height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.logo { font-weight: 850; letter-spacing: -.04em; font-size: 20px; }
+.nav-links { display: flex; align-items: center; gap: 26px; font-size: 14px; }
+.nav-links a:hover { opacity: .55; }
+.button {
+  min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
+  padding: 0 18px; border: 1px solid var(--ink); border-radius: 999px; font-weight: 700;
+  font-size: 14px; cursor: pointer; background: var(--ink); color: var(--bg);
+  transition: transform .2s ease, opacity .2s ease;
+}
+.button:hover { transform: translateY(-1px); opacity: .88; }
+.button.secondary { color: var(--ink); background: transparent; border-color: var(--line); }
+.mobile-menu-btn { display: none; border: 0; background: transparent; font: 700 14px var(--mono); cursor: pointer; color: var(--ink); }
+
+/* Hero */
+.hero { min-height: calc(100vh - 68px); display: grid; align-items: center; padding: 70px 0 90px; }
+.hero-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 70px; align-items: center; }
+.hero h1 { max-width: 720px; margin: 20px 0 26px; font-size: clamp(50px, 6.6vw, 92px); line-height: .92; letter-spacing: -.05em; }
+.hero-copy { max-width: 650px; color: var(--muted); font-size: clamp(18px, 2vw, 21px); }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 30px 0 20px; }
+.meta { color: var(--muted); font: 12px var(--mono); }
+
+.workflow { position: relative; padding: 28px; border: 1px solid var(--line); border-radius: 24px; background: var(--surface); overflow: hidden; }
+.workflow-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.node { position: relative; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); min-height: 82px; }
+.node strong { display: block; font: 700 12px var(--mono); letter-spacing: .03em; }
+.node span { display: block; margin-top: 5px; color: var(--muted); font-size: 13px; }
+.node.human { grid-column: 1 / -1; background: var(--ink); color: var(--bg); }
+.node.human span { color: #bbb9b1; }
+.workflow-status {
+  margin-top: 14px; padding: 12px 14px; border-top: 1px dashed var(--line);
+  font: 12px var(--mono); color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+}
+.pulse { display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: var(--success); animation: pulse 1.8s infinite; }
+@keyframes pulse { 50% { opacity: .25; transform: scale(.7); } }
+
+/* Problem */
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
+.problem-copy h2 { max-width: 620px; margin: 18px 0; font-size: clamp(38px, 4.6vw, 62px); line-height: .98; letter-spacing: -.045em; }
+.problem-copy p { max-width: 600px; color: var(--muted); font-size: 18px; }
+.compare { display: grid; gap: 14px; }
+.compare-card { padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.compare-card h3 { margin: 0 0 20px; font: 700 12px var(--mono); }
+.flow-line { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; font: 12px var(--mono); }
+.flow-line span { padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px; }
+.flow-line .arrow { border: 0; padding: 0; color: var(--muted); }
+
+/* Thesis */
+.thesis { padding: 140px 0; background: var(--ink); color: var(--bg); border-top: 0; }
+.thesis-inner { max-width: 1000px; }
+.thesis h2 { margin: 20px 0 0; font-size: clamp(42px, 6.4vw, 84px); line-height: .96; letter-spacing: -.05em; }
+.thesis h2 span { color: #77756e; }
+
+/* Loop */
+.loop { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.loop-step { position: relative; min-height: 170px; padding: 18px; border: 1px solid var(--line); background: var(--surface); }
+.loop-step:first-child { border-radius: 16px 0 0 16px; }
+.loop-step:last-child { border-radius: 0 16px 16px 0; }
+.loop-step .number { font: 12px var(--mono); color: var(--muted); }
+.loop-step h3 { margin: 42px 0 7px; font-size: 19px; letter-spacing: -.02em; }
+.loop-step p { margin: 0; color: var(--muted); font-size: 13px; }
+
+/* Command bridge */
+.cmd-row {
+  margin-top: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
+  font: 12px var(--mono);
+}
+.cmd-row .pair { display: flex; align-items: center; gap: 8px; }
+.cmd-row code { padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); color: var(--ink); }
+.cmd-row .gate { color: var(--success); font-weight: 700; }
+.cmd-row .arrow { color: var(--muted); }
+
+/* Checkpoint */
+.checkpoint { display: grid; grid-template-columns: .85fr 1.15fr; gap: 70px; align-items: center; }
+.checkpoint-copy h2 { margin: 18px 0; font-size: clamp(40px, 5vw, 64px); line-height: .98; letter-spacing: -.045em; }
+.checkpoint-copy p { color: var(--muted); font-size: 18px; }
+.decision-card { border: 1px solid var(--line); border-radius: 22px; overflow: hidden; background: var(--surface); box-shadow: 0 20px 60px rgba(0,0,0,.07); }
+.decision-top { display: flex; justify-content: space-between; padding: 15px 18px; border-bottom: 1px solid var(--line); font: 11px var(--mono); }
+.decision-status { color: var(--success); }
+.decision-body { padding: 25px; }
+.decision-body > p { margin: 0 0 20px; font-size: 16px; }
+.option { padding: 18px; margin-bottom: 10px; border: 1px solid var(--line); border-radius: 13px; cursor: pointer; transition: border-color .2s, background .2s; }
+.option:hover, .option.selected { border-color: var(--ink); background: var(--surface-2); }
+.option strong { display: block; font: 700 11px var(--mono); }
+.option p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+.decision-recommendation { margin: 18px 0; font: 12px var(--mono); }
+.decision-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.decision-actions button { min-height: 44px; border: 1px solid var(--line); border-radius: 9px; padding: 0 13px; background: transparent; cursor: pointer; font: 700 11px var(--mono); color: var(--ink); }
+.decision-actions .approve { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.decision-result { display: none; padding: 18px 25px; border-top: 1px solid var(--line); color: var(--success); font: 12px var(--mono); }
+.decision-card.approved .decision-result { display: block; }
+
+/* Multi agent */
+.agent-map { position: relative; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); padding: 40px 30px; }
+.agent-node.main {
+  width: min(100%, 220px); margin: 0 auto 34px; padding: 18px; border: 1px solid var(--line);
+  border-radius: 13px; background: var(--ink); color: var(--bg); text-align: center; position: relative;
+}
+.agent-node.main::after {
+  content: ""; position: absolute; left: 50%; bottom: -24px; width: 1px; height: 24px;
+  background: var(--line); transform: translateX(-50%);
+}
+.agent-node.main small { display: block; margin-bottom: 6px; font: 10px var(--mono); color: #aaa89f; }
+.agent-role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.agent-role {
+  padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: var(--bg); text-align: left;
+}
+.agent-role .role-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.agent-role code { font: 700 12px var(--mono); }
+.agent-role .perm { font: 10px var(--mono); padding: 2px 8px; border-radius: 20px; }
+.agent-role .perm.write { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--success); }
+.agent-role .perm.read { background: var(--surface-2); color: var(--muted); }
+.agent-role p { margin: 0; color: var(--muted); font-size: 13px; }
+
+/* Principles */
+.principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.principle { min-height: 220px; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.principle strong { font: 700 24px var(--mono); }
+.principle h3 { margin: 50px 0 8px; font-size: 18px; }
+.principle p { margin: 0; color: var(--muted); font-size: 14px; }
+
+/* Ladder */
+.ladder { max-width: 850px; margin-inline: auto; display: grid; gap: 0; }
+.ladder-step { display: grid; grid-template-columns: 80px 1fr; border-bottom: 1px solid var(--line); }
+.ladder-step:first-child { border-top: 1px solid var(--line); }
+.ladder-number { padding: 20px 0; font: 12px var(--mono); color: var(--muted); }
+.ladder-content { padding: 20px 0; }
+.ladder-content strong { display: block; font-size: 20px; }
+.ladder-content span { color: var(--muted); }
+
+/* Code comparison */
+.code-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.code-panel { min-width: 0; background: var(--code-bg); color: var(--code-ink); }
+.code-panel + .code-panel { border-left: 1px solid var(--code-line); }
+.code-head { display: flex; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--code-line); font: 11px var(--mono); }
+.code-body { min-height: 260px; padding: 20px; overflow: auto; font: 12px/1.7 var(--mono); white-space: pre; }
+.line-count { color: var(--code-muted); }
+.code-note { margin-top: 16px; color: var(--muted); font: 13px var(--mono); }
+
+/* Hosts */
+.hosts { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.host { min-height: 92px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); font-weight: 700; font-size: 13.5px; text-align: center; padding: 6px; }
+
+/* Benchmarks */
+.bench-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.bench-card { padding: 26px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.bench-num { font: 700 44px var(--mono); letter-spacing: -.02em; }
+.bench-label { margin-top: 10px; color: var(--muted); font-size: 13.5px; max-width: 32ch; }
+.bench-foot { margin-top: 16px; color: var(--muted); font: 12px var(--mono); }
+
+/* Vision */
+.vision { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.vision-card { position: relative; min-height: 300px; padding: 25px; border: 1px solid var(--line); background: var(--surface); }
+.vision-card:first-child { border-radius: 18px 0 0 18px; }
+.vision-card:last-child { border-radius: 0 18px 18px 0; }
+.vision-card h3 { margin: 60px 0 10px; font-size: 28px; letter-spacing: -.03em; }
+.vision-card p { margin: 0; color: var(--muted); font-size: 14px; }
+.vision-card .tag { font: 11px var(--mono); color: var(--muted); }
+.future { margin-top: 45px; padding: 40px; border: 1px dashed var(--line); border-radius: 20px; background: var(--surface); text-align: center; }
+.future h3 { margin: 0; font-size: clamp(26px, 3.6vw, 42px); letter-spacing: -.03em; }
+.future p { max-width: 650px; margin: 14px auto 0; color: var(--muted); }
+
+/* Install */
+.install-box { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 15px; padding: 7px 7px 7px 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--code-bg); color: var(--code-ink); max-width: 760px; }
+.install-box code { overflow: auto; white-space: nowrap; font: 13px var(--mono); }
+.install-box button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 9px; background: #eee; color: #171717; cursor: pointer; font: 700 11px var(--mono); }
+.install-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+.chip { padding: 8px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font: 11px var(--mono); }
+
+/* Final CTA */
+.final-cta { padding: 150px 0; background: var(--ink); color: var(--bg); border-top: 0; }
+.final-cta h2 { max-width: 1000px; margin: 20px 0 30px; font-size: clamp(48px, 7vw, 96px); line-height: .9; letter-spacing: -.05em; }
+.final-cta .button { background: var(--bg); color: var(--ink); border-color: var(--bg); }
+.final-cta .button.secondary { background: transparent; color: var(--bg); border-color: #55534d; }
+
+/* Footer */
+footer { padding: 65px 0 35px; background: var(--ink); color: var(--bg); border-top: 1px solid #37352f; }
+.footer-grid { display: grid; grid-template-columns: 1.3fr repeat(3, 1fr); gap: 40px; }
+footer h3 { margin: 0 0 14px; font: 700 11px var(--mono); color: #a9a79f; text-transform: uppercase; }
+footer a { display: block; margin: 8px 0; font-size: 14px; }
+footer a:hover { opacity: .55; }
+.footer-brand { font-size: 26px; font-weight: 850; letter-spacing: -.04em; }
+.footer-brand p { max-width: 280px; margin: 10px 0; color: #aaa89f; font-size: 13px; }
+.footer-bottom { display: flex; justify-content: space-between; gap: 20px; margin-top: 60px; padding-top: 20px; border-top: 1px solid #37352f; color: #8e8c85; font: 11px var(--mono); }
+
+/* Responsive */
+@media (max-width: 980px) {
+  .hero-grid, .problem-grid, .checkpoint { grid-template-columns: 1fr; }
+  .hero { padding-top: 60px; } .hero-grid { gap: 50px; }
+  .loop { grid-template-columns: repeat(3, 1fr); }
+  .loop-step:first-child { border-radius: 16px 0 0 0; }
+  .loop-step:nth-child(3) { border-radius: 0 16px 0 0; }
+  .loop-step:nth-child(4) { border-radius: 0 0 0 16px; }
+  .loop-step:last-child { border-radius: 0 0 16px 0; }
+  .principles { grid-template-columns: repeat(2, 1fr); }
+  .hosts { grid-template-columns: repeat(3, 1fr); }
+  .bench-grid { grid-template-columns: 1fr; }
+  .agent-role-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 700px) {
+  .container { width: min(calc(100% - 28px), var(--max)); }
+  .section { padding: 80px 0; }
+  .nav-inner { height: 60px; }
+  .nav-links { display: none; }
+  .mobile-menu-btn { display: block; }
+  .nav.mobile-open .nav-links {
+    position: absolute; inset: 60px 0 auto 0; display: grid; gap: 0;
+    padding: 10px 14px 18px; background: var(--bg); border-bottom: 1px solid var(--line);
+  }
+  .nav.mobile-open .nav-links a { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .nav.mobile-open .nav-links .button { margin-top: 12px; }
+  .hero { min-height: auto; padding: 60px 0 70px; }
+  .hero h1 { font-size: clamp(48px, 15vw, 72px); }
+  .hero-copy { font-size: 17px; }
+  .hero-actions { display: grid; } .hero-actions .button { width: 100%; }
+  .workflow { padding: 15px; } .workflow-grid { grid-template-columns: 1fr; }
+  .node.human { grid-column: auto; }
+  .thesis { padding: 88px 0; }
+  .loop { grid-template-columns: 1fr; gap: 8px; }
+  .loop-step, .loop-step:first-child, .loop-step:nth-child(3), .loop-step:nth-child(4), .loop-step:last-child { min-height: 120px; border-radius: 14px; }
+  .loop-step h3 { margin-top: 26px; }
+  .agent-role-grid { grid-template-columns: 1fr; }
+  .principles { grid-template-columns: 1fr; } .principle { min-height: 170px; } .principle h3 { margin-top: 32px; }
+  .code-grid { grid-template-columns: 1fr; }
+  .code-panel + .code-panel { border-left: 0; border-top: 1px solid var(--code-line); }
+  .hosts { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 5px; }
+  .host { flex: 0 0 140px; scroll-snap-align: start; }
+  .vision { grid-template-columns: 1fr; }
+  .vision-card, .vision-card:first-child, .vision-card:last-child { min-height: 220px; border-radius: 16px; }
+  .future { padding: 26px 18px; }
+  .install-box { grid-template-columns: 1fr; padding: 15px; } .install-box button { width: 100%; }
+  .final-cta { padding: 90px 0; }
+  .footer-grid { grid-template-columns: 1fr 1fr; } .footer-brand { grid-column: 1 / -1; }
+  .footer-bottom { flex-direction: column; margin-top: 45px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+  <header class="nav" id="nav">
+    <div class="container nav-inner">
+      <a class="logo" href="#">Lexis-Two</a>
+      <nav class="nav-links" aria-label="Navegación principal">
+        <a href="#workflow">Cómo funciona</a>
+        <a href="#examples">Checkpoint</a>
+        <a href="#agents">Agentes</a>
+        <a href="#vision">Visión</a>
+        <a href="https://github.com/nitdraig/lexis-two" target="_blank" rel="noreferrer">GitHub ↗</a>
+        <a class="button" href="#install">Empezar</a>
+      </nav>
+      <button class="mobile-menu-btn" id="menuBtn" aria-label="Abrir menú">MENU</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Framework de agentes con humano en el loop</div>
+          <h1>La IA hace el trabajo.<br />Vos decidís lo que importa.</h1>
+          <p class="hero-copy">
+            Lexis-Two es un framework abierto para construir flujos de agentes donde la IA
+            planifica, ejecuta y revisa — mientras el humano conserva el control de las
+            decisiones críticas del loop.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="#workflow">Explorar el loop</a>
+            <a class="button secondary" href="https://github.com/nitdraig/lexis-two" target="_blank" rel="noreferrer">Ver en GitHub ↗</a>
+          </div>
+          <div class="meta">Open source · Portable · Controlado por humanos</div>
+        </div>
+
+        <div class="workflow" aria-label="Loop de Lexis-Two">
+          <div class="workflow-grid">
+            <div class="node human">
+              <strong>HUMANO / INTENCIÓN</strong>
+              <span>Definís el objetivo y los límites.</span>
+            </div>
+            <div class="node"><strong>01 / DESCUBRIR</strong><span>Entender el problema.</span></div>
+            <div class="node"><strong>02 / PLANIFICAR</strong><span>Definir la solución mínima.</span></div>
+            <div class="node"><strong>03 / CONSTRUIR</strong><span>El agente ejecuta una tarea.</span></div>
+            <div class="node"><strong>04 / REVISAR</strong><span>Se chequea el resultado.</span></div>
+            <div class="node human">
+              <strong>05 / CHECKPOINT HUMANO</strong>
+              <span>Aprobás, modificás o rechazás — y sigue.</span>
+            </div>
+          </div>
+          <div class="workflow-status">
+            <span><span class="pulse"></span>LOOP DE AGENTE / ESPERA DECISIÓN HUMANA</span>
+            <span>↻ vuelve a 01 en la próxima vuelta</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section class="section" id="problem">
+      <div class="container problem-grid">
+        <div class="problem-copy">
+          <div class="eyebrow">El problema</div>
+          <h2>Autónomo no tiene por qué ser sin supervisión.</h2>
+          <p>
+            Los agentes ya pueden planificar, escribir, revisar y operar herramientas. La pregunta
+            no es si pueden actuar solos. Es en qué punto del sistema tiene que entrar el criterio humano.
+          </p>
+        </div>
+        <div class="compare">
+          <div class="compare-card">
+            <h3>SIN UN LOOP CONTROLADO</h3>
+            <div class="flow-line">
+              <span>Humano</span><i class="arrow">→</i><span>Prompt</span><i class="arrow">→</i>
+              <span>Agente</span><i class="arrow">→</i><span>Resultado</span>
+            </div>
+          </div>
+          <div class="compare-card">
+            <h3>CON LEXIS-TWO</h3>
+            <div class="flow-line">
+              <span>Intención</span><i class="arrow">→</i><span>Loop de agentes</span>
+              <i class="arrow">→</i><span>Checkpoint humano</span><i class="arrow">→</i><span>Resultado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THESIS -->
+    <section class="thesis">
+      <div class="container thesis-inner">
+        <div class="eyebrow">El principio</div>
+        <h2>Los humanos no necesitan supervisar cada paso.<br /><span>Necesitan ser dueños de los importantes.</span></h2>
+      </div>
+    </section>
+
+    <!-- WORKFLOW / LOOP -->
+    <section class="section" id="workflow">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">El loop de Lexis-Two</div>
+          <h2>Un flujo diseñado alrededor de decisiones.</h2>
+          <p>
+            Estructura el trabajo de los agentes en etapas explícitas, para que el sistema sepa
+            qué hacer, qué revisar y cuándo involucrar a un humano.
+          </p>
+        </div>
+
+        <div class="loop">
+          <article class="loop-step"><div class="number">01</div><h3>Descubrir</h3><p>Entender el problema antes de escribir código.</p></article>
+          <article class="loop-step"><div class="number">02</div><h3>Planificar</h3><p>Definir la solución más chica que sirve.</p></article>
+          <article class="loop-step"><div class="number">03</div><h3>Construir</h3><p>El agente ejecuta una porción controlada.</p></article>
+          <article class="loop-step"><div class="number">04</div><h3>Revisar</h3><p>Chequear la implementación contra la intención.</p></article>
+          <article class="loop-step"><div class="number">05</div><h3>Decidir</h3><p>Traer al humano cuando hace falta criterio.</p></article>
+          <article class="loop-step"><div class="number">06</div><h3>Continuar</h3><p>Retomar el loop desde la decisión.</p></article>
+        </div>
+
+        <div class="cmd-row">
+          <span style="color:var(--muted)">Así se ve hoy, en comandos reales:</span>
+          <div class="pair"><code>/discx</code></div>
+          <span class="arrow">→</span>
+          <div class="pair"><code>/specx plan</code></div>
+          <span class="arrow">→</span>
+          <div class="pair"><code>/specx implement</code> <span class="gate">⏸ gate</span></div>
+          <span class="arrow">→</span>
+          <div class="pair"><code>/lexis review</code></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HUMAN CHECKPOINT -->
+    <section class="section" id="examples">
+      <div class="container checkpoint">
+        <div class="checkpoint-copy">
+          <div class="eyebrow">Checkpoint humano</div>
+          <h2>El agente sabe cuándo parar.</h2>
+          <p>
+            No todas las acciones necesitan aprobación. Las decisiones críticas, sí.
+            Acá el humano pasa de supervisor a quien decide.
+          </p>
+        </div>
+
+        <div class="decision-card" id="decisionCard">
+          <div class="decision-top">
+            <span>AGENTE / IMPLEMENTACIÓN</span>
+            <span class="decision-status" id="decisionStatus">● EN PAUSA</span>
+          </div>
+          <div class="decision-body">
+            <p>Encontré dos enfoques válidos para esta feature.</p>
+            <div class="option selected" data-option="A">
+              <strong>OPCIÓN A</strong>
+              <p>Usar el &lt;dialog&gt; nativo del navegador. Sin dependencia nueva. Menos código.</p>
+            </div>
+            <div class="option" data-option="B">
+              <strong>OPCIÓN B</strong>
+              <p>Agregar una librería de modales. Menos código propio, pero suma una dependencia.</p>
+            </div>
+            <div class="decision-recommendation">Recomendación: <strong id="recommendation">OPCIÓN A</strong></div>
+            <div class="decision-actions">
+              <button class="approve" id="approveBtn">Aprobar</button>
+              <button id="modifyBtn">Modificar</button>
+              <button id="askBtn">Preguntarle al agente</button>
+            </div>
+          </div>
+          <div class="decision-result" id="decisionResult">✓ Decisión registrada. El agente retoma…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MULTI AGENT -->
+    <section class="section" id="agents">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Arquitectura de agentes</div>
+          <h2>Un loop. Varios agentes especializados.</h2>
+          <p>
+            Separá responsabilidades sin perder un flujo compartido. Cada rol tiene permisos
+            explícitos — los auditores son de solo lectura por diseño.
+          </p>
+        </div>
+
+        <div class="agent-map">
+          <div class="agent-node main"><small>CONTROL</small>HUMANO / LOOP</div>
+          <div class="agent-role-grid">
+            <div class="agent-role">
+              <div class="role-head"><code>lexis-one</code><span class="perm write">escribe</span></div>
+              <p>Implementa, edita, corre bash dentro del gate.</p>
+            </div>
+            <div class="agent-role">
+              <div class="role-head"><code>lexis-review</code><span class="perm read">solo lectura</span></div>
+              <p>Evalúa cambios contra la spec. Nunca edita.</p>
+            </div>
+            <div class="agent-role">
+              <div class="role-head"><code>ui-architect</code><span class="perm read">solo lectura</span></div>
+              <p>Asesora sobre diseño. No implementa.</p>
+            </div>
+            <div class="agent-role">
+              <div class="role-head"><code>refactor-agent</code><span class="perm write">escribe</span></div>
+              <p>Reestructuración a gran escala, dentro de una tarea.</p>
+            </div>
+            <div class="agent-role">
+              <div class="role-head"><code>security-auditor</code><span class="perm read">solo lectura</span></div>
+              <p>Corre auditorías. Reporta, no corrige.</p>
+            </div>
+            <div class="agent-role">
+              <div class="role-head"><code>design-auditor</code><span class="perm read">solo lectura</span></div>
+              <p>Detecta desliz visual de IA genérica.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRINCIPLES -->
+    <section class="section" id="docs">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Principios de ingeniería</div>
+          <h2>Los agentes necesitan límites, no más prompts.</h2>
+          <p>Lexis-Two inclina el loop hacia soluciones más simples, chicas y mantenibles.</p>
+        </div>
+        <div class="principles">
+          <article class="principle"><strong>YAGNI</strong><h3>Construí lo necesario.</h3><p>No metas funcionalidad antes de que haya una necesidad concreta.</p></article>
+          <article class="principle"><strong>KISS</strong><h3>Preferí el camino simple.</h3><p>Usá capacidades nativas antes que sumar una abstracción.</p></article>
+          <article class="principle"><strong>DRY</strong><h3>Una sola fuente de verdad.</h3><p>Evitá conocimiento duplicado e implementaciones paralelas.</p></article>
+          <article class="principle"><strong>SOLID</strong><h3>Límites explícitos.</h3><p>Responsabilidades claras, interfaces mantenibles.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- LADDER -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Escalera de decisión</div>
+          <h2>Antes de sumar código, preguntar si el código debe existir.</h2>
+        </div>
+        <div class="ladder">
+          <div class="ladder-step"><div class="ladder-number">01</div><div class="ladder-content"><strong>YAGNI</strong><span>¿Necesita existir?</span></div></div>
+          <div class="ladder-step"><div class="ladder-number">02</div><div class="ladder-content"><strong>Plataforma</strong><span>¿La plataforma ya lo resuelve?</span></div></div>
+          <div class="ladder-step"><div class="ladder-number">03</div><div class="ladder-content"><strong>Dependencia existente</strong><span>¿El proyecto ya lo provee?</span></div></div>
+          <div class="ladder-step"><div class="ladder-number">04</div><div class="ladder-content"><strong>Código mínimo</strong><span>¿Cuál es la implementación más chica que funciona?</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CODE COMPARISON -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Prueba en el loop</div>
+          <h2>El agente no solo escribe código. Lo cuestiona.</h2>
+          <p>Una decisión representativa: usar una capacidad nativa del navegador en vez de sumar una abstracción.</p>
+        </div>
+        <div class="code-grid">
+          <div class="code-panel">
+            <div class="code-head"><span>SIN LEXIS-TWO</span><span class="line-count">74 líneas</span></div>
+            <div class="code-body">function Modal({ open, onClose, title, children }) {
+  useEffect(() => {
+    document.addEventListener("keydown", onEscape);
+    document.body.style.overflow = "hidden";
+    return () => { /* cleanup */ };
+  }, [open]);
+  return createPortal(
+    &lt;div className="modal-overlay" onClick={onClose}&gt;
+      &lt;div role="dialog"&gt;
+        &lt;h2&gt;{title}&lt;/h2&gt;
+        {children}
+      &lt;/div&gt;
+    &lt;/div&gt;,
+    document.body,
+  );
+}</div>
+          </div>
+          <div class="code-panel">
+            <div class="code-head"><span>CON LEXIS-TWO</span><span class="line-count">24 líneas</span></div>
+            <div class="code-body">// lexis: &lt;dialog&gt; nativo — focus trap
+// y backdrop ya incluidos
+&lt;dialog ref={dialogRef}&gt;
+  &lt;h2&gt;Confirmar borrado&lt;/h2&gt;
+  &lt;form method="dialog"&gt;
+    &lt;button value="cancel"&gt;Cancelar&lt;/button&gt;
+    &lt;button value="confirm"&gt;Borrar&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/dialog&gt;</div>
+          </div>
+        </div>
+        <p class="code-note">El agente eligió la plataforma antes que la librería — sin que nadie se lo pidiera vuelta a vuelta.</p>
+      </div>
+    </section>
+
+    <!-- HOSTS -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Portable por diseño</div>
+          <h2>Usá el agente que ya tenés.</h2>
+          <p>Lexis-Two no reemplaza al agente que usás hoy. Le da una forma compartida de trabajar.</p>
+        </div>
+        <div class="hosts" aria-label="Hosts soportados">
+          <div class="host">OpenCode</div>
+          <div class="host">Claude Code</div>
+          <div class="host">Cursor</div>
+          <div class="host">Codex</div>
+          <div class="host">Gemini CLI</div>
+          <div class="host">Copilot</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENCHMARKS -->
+    <section class="section" id="benchmarks">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Con números, no solo promesas</div>
+          <h2>Lo que cambia cuando el loop tiene disciplina.</h2>
+          <p>Benchmark OpenCode Go, mediana de 5 tareas de código, 3 corridas por celda.</p>
+        </div>
+        <div class="bench-grid">
+          <div class="bench-card"><div class="bench-num">−68%</div><div class="bench-label">reducción de LOC vs. baseline</div></div>
+          <div class="bench-card"><div class="bench-num">9</div><div class="bench-label">casos antes/después documentados — Next.js, Express, FastAPI</div></div>
+          <div class="bench-card"><div class="bench-num">9</div><div class="bench-label">hosts con soporte completo</div></div>
+        </div>
+        <p class="bench-foot">Resultados de una corrida — específicos por modelo y tarea, no una promesa universal.</p>
+      </div>
+    </section>
+
+    <!-- VISION -->
+    <section class="section" id="vision">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">La dirección</div>
+          <h2>De reglas a orquestación.</h2>
+          <p>
+            Lexis-Two es la base portable de hoy. La dirección de largo plazo es una capa de
+            orquestación programable para flujos humano + agente.
+          </p>
+        </div>
+        <div class="vision">
+          <article class="vision-card"><div class="tag">HOY</div><h3>Lexis-Two</h3><p>Principios, skills, comandos, adaptadores y loop de agentes estructurado.</p></article>
+          <article class="vision-card"><div class="tag">PRÓXIMO</div><h3>Lexis-Core</h3><p>Orquestación, estado, coordinación de agentes, contexto compartido y checkpoints humanos configurables.</p></article>
+          <article class="vision-card"><div class="tag">VISIÓN</div><h3>Sistemas de agentes</h3><p>Una capa programable para flujos inteligentes que saben cuándo actuar y cuándo preguntar.</p></article>
+        </div>
+        <div class="future">
+          <h3>¿Y si el agente pudiera trabajar hasta que se necesite tu criterio?</h3>
+          <p>El objetivo no es la autonomía máxima. Es autonomía útil, con control humano explícito en los momentos que importan.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GET STARTED -->
+    <section class="section" id="install">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Empezá</div>
+          <h2>Arrancá con el agente que ya usás.</h2>
+        </div>
+        <div class="install-box">
+          <code id="installCommand">npx @draig/lexis-two install</code>
+          <button id="copyBtn">Copiar</button>
+        </div>
+        <div class="install-meta">
+          <span class="chip">OpenCode</span><span class="chip">Claude Code</span><span class="chip">Cursor</span>
+          <span class="chip">Codex</span><span class="chip">Gemini CLI</span><span class="chip">Copilot</span>
+          <span class="chip">AGENTS.md</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="final-cta">
+      <div class="container">
+        <div class="eyebrow">Lexis-Two</div>
+        <h2>Dejá que el agente trabaje.<br />Guardate la decisión.</h2>
+        <div class="hero-actions">
+          <a class="button" href="#install">Empezar</a>
+          <a class="button secondary" href="https://github.com/nitdraig/lexis-two" target="_blank" rel="noreferrer">Explorar en GitHub ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">Lexis-Two<p>Framework de agentes con humano en el loop.</p></div>
+        <div><h3>Producto</h3><a href="#workflow">Cómo funciona</a><a href="#examples">Checkpoint</a><a href="#install">Empezar</a></div>
+        <div><h3>Para devs</h3><a href="#docs">Principios</a><a href="#install">Instalación</a><a href="https://github.com/nitdraig/lexis-two" target="_blank" rel="noreferrer">GitHub ↗</a></div>
+        <div><h3>Proyecto</h3><a href="https://github.com/nitdraig/lexis-two" target="_blank" rel="noreferrer">Código fuente</a><a href="https://github.com/nitdraig/lexis-two/issues" target="_blank" rel="noreferrer">Issues</a><a href="https://github.com/nitdraig/lexis-two/discussions" target="_blank" rel="noreferrer">Discussions</a></div>
+      </div>
+      <div class="footer-bottom"><span>MIT · Excelso Open</span><span>© 2026 Lexis-Two</span></div>
+    </div>
+  </footer>
+
+<script>
+  const nav = document.getElementById("nav");
+  const menuBtn = document.getElementById("menuBtn");
+  window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 8));
+  menuBtn.addEventListener("click", () => {
+    nav.classList.toggle("mobile-open");
+    menuBtn.textContent = nav.classList.contains("mobile-open") ? "CERRAR" : "MENU";
+  });
+  document.querySelectorAll(".nav-links a").forEach(link => {
+    link.addEventListener("click", () => { nav.classList.remove("mobile-open"); menuBtn.textContent = "MENU"; });
+  });
+
+  const options = document.querySelectorAll(".option");
+  const recommendation = document.getElementById("recommendation");
+  const decisionCard = document.getElementById("decisionCard");
+  const decisionStatus = document.getElementById("decisionStatus");
+  options.forEach(option => {
+    option.addEventListener("click", () => {
+      options.forEach(o => o.classList.remove("selected"));
+      option.classList.add("selected");
+      recommendation.textContent = "OPCIÓN " + option.dataset.option;
+      decisionCard.classList.remove("approved");
+      decisionStatus.textContent = "● EN PAUSA";
+    });
+  });
+  document.getElementById("approveBtn").addEventListener("click", () => {
+    decisionCard.classList.add("approved");
+    decisionStatus.textContent = "✓ RETOMANDO";
+  });
+  document.getElementById("modifyBtn").addEventListener("click", () => {
+    decisionStatus.textContent = "● REQUIERE AJUSTE";
+  });
+  document.getElementById("askBtn").addEventListener("click", () => {
+    decisionStatus.textContent = "● ESPERANDO AL HUMANO";
+  });
+
+  document.getElementById("copyBtn").addEventListener("click", async () => {
+    const command = document.getElementById("installCommand").textContent;
+    const btn = document.getElementById("copyBtn");
+    try {
+      await navigator.clipboard.writeText(command);
+      btn.textContent = "Copiado";
+    } catch {
+      btn.textContent = "Seleccioná";
+    }
+    setTimeout(() => btn.textContent = "Copiar", 1400);
+  });
+</script>
+</body>
+</html>

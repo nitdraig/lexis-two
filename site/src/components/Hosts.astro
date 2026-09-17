@@ -1,62 +1,27 @@
 ---
 interface Props {
   hosts: {
+    eyebrow: string;
     title: string;
-    subtitle: string;
-    headHost: string;
-    headLevel: string;
-    headEntry: string;
-    rows: readonly {
-      host: string;
-      level: string;
-      entry: string;
-    }[];
-    levelFull: string;
-    levelSoon: string;
-    levelRules: string;
+    copy: string;
+    items: string[];
   };
 }
 
 const { hosts } = Astro.props;
 ---
 
-<section id="hosts">
-  <div class="wrap">
-    <div class="section-head">
+<section class="section" id="hosts">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">{hosts.eyebrow}</div>
       <h2>{hosts.title}</h2>
-      <p set:html={hosts.subtitle} />
+      <p>{hosts.copy}</p>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">{hosts.headHost}</th>
-            <th scope="col">{hosts.headLevel}</th>
-            <th scope="col">{hosts.headEntry}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            hosts.rows.map((row) => (
-              <tr>
-                <td>{row.host}</td>
-                <td>
-                  <span class:list={["pill", row.level]}>
-                    {row.level === "full"
-                      ? hosts.levelFull
-                      : row.level === "soon"
-                        ? hosts.levelSoon
-                        : hosts.levelRules}
-                  </span>
-                </td>
-                <td>
-                  <code>{row.entry}</code>
-                </td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
+    <div class="hosts reveal" aria-label="Supported hosts">
+      {hosts.items.map((host) => (
+        <div class="host">{host}</div>
+      ))}
     </div>
   </div>
 </section>

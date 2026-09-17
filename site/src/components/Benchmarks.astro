@@ -1,75 +1,73 @@
 ---
+import Layout from "../layouts/Layout.astro";
+import Header from "./Header.astro";
+import Footer from "./Footer.astro";
 import benchmarkData from "../data/opencode-go-benchmark.json";
+import { getDictionary } from "../i18n/index.js";
+import type { Locale } from "../i18n/index.js";
 
 interface Props {
-  benchmarks: {
-    title: string;
-    subtitle: string;
-    runDate: string;
-    runsPerCell: string;
-    source: string;
-    totalLoc: string;
-    reduction: string;
-    time: string;
-    byTask: string;
-    summary: string;
-    colModel: string;
-    colBaseline: string;
-    colLexis: string;
-    colReduction: string;
-    colCorrect: string;
-    regenerate: string;
-  };
+  locale: Locale;
 }
 
-const { benchmarks } = Astro.props;
+const { locale } = Astro.props;
+const t = getDictionary(locale);
+const b = t.benchmarks;
 const chartPayload = JSON.stringify(benchmarkData);
 ---
 
-<section id="benchmarks" class="benchmark-page">
-  <div class="wrap">
-    <div class="section-head benchmark-head">
-      <h2>{benchmarks.title}</h2>
-      <p>{benchmarks.subtitle}</p>
-      <p class="benchmark-meta">
-        {benchmarks.runDate}: <strong>{benchmarkData.date}</strong>
-        · {benchmarkData.repeat} {benchmarks.runsPerCell}
-        · {benchmarks.source}: <code>{benchmarkData.source}</code>
+<Layout
+  locale={locale}
+  canonicalPath={locale === "es" ? "/es/benchmarks" : "/benchmarks"}
+  title={b.title}
+  description={b.subtitle}
+>
+  <Header locale={locale} nav={t.nav} />
+
+  <main id="main" class="benchmark-page">
+    <div class="container benchmark-head">
+      <div class="eyebrow">Lexis-Two</div>
+      <h1>{b.title}</h1>
+      <p>{b.subtitle}</p>
+      <p class="benchmark-foot" style="margin-top: 1rem;">
+        {b.runDate}: <strong>{benchmarkData.date}</strong>
+        · {benchmarkData.repeat} {b.runsPerCell}
+        · {b.source}: <code>{benchmarkData.source}</code>
       </p>
     </div>
 
-    <div class="benchmark-grid">
+    <div class="container benchmark-grid">
       <section class="benchmark-card wide" aria-labelledby="chart-total-loc-title">
-        <h3 id="chart-total-loc-title">{benchmarks.totalLoc}</h3>
+        <h2 id="chart-total-loc-title">{b.totalLoc}</h2>
         <canvas id="chart-total-loc" height="280"></canvas>
       </section>
 
       <section class="benchmark-card" aria-labelledby="chart-reduction-title">
-        <h3 id="chart-reduction-title">{benchmarks.reduction}</h3>
+        <h2 id="chart-reduction-title">{b.reduction}</h2>
         <canvas id="chart-reduction" height="280"></canvas>
       </section>
 
       <section class="benchmark-card" aria-labelledby="chart-time-title">
-        <h3 id="chart-time-title">{benchmarks.time}</h3>
+        <h2 id="chart-time-title">{b.time}</h2>
         <canvas id="chart-time" height="280"></canvas>
       </section>
 
       <section class="benchmark-card wide" aria-labelledby="chart-by-task-title">
-        <h3 id="chart-by-task-title">{benchmarks.byTask}</h3>
+        <h2 id="chart-by-task-title">{b.byTask}</h2>
         <canvas id="chart-by-task" height="280"></canvas>
       </section>
 
       <section class="benchmark-card wide" aria-labelledby="summary-table-title">
-        <h3 id="summary-table-title">{benchmarks.summary}</h3>
+        <h2 id="summary-table-title">{b.summary}</h2>
         <div class="table-wrap">
           <table id="summary-table">
             <thead>
               <tr>
-                <th scope="col">{benchmarks.colModel}</th>
-                <th scope="col">{benchmarks.colBaseline}</th>
-                <th scope="col">{benchmarks.colLexis}</th>
-                <th scope="col">{benchmarks.colReduction}</th>
-                <th scope="col">{benchmarks.colCorrect}</th>
+                <th scope="col">{b.colModel}</th>
+                <th scope="col">{b.colBaseline}</th>
+                <th scope="col">{b.colLexis}</th>
+                <th scope="col">{b.colReduction}</th>
+                <th scope="col">{b.colCorrect}</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -78,21 +76,26 @@ const chartPayload = JSON.stringify(benchmarkData);
       </section>
     </div>
 
-    <p class="benchmark-foot">
-      {benchmarks.disclaimer}
-    </p>
-    <p class="benchmark-foot">
-      {benchmarks.regenerate}
-      <code>npm run benchmark:opencode-go &amp;&amp; npm run benchmark:report</code>
-    </p>
-  </div>
-</section>
+    <div class="container">
+      <p class="benchmark-foot">{b.disclaimer}</p>
+      <p class="benchmark-foot">
+        {b.regenerate}
+        <code>npm run benchmark:opencode-go &amp;&amp; npm run benchmark:report</code>
+      </p>
+      <p style="margin-top: 2rem;">
+        <a class="button" href={locale === "es" ? "/es" : "/"}>{b.backHome}</a>
+      </p>
+    </div>
+  </main>
 
-<script define:vars={{ chartPayload, benchmarks }} is:inline>
+  <Footer locale={locale} footer={t.footer} />
+</Layout>
+
+<script define:vars={{ chartPayload, benchmarks: b }} is:inline>
   (function () {
     const CHART_JS_URL = "https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js";
-    const section = document.getElementById("benchmarks");
-    if (!section) return;
+    const main = document.getElementById("main");
+    if (!main) return;
 
     let loaded = false;
 
@@ -103,9 +106,9 @@ const chartPayload = JSON.stringify(benchmarkData);
       const DATA = JSON.parse(chartPayload);
       const labels = DATA.models.map(function (m) { return m.label; });
 
-      Chart.defaults.color = "#a0aa9e";
-      Chart.defaults.borderColor = "#1e2420";
-      Chart.defaults.font.family = "Syne, system-ui, sans-serif";
+      Chart.defaults.color = "#97a1b3";
+      Chart.defaults.borderColor = "#272d3a";
+      Chart.defaults.font.family = "Inter, system-ui, sans-serif";
 
       new Chart(document.getElementById("chart-total-loc"), {
         type: "bar",
@@ -115,17 +118,18 @@ const chartPayload = JSON.stringify(benchmarkData);
             {
               label: "baseline",
               data: DATA.models.map(function (m) { return m.totals.baselineLoc; }),
-              backgroundColor: "#c97a7a",
+              backgroundColor: "#e08a8a",
             },
             {
               label: "lexis-two",
               data: DATA.models.map(function (m) { return m.totals.lexisLoc; }),
-              backgroundColor: "#7cba8a",
+              backgroundColor: "#6ed7a5",
             },
           ],
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: { legend: { position: "bottom" } },
           scales: { y: { beginAtZero: true } },
         },
@@ -139,13 +143,14 @@ const chartPayload = JSON.stringify(benchmarkData);
             {
               label: benchmarks.reduction,
               data: DATA.models.map(function (m) { return m.totals.reductionPct; }),
-              backgroundColor: "#7cba8a",
+              backgroundColor: "#6ed7a5",
             },
           ],
         },
         options: {
           indexAxis: "y",
           responsive: true,
+          maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
             x: { beginAtZero: true, max: 100, ticks: { callback: function (v) { return v + "%"; } } },
@@ -161,23 +166,24 @@ const chartPayload = JSON.stringify(benchmarkData);
             {
               label: "baseline",
               data: DATA.models.map(function (m) { return m.totals.baselineTimeSec; }),
-              backgroundColor: "#c97a7a",
+              backgroundColor: "#e08a8a",
             },
             {
               label: "lexis-two",
               data: DATA.models.map(function (m) { return m.totals.lexisTimeSec; }),
-              backgroundColor: "#7cba8a",
+              backgroundColor: "#6ed7a5",
             },
           ],
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: { legend: { position: "bottom" } },
           scales: { y: { beginAtZero: true } },
         },
       });
 
-      var taskColors = ["#7cba8a", "#5a9a6a", "#9fd4a8", "#4a7356", "#3d5f48"];
+      const taskColors = ["#8b7fff", "#5fd8c9", "#f2a154", "#6ed7a5", "#e08a8a"];
       new Chart(document.getElementById("chart-by-task"), {
         type: "bar",
         data: {
@@ -192,12 +198,13 @@ const chartPayload = JSON.stringify(benchmarkData);
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: { legend: { position: "bottom" } },
           scales: { y: { beginAtZero: true } },
         },
       });
 
-      var tbody = document.querySelector("#summary-table tbody");
+      const tbody = document.querySelector("#summary-table tbody");
       DATA.models.forEach(function (m) {
         var c = m.correctByArm["lexis-two"];
         var tr = document.createElement("tr");
@@ -226,9 +233,8 @@ const chartPayload = JSON.stringify(benchmarkData);
           loadChartJS(renderCharts);
         }
       }, { rootMargin: "200px" });
-      observer.observe(section);
+      observer.observe(main);
     } else {
-      // Fallback: load immediately
       loadChartJS(renderCharts);
     }
   })();

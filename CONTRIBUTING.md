@@ -23,6 +23,7 @@ plugin manifests           ← gemini-extension.json, .claude-plugin/, .codex-pl
 | Layer | Rule |
 | ----- | ---- |
 | `skills/` | All reusable agent behavior lives here. |
+| `stacks/` | One `<id>.md` per ecosystem; `AGENTS.md` points at the matching profile. |
 | `commands/` + `.opencode/commands/` | One-liner or `skill = "../skills/…"` pointer — no logic. |
 | `hooks/` | Mode persistence and instruction loading shared across Claude, Codex, Copilot, OpenCode. |
 | Instruction-tier hosts | Static copies of `AGENTS.md` — never fork the philosophy per host. |
@@ -135,6 +136,18 @@ If you must register `pi.registerCommand("lexis-two-<action>", …)`:
 3. Mark the handler deprecated and delegate to `/lexis <action>` (see existing `makeDeprecatedHandler`).
 
 [tests/commands.test.js](./tests/commands.test.js) fails if any `pi.registerCommand` lacks matching `commands/*.toml` and `.opencode/commands/*.md`.
+
+---
+
+## Adding a stack profile
+
+When a new ecosystem needs its own conventions:
+
+1. Copy `stacks/_template.md` → `stacks/<id>.md` (English kebab-case id).
+2. Fill `Detection`, tools, and only the frontend/backend/database sections that apply. Do not invent shortcuts in a vacuum — seed from a real project.
+3. Add one row to the "Stack profiles" detection table in `AGENTS.md`.
+4. Re-sync the four instruction-tier copies (`npm test` will catch drift).
+5. If the profile has an audit command, note it in `Tools`; otherwise the security/audit skills run generic checks and say so.
 
 ---
 

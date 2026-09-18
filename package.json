@@ -1,6 +1,6 @@
 {
   "name": "@draig/lexis-two",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "description": "The simple way to obtain the best code. A portable ruleset that steers coding agents: prove the feature, prefer the platform, ship the minimum.",
   "bin": {
     "lexis-two": "bin/lexis-two.js"
@@ -35,6 +35,7 @@
     "commands/",
     "hooks/",
     "skills/",
+    "stacks/",
     "templates/",
     "scripts/",
     "bin/",

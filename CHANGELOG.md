@@ -4,9 +4,19 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-18
+
+### Added
+
+- Stack profiles: `stacks/node-ts.md` + `stacks/_template.md`; `AGENTS.md` core is now stack-agnostic and detects a profile per task.
+- Installer copies `stacks/` to the project root (skips existing files unless `--force`); `package.json` `files` include `stacks/`.
+- `lexis-two-security` and `lexis-two-audit` are profile-aware — they run the stack audit only when a profile defines one, otherwise generic checks.
+- Landing: welcome banner for the stack-profile feature and a dedicated "agnostic by design" section (stack / host / agent).
+
 ### Changed
 
 - Landing and `/guide` copy: problem-first hero, three-step loop, `/desx` as a design pass beside the loop. npm/README descriptions drop “lowest tokens” as the product promise.
+- README stack section and `/lexis security` / `/lexis audit` site copy now describe profile-based detection.
 
 ## [1.3.3] - 2026-09-11
 

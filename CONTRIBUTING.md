@@ -149,6 +149,8 @@ When a new ecosystem needs its own conventions:
 4. Re-sync the four instruction-tier copies (`npm test` will catch drift).
 5. If the profile has an audit command, note it in `Tools`; otherwise the security/audit skills run generic checks and say so.
 
+Full guide: [docs/stacks.md](./docs/stacks.md).
+
 ---
 
 ## Adding a command

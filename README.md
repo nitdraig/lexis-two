@@ -104,7 +104,7 @@ profile for the task's files, then read only that profile.
 | `go.mod` | `go` | Planned |
 | `Cargo.toml` | `rust` | Planned |
 
-See `stacks/_template.md` to add a profile.
+See [docs/stacks.md](./docs/stacks.md) for detection, configuration, and adding a profile.
 
 ---
 

@@ -154,7 +154,7 @@ Rules point at `./stacks/<id>.md`. Copy the tree beside `AGENTS.md`:
 cp -r ~/lexis-two/stacks ./stacks
 ```
 
-The installer does this automatically; re-run without `--force` and it skips any `stacks/` files you already have.
+The installer does this automatically; re-run without `--force` and it skips any `stacks/` files you already have. Full guide: [stacks.md](./stacks.md).
 
 ### OpenCode
 

@@ -385,7 +385,7 @@
       "Loop: /discx define este MVP y la siguiente etapa, /specx lo convierte en spec y tareas, /lexis mantiene al agente lean. Después de UI, /desx es una pasada de diseño al costado del loop — no una fase de Specxis. Bugs: salta Discovery, usa /lexis plan.",
     availability:
       "Disponibles en los hosts con adaptador de comandos: OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
-    toc: ["Niveles de intensidad", "Comandos /lexis", "El ciclo /discx", "El ciclo /specx", "La pasada /desx"],
+    toc: ["Niveles de intensidad", "Comandos /lexis", "El ciclo /discx", "El ciclo /specx", "La pasada /desx", "Perfiles de stack"],
     levelsTitle: "Niveles de intensidad",
     levelsSubtitle:
       "/lexis <modo> cambia la agresividad con la que las reglas frenan a tu agente. El nivel activo se inyecta en cada system prompt hasta que lo cambies.",
@@ -436,6 +436,19 @@
       { name: "/desx audit", desc: "design-auditor. Detector sin modelo y pulido opcional. Solo escribe DESIGN-AUDIT.md.", example: "/desx audit" },
       { name: "/desx apply", desc: "El implementador aplica P0 y luego P1, tilda solo lo resuelto y vuelve a correr el detector.", example: "/desx apply" },
     ],
+    stacksTitle: "Perfiles de stack",
+    stacksSubtitle: "La filosofía sigue agnóstica; las convenciones viven en stacks/<id>.md y se detectan por tarea.",
+    stacksHow: "El agente escanea los markers más cercanos a los archivos de la tarea y lee solo el perfil que corresponde. Sin markers claros, aplica solo la filosofía.",
+    stacksColProfile: "Perfil",
+    stacksColStatus: "Estado",
+    stacksItems: [
+      { name: "node-ts", desc: "Shipped — Next.js, Express, MongoDB, PostgreSQL, TypeScript estricto" },
+      { name: "js-astro", desc: "Planificado — se detecta, nunca se simula como Next" },
+      { name: "python", desc: "Planificado — se detecta desde pyproject.toml / requirements.txt" },
+      { name: "go", desc: "Planificado — se detecta desde go.mod" },
+      { name: "rust", desc: "Planificado — se detecta desde Cargo.toml" },
+    ],
+    stacksAdd: "Agregá un perfil: copiá stacks/_template.md → stacks/<id>.md, sumá una fila a la tabla de detección de AGENTS.md y corré npm test.",
     sddHint:
       "Loop: /discx para producto vago y escala; /specx para coordinación de 3+ archivos; /lexis para intensidad. Después de UI, /desx es una pasada de diseño. Salta Discovery en bugs y cambios de un archivo.",
     backHome: "Volver al inicio",

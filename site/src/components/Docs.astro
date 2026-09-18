@@ -154,6 +154,29 @@ const d = t.docs;
           </table>
         </div>
 
+        <h2 id="docs-section-5">{d.stacksTitle}</h2>
+        <p>{d.stacksSubtitle}</p>
+        <p>{d.stacksHow}</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>{d.stacksColProfile}</th>
+                <th>{d.stacksColStatus}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {d.stacksItems.map((item) => (
+                <tr>
+                  <td><code>{item.name}</code></td>
+                  <td>{item.desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top: 1rem;">{d.stacksAdd}</p>
+
         <p style="margin-top: 2rem;">{d.sddHint}</p>
 
         <p style="margin-top: 2rem;">

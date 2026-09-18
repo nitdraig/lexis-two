@@ -384,7 +384,7 @@ export default {
       "Loop: /discx defines this MVP and the next stage, /specx turns that into a spec and tasks, /lexis keeps the agent lean. After UI, /desx is a design pass beside the loop — not a Specxis phase. Bugs: skip Discovery, use /lexis plan.",
     availability:
       "Available on hosts with command adapters: OpenCode, Gemini CLI, pi, Claude Code, and GitHub Copilot.",
-    toc: ["Intensity levels", "/lexis commands", "The /discx cycle", "The /specx lifecycle", "The /desx pass"],
+    toc: ["Intensity levels", "/lexis commands", "The /discx cycle", "The /specx lifecycle", "The /desx pass", "Stack profiles"],
     levelsTitle: "Intensity levels",
     levelsSubtitle:
       "/lexis <mode> switches how aggressively the ruleset gates your agent. The active level is injected into every system prompt until you switch again.",
@@ -435,6 +435,19 @@ export default {
       { name: "/desx audit", desc: "design-auditor. Detector without a model, then optional prose polish. Writes only DESIGN-AUDIT.md.", example: "/desx audit" },
       { name: "/desx apply", desc: "Implementer applies P0 then P1, ticks only fixed items, re-runs the detector.", example: "/desx apply" },
     ],
+    stacksTitle: "Stack profiles",
+    stacksSubtitle: "Philosophy stays stack-agnostic; conventions live in stacks/<id>.md and are detected per task.",
+    stacksHow: "The agent scans markers nearest to the task's files and reads only the matching profile. Ambiguous or missing markers fall back to philosophy only.",
+    stacksColProfile: "Profile",
+    stacksColStatus: "Status",
+    stacksItems: [
+      { name: "node-ts", desc: "Shipped — Next.js, Express, MongoDB, PostgreSQL, TypeScript strict" },
+      { name: "js-astro", desc: "Planned — detected, never faked as Next" },
+      { name: "python", desc: "Planned — detected from pyproject.toml / requirements.txt" },
+      { name: "go", desc: "Planned — detected from go.mod" },
+      { name: "rust", desc: "Planned — detected from Cargo.toml" },
+    ],
+    stacksAdd: "Add a profile: copy stacks/_template.md → stacks/<id>.md, add one row to the AGENTS.md detection table, then run npm test.",
     sddHint:
       "Loop: /discx for vague products and scale; /specx for 3+ file coordination; /lexis for intensity. After UI, /desx is a design pass. Skip Discovery for bugs and one-file fixes.",
     backHome: "Back to home",

@@ -38,6 +38,7 @@ const INVARIANTS = [
   'lazy senior',
   'Input validation at trust boundaries',
   'YAGNI',
+  'stacks/',
 ];
 
 function read(relPath) {

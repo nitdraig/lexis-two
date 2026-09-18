@@ -23,66 +23,35 @@ Before writing any code, stop at the first rung that holds:
 
 ---
 
-## Stack-Specific Shortcuts
+## Stack profiles
 
-Always check these before reaching for a new solution.
+Philosophy above always applies. Stack-specific conventions live in `./stacks/<id>.md`,
+one per ecosystem. Read only the profile that matches the files you are editing.
+Do not improvise another stack's libraries or folder layout.
 
-### Frontend (Next.js App Router / React / TypeScript)
+### Detect
 
-- **Date input** → `<input type="date">`, not a datepicker library
-- **Modal** → `<dialog>`, not a modal library
-- **Tooltip** → `title` attribute or CSS `::after`, not a tooltip component
-- **Animation** → CSS `transition`/`animation`, not framer-motion unless already installed
-- **Form validation** → HTML5 attributes first, then zod if already in project
-- **State** → `useState`/`useReducer` before zustand; zustand before redux
-- **Table** → native `<table>` before react-table unless already installed
-- **Server vs Client Components** → Server by default; `'use client'` only for interactivity
-- **Data fetching** → TanStack Query if installed; native `fetch` in Server Components
+Scan markers nearest to the task's files first, most specific first:
 
-### Backend (Express / Fastify / Node.js / TypeScript)
+| If you see | Profile | File | Status |
+| --- | --- | --- | --- |
+| `next.config.*` or dependency `next` | `node-ts` | `stacks/node-ts.md` | Shipped |
+| `astro.config.*` or dependency `astro` | `js-astro` | `stacks/js-astro.md` | Planned |
+| `package.json` + TypeScript (`tsconfig.json` / `"typescript"`), no Next/Astro | `node-ts` | `stacks/node-ts.md` | Shipped |
+| `package.json` (JS, no TS/Next/Astro) | `node-ts` | `stacks/node-ts.md` | Shipped — skip TS-only bullets |
+| `pyproject.toml` / `requirements.txt` / `Pipfile` | `python` | `stacks/python.md` | Planned |
+| `go.mod` | `go` | `stacks/go.md` | Planned |
+| `Cargo.toml` | `rust` | `stacks/rust.md` | Planned |
 
-- **Validation** → zod if installed, not a new library
-- **Auth middleware** → extend existing, don't create a parallel system
-- **Caching** → in-memory `Map` before Redis unless Redis already configured
-- **Scheduled job** → `setInterval` before a job queue unless already installed
-- **Error handling** → centralized middleware, not per-route try/catch
+### Load
 
-### Database
+1. One clear profile for the task's path → read `./stacks/<id>.md` only; apply it to that scope. Do not ask.
+2. Several markers → ask which profile applies to this task's path (max 2 questions). Apply each profile only under its own tree; never merge two profiles into global laws.
+3. Marker but no profile file (planned id) → say the ecosystem, say there is no profile, continue with core only.
+4. No markers → ask once per session; pick a known id or "philosophy only".
+5. `./stacks/` missing → say the install is incomplete; do not read `node_modules/@draig/lexis-two/stacks/`.
 
-**MongoDB / Mongoose (default)**
-
-- **Aggregation** → single pipeline, not multiple queries
-- **Pagination** → follow existing project pattern, don't invent a new one
-- **Soft delete** → follow existing project convention
-- **Indexes** → add only for fields actually queried; measure before adding
-
-**PostgreSQL / Prisma**
-
-- **Raw query** → Prisma ORM first; raw SQL only when ORM can't express it
-- **Relations** → define in schema, not in application logic
-- **Migrations** → always via `prisma migrate`, never manual schema edits
-- **N+1** → use `include`/`select` to eager-load, not separate queries in loops
-
-**SQLite**
-
-- **Use when** → local dev, prototypes, single-user tools, embedded data
-- **Don't use when** → multi-writer concurrency, production SaaS with scale
-- **Driver** → `better-sqlite3` (sync, fast) unless async is explicitly required
-- **Migrations** → keep them in a `/migrations` folder, never alter tables manually
-
-**Redis**
-
-- **Use for** → caching, sessions, rate limiting, pub/sub — not as primary DB
-- **Cache strategy** → cache-aside by default; write-through only if explicitly needed
-- **TTL** → always set a TTL; never store without expiry
-- **Keys** → use namespaced keys: `app:feature:id` (e.g. `user:session:abc123`)
-- **Don't cache** → user-specific writes, financial data, anything requiring consistency
-
-**General rules across all databases**
-
-- Check which DB the project uses before writing any query — don't assume MongoDB
-- Follow the existing ORM/driver convention in the project, don't introduce a second one
-- Transactions for multi-step writes regardless of DB engine
+Ask once per session, in memory only. Do not write the answer to disk. Unambiguous detection never asks.
 
 ---
 
@@ -100,21 +69,10 @@ Always check these before reaching for a new solution.
 
 ---
 
-## TypeScript Rules
-
-- `strict: true` always.
-- Never use `any` or `unknown` without a `// lexis:` comment explaining why.
-- Never use `as` or `!` unless absolutely necessary — same rule.
-- Prefer `type` over `interface` except for public APIs.
-- Let TypeScript infer types when possible.
-- If types are unclear: stop and ask before writing code.
-
----
-
 ## Never Lazy About
 
 Input validation at trust boundaries, error handling that prevents data loss,
-security, accessibility, TypeScript types, and tests for new behavior.
+security, accessibility, the repo's typechecker (do not invent a language), and tests for new behavior.
 These are non-negotiable regardless of mode.
 
 ---

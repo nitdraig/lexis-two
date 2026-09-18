@@ -54,7 +54,7 @@ In any **other** project directory, `npx @draig/lexis-two install` works without
 | **Windsurf** | `.windsurf/rules/lexis-two.md` | — |
 | **Cline** | `.clinerules/lexis-two.md` | — |
 | **Kiro** | `.kiro/steering/lexis-two.md` | — |
-| **AGENTS.md** | `./AGENTS.md` | — |
+| **AGENTS.md** | `./AGENTS.md` + `./stacks/` | — |
 | **OpenCode** | `opencode.json` + `.opencode/commands/` | `~/.config/opencode/commands/` (Windows: `%USERPROFILE%\.config\opencode\commands\`) |
 | **Copilot (repo)** | `.github/copilot-instructions.md` | — |
 
@@ -98,6 +98,8 @@ In `cmd`: `/import opencode` then `/import cursor`, then `/reload`. Use `/lexis 
 ### Safety rules
 
 - **`AGENTS.md` is never overwritten** unless you pass `--force`.
+- `stacks/` files are copied beside `AGENTS.md` and are **skipped if they exist** unless you pass `--force` (same contract as `AGENTS.md`).
+- On uninstall, only `stacks/` files identical to the package are removed; modified files are skipped.
 - Re-running the installer is **idempotent**: identical files are skipped.
 - With `--force`, existing targets are backed up to `*.bak` before overwrite.
 

@@ -90,17 +90,21 @@ Skip Discovery for clear bugs and one-line fixes. `/desx` is beside that loop, n
 
 ---
 
-## Stack
+## Stack profiles
 
-Lexis is optimized for this stack — adapt as needed for your own:
+Philosophy is stack-agnostic; conventions live in `stacks/<id>.md`. Detect the
+profile for the task's files, then read only that profile.
 
-- **Frontend**: Next.js App Router, React, TypeScript strict
-- **Backend**: Express.js / Fastify, Node.js, TypeScript
-- **Database**: MongoDB (default) / PostgreSQL / SQLite
-- **Cache**: Redis
-- **Styling**: Tailwind CSS
-- **Data fetching**: TanStack Query v5
-- **Package Manager**: npm
+| Marker | Profile | Status |
+| --- | --- | --- |
+| `next.config.*` / `next` dep | `node-ts` | Shipped |
+| `astro.config.*` / `astro` dep | `js-astro` | Planned |
+| `package.json` (+ TypeScript) | `node-ts` | Shipped |
+| `pyproject.toml` / `requirements.txt` / `Pipfile` | `python` | Planned |
+| `go.mod` | `go` | Planned |
+| `Cargo.toml` | `rust` | Planned |
+
+See `stacks/_template.md` to add a profile.
 
 ---
 
@@ -440,6 +444,18 @@ MVP cut and map **before** Specxis. Output: `docs/discovery/<slug>/`.
 
 ---
 
+### v1.4 — Stack profiles ✅
+
+Core `AGENTS.md` stays stack-agnostic; conventions move to `stacks/<id>.md` and are detected per task.
+
+- [x] `stacks/node-ts.md` (moved shortcuts + TypeScript rules + detection + tools) and `stacks/_template.md`
+- [x] `AGENTS.md` "Stack profiles" detection table + load rules; TypeScript rules leave the core
+- [x] Installer copies `stacks/` (skips existing files unless `--force`); `package.json` `files` include `stacks/`
+- [x] `lexis-two-security` and `lexis-two-audit` are profile-aware (generic checks when no profile)
+- [x] Landing: stack-profile welcome banner + "agnostic by design" section
+
+---
+
 ### v1.0 — Community & Growth
 
 When the ecosystem is stable and has adoption.
@@ -464,7 +480,7 @@ The commercial evolution. Defined once v1.0 has traction.
 
 Contributions welcome. Read [CONTRIBUTING.md](./CONTRIBUTING.md) for architecture, host/skill/command checklists, and the PR contract. [AGENTS.md](./AGENTS.md) applies to this repo too.
 
-Focus areas: stack-specific shortcuts for other tech stacks, new examples, additional hosts, installer improvements.
+Focus areas: add a `stacks/<id>.md` profile + detection-table row, new examples, additional hosts, installer improvements.
 
 ---
 

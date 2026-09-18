@@ -41,7 +41,9 @@ Slash commands: **`/lexis`** is canonical (subcommands below). Skill folders and
 
 Keep adapters thin. When a host supports skills or hooks, point it at the
 existing `skills/` and `hooks/` files. When a host only supports project
-instructions, keep its rule text aligned with `AGENTS.md`.
+instructions, keep its rule text aligned with `AGENTS.md`. Stack conventions
+live in `./stacks/<id>.md`, not in `AGENTS.md`; the rules point there, never to
+`node_modules/@draig/lexis-two/stacks/`.
 
 **Contributing:** See [CONTRIBUTING.md](../CONTRIBUTING.md) for how to add a host, skill, or command without duplicating logic.
 
@@ -124,7 +126,7 @@ Adapter files: Gemini `commands/*.toml`, OpenCode `.opencode/commands/*.md`, pi 
 | `skills/lexis-two-audit/` | Full repo audit |
 | `skills/lexis-two-debt/` | Harvest `// lexis:` comments into debt ledger |
 | `skills/lexis-two-plan/` | Feature planning before coding (includes clarify / sources / compare / scenarios) |
-| `skills/lexis-two-security/` | Security audit (default: Node.js / Next.js / MongoDB) |
+| `skills/lexis-two-security/` | Security audit (stack-aware; generic when no profile) |
 | `skills/lexis-two-doubt-driven/` | No slash — folded into plan; `@skill` still works |
 | `skills/lexis-two-incremental-impl/` | No slash — folded into plan; `@skill` still works |
 | `skills/lexis-two-debug-triage/` | No slash — folded into plan; `@skill` still works |
@@ -143,6 +145,16 @@ Adapt skill shell commands for other stacks — see README **Adapting Lexis-Two 
 ```bash
 git clone https://github.com/nitdraig/lexis-two.git ~/lexis-two
 ```
+
+### Stack profiles
+
+Rules point at `./stacks/<id>.md`. Copy the tree beside `AGENTS.md`:
+
+```bash
+cp -r ~/lexis-two/stacks ./stacks
+```
+
+The installer does this automatically; re-run without `--force` and it skips any `stacks/` files you already have.
 
 ### OpenCode
 

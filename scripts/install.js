@@ -182,6 +182,10 @@ const ALL_HOST_IDS = [
   ...Object.keys(HINT_HOSTS),
 ];
 
+// Hosts whose rules point at `./stacks/<id>.md`. Installing any of them to a
+// project must also ship the stack profile tree, or the rules break.
+const STACK_HOSTS = [...Object.keys(RULE_HOSTS), ...Object.keys(PLUGIN_HOSTS)];
+
 /**
  * @typedef {object} RuleHost
  * @property {string} id
@@ -302,6 +306,20 @@ function listPortableSkillDirs() {
     .map((name) => ({
       name,
       src: path.join(dir, name, 'SKILL.md'),
+    }));
+}
+
+function listStackFiles() {
+  const dir = path.join(PACKAGE_ROOT, 'stacks');
+  if (!fs.existsSync(dir)) {
+    return [];
+  }
+  return fs
+    .readdirSync(dir)
+    .filter((name) => name.endsWith('.md'))
+    .map((name) => ({
+      name,
+      src: path.join(dir, name),
     }));
 }
 
@@ -625,6 +643,26 @@ function planCopyAction(host, installScope, destPath, options) {
   );
 }
 
+function stackDest(ctx, name) {
+  return path.join(ctx.projectDir, 'stacks', name);
+}
+
+function planStackCopies(ctx, options) {
+  return listStackFiles().map((file) =>
+    planFileCopy('stacks', 'project', file.src, stackDest(ctx, file.name), options, true),
+  );
+}
+
+function planStackRemoves(ctx, options) {
+  return listStackFiles().map((file) =>
+    planFileRemove('stacks', 'project', stackDest(ctx, file.name), file.src),
+  );
+}
+
+function shouldCopyStacks(hostIds) {
+  return hostIds.some((id) => STACK_HOSTS.includes(id));
+}
+
 function planOpencodeConfigMerge(configPath, installScope, options) {
   const config = readJsonConfig(configPath);
   const plugins = Array.isArray(config.plugin) ? [...config.plugin] : [];
@@ -823,6 +861,10 @@ function buildUninstallPlan(hostIds, options, ctx) {
     }
   }
 
+  if (shouldCopyStacks(hostIds)) {
+    actions.push(...planStackRemoves(ctx, options));
+  }
+
   return actions;
 }
 
@@ -853,6 +895,10 @@ function buildPlan(hostIds, options, ctx) {
     if (hostId === 'cursor') {
       actions.push(...planCursorSkillCopies(options, ctx));
     }
+  }
+
+  if (shouldCopyStacks(hostIds)) {
+    actions.push(...planStackCopies(ctx, options));
   }
 
   return actions;
@@ -1116,6 +1162,7 @@ module.exports = {
   planOpencodeConfigMerge,
   planOpencodeConfigUninstall,
   listPortableSkillDirs,
+  listStackFiles,
   cursorSkillDest,
   backupPath,
 };

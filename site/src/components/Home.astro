@@ -2,6 +2,7 @@
 import type { Locale } from "../i18n/index.js";
 import { getDictionary } from "../i18n/index.js";
 import Header from "./Header.astro";
+import WelcomeBanner from "./WelcomeBanner.astro";
 import Hero from "./Hero.astro";
 import Problem from "./Problem.astro";
 import Thesis from "./Thesis.astro";
@@ -13,6 +14,7 @@ import Ladder from "./Ladder.astro";
 import CommandsExplained from "./CommandsExplained.astro";
 import Example from "./Example.astro";
 import Hosts from "./Hosts.astro";
+import Agnostic from "./Agnostic.astro";
 import BenchmarkStrip from "./BenchmarkStrip.astro";
 import Vision from "./Vision.astro";
 import Install from "./Install.astro";
@@ -30,6 +32,7 @@ const t = getDictionary(locale);
 <Header locale={locale} nav={t.nav} />
 
 <main id="main">
+  <WelcomeBanner banner={t.home.banner} />
   <Hero hero={t.home.hero} />
   <Problem problem={t.home.problem} />
   <Thesis thesis={t.home.thesis} />
@@ -41,6 +44,7 @@ const t = getDictionary(locale);
   <CommandsExplained commandsExplained={t.home.commandsExplained} />
   <Example example={t.home.example} />
   <Hosts hosts={t.home.hosts} />
+  <Agnostic agnostic={t.home.agnostic} />
   <BenchmarkStrip benchmarks={t.home.benchmarks} />
   <Vision vision={t.home.vision} />
   <Install install={t.home.install} />

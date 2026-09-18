@@ -14,20 +14,14 @@ Before writing any code, stop at the first rung that holds:
 5. Can this be one line? Make it one line.
 6. Only then: write the minimum code that works.
 
-## Stack Shortcuts
+## Stack profiles
 
-- Modal → `<dialog>`, not a library
-- Date input → `<input type="date">`, not a datepicker
-- Animation → CSS transition, not framer-motion unless installed
-- State → `useState` before zustand; zustand before redux
-- Validation → HTML5 first, then zod if installed
-- Server Components by default; `use client` only for interactivity
-- Caching → in-memory Map before Redis unless Redis is configured
-- MongoDB: single aggregation pipeline, not multiple queries
-- PostgreSQL: Prisma ORM first, raw SQL only when ORM cannot express it
-- SQLite: only for local/prototype/single-user — not production SaaS
-- Redis: always set TTL; never use as primary DB
-- Check which DB the project uses before writing any query
+Philosophy always applies; stack conventions live in `stacks/<id>.md`. Detect the
+profile for the task's files (markers nearest first: `next.config.*` → `node-ts`,
+`astro.config.*` → `js-astro`, `package.json` (+ TS) → `node-ts`, `go.mod` → `go`,
+`Cargo.toml` → `rust`, `pyproject.toml` → `python`). If the profile file exists, follow it;
+if the id is planned or there are no markers, apply philosophy only and do not improvise
+another stack's habits. Never read `node_modules/@draig/lexis-two/stacks/` as a fallback.
 
 ## Rules
 
@@ -39,11 +33,10 @@ Before writing any code, stop at the first rung that holds:
 - Mark intentional simplifications: // lexis: reason
 - All user-facing responses in Spanish. All code, comments, JSDoc in English
 - Never rewrite entire files when a targeted edit is sufficient
-- strict: true always. Never any, as, or ! without a // lexis: explanation
 
 ## Never Lazy About
 
 Input validation at trust boundaries, error handling that prevents data loss,
-security, accessibility, TypeScript types, tests for new behavior.
+security, accessibility, tests for new behavior.
 
 Vague product or next-stage scale: `/discx`. Specs: `/specx`. Intensity: `/lexis` (`plan`, `review`, `audit`, `debt`, `security`, `help`). After UI: `/desx`.

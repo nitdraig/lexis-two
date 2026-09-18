@@ -1,0 +1,117 @@
+---
+interface Props {
+  banner: {
+    flag: string;
+    title: string;
+    copy: string;
+    dismiss: string;
+  };
+}
+
+const { banner } = Astro.props;
+---
+
+<section class="welcome-banner" id="feature-banner" hidden>
+  <div class="wrap banner-inner">
+    <span class="banner-flag">{banner.flag}</span>
+    <div class="banner-copy">
+      <strong>{banner.title}</strong>
+      <p>{banner.copy}</p>
+    </div>
+    <button type="button" class="banner-dismiss" aria-label={banner.dismiss}>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const banner = document.getElementById("feature-banner");
+    if (!banner) return;
+
+    const key = "lexis-banner-dismissed";
+    let dismissed = false;
+    try {
+      dismissed = localStorage.getItem(key) === "1";
+    } catch {
+      dismissed = false;
+    }
+
+    if (!dismissed) {
+      banner.removeAttribute("hidden");
+    }
+
+    const dismiss = banner.querySelector(".banner-dismiss");
+    dismiss?.addEventListener("click", () => {
+      banner.setAttribute("hidden", "");
+      try {
+        localStorage.setItem(key, "1");
+      } catch {
+        // lexis: storage unavailable — banner will reappear next visit
+      }
+    });
+  })();
+</script>
+
+<style>
+  .welcome-banner {
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--accent-glow), transparent);
+  }
+
+  .banner-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .banner-flag {
+    flex: none;
+    margin-top: 0.05rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    border-radius: 999px;
+    padding: 0.28rem 0.6rem;
+  }
+
+  .banner-copy {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .banner-copy strong {
+    font-size: 0.92rem;
+    letter-spacing: -0.01em;
+  }
+
+  .banner-copy p {
+    margin: 0.15rem 0 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  .banner-dismiss {
+    flex: none;
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    padding: 0.1rem 0.35rem;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .banner-dismiss:hover {
+    color: var(--text);
+    background: var(--bg-elevated);
+  }
+</style>

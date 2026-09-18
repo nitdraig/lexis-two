@@ -19,6 +19,7 @@ const {
   getOpencodeConfigDir,
   isHintHost,
   listPortableSkillDirs,
+  listStackFiles,
   parseArgs,
 } = require('../scripts/install.js');
 
@@ -76,8 +77,9 @@ test('buildPlan dry-run lists cursor project copy', () => {
   const ctx = createContext(temp);
   const actions = buildPlan(['cursor'], { scope: 'project', force: false }, ctx);
   const skillCount = listPortableSkillDirs().length;
+  const stackCount = listStackFiles().length;
 
-  assert.equal(actions.length, 1 + skillCount);
+  assert.equal(actions.length, 1 + skillCount + stackCount);
   assert.equal(actions[0].type, 'copy');
   assert.equal(actions[0].host, 'cursor');
   assert.equal(
@@ -97,23 +99,25 @@ test('buildPlan skips existing AGENTS.md without --force', () => {
   const ctx = createContext(temp);
   const actions = buildPlan(['agents'], { scope: 'project', force: false }, ctx);
 
-  assert.equal(actions.length, 1);
-  assert.equal(actions[0].type, 'skip');
-  assert.equal(actions[0].reason, 'exists');
+  const agentsAction = actions.find((a) => a.host === 'agents');
+  assert.ok(agentsAction);
+  assert.equal(agentsAction.type, 'skip');
+  assert.equal(agentsAction.reason, 'exists');
 });
 
 test('executePlan is idempotent for identical files', () => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-install-idem-'));
   const ctx = createContext(temp);
   const skillCount = listPortableSkillDirs().length;
+  const stackCount = listStackFiles().length;
 
   const first = buildPlan(['cursor'], { scope: 'project', force: false }, ctx);
-  assert.equal(executePlan(first).applied, 1 + skillCount);
+  assert.equal(executePlan(first).applied, 1 + skillCount + stackCount);
 
   const second = buildPlan(['cursor'], { scope: 'project', force: false }, ctx);
   assert.equal(second.every((action) => action.type === 'skip'), true);
   assert.equal(second.every((action) => action.reason === 'identical'), true);
-  assert.equal(executePlan(second).skipped, 1 + skillCount);
+  assert.equal(executePlan(second).skipped, 1 + skillCount + stackCount);
 });
 
 test('CLI dry-run prints copy action without writing files', () => {
@@ -168,6 +172,9 @@ test('CLI install writes cursor rule file', () => {
   const reviewSkill = path.join(temp, '.cursor', 'skills', 'lexis-two-review', 'SKILL.md');
   assert.equal(fs.existsSync(reviewSkill), true);
   assert.match(fs.readFileSync(reviewSkill, 'utf8'), /lexis-two-review/);
+
+  const stackFile = path.join(temp, 'stacks', 'node-ts.md');
+  assert.equal(fs.existsSync(stackFile), true);
 });
 
 test('buildPlan merges opencode.json without clobbering existing plugins', () => {
@@ -280,9 +287,62 @@ test('buildUninstallPlan skips modified AGENTS.md', () => {
   const ctx = createContext(temp);
   const actions = buildUninstallPlan(['agents'], { scope: 'project' }, ctx);
 
-  assert.equal(actions.length, 1);
-  assert.equal(actions[0].type, 'skip');
-  assert.equal(actions[0].reason, 'modified');
+  const agentsAction = actions.find((a) => a.host === 'agents');
+  assert.ok(agentsAction);
+  assert.equal(agentsAction.type, 'skip');
+  assert.equal(agentsAction.reason, 'modified');
+});
+
+test('buildPlan agents copies stacks/ to project root', () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-install-stacks-'));
+  const ctx = createContext(temp);
+  const actions = buildPlan(['agents'], { scope: 'project', force: false }, ctx);
+
+  const stackActions = actions.filter((a) => a.host === 'stacks');
+  assert.equal(stackActions.length, listStackFiles().length);
+  assert.ok(
+    stackActions.some((a) => a.to === path.join(temp, 'stacks', 'node-ts.md')),
+  );
+});
+
+test('stack files skip existing without --force and overwrite with --force', () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-install-stacks-overwrite-'));
+  const ctx = createContext(temp);
+
+  executePlan(buildPlan(['agents'], { scope: 'project', force: false }, ctx));
+  const nodeTs = path.join(temp, 'stacks', 'node-ts.md');
+  assert.equal(fs.existsSync(nodeTs), true);
+
+  fs.writeFileSync(nodeTs, '# customized\n', 'utf8');
+  const noForce = buildPlan(['agents'], { scope: 'project', force: false }, ctx);
+  const noForceNode = noForce.find((a) => a.host === 'stacks' && a.to === nodeTs);
+  assert.equal(noForceNode.type, 'skip');
+  assert.equal(noForceNode.reason, 'exists');
+
+  const withForce = buildPlan(['agents'], { scope: 'project', force: true }, ctx);
+  const forceNode = withForce.find((a) => a.host === 'stacks' && a.to === nodeTs);
+  assert.equal(forceNode.type, 'copy');
+  executePlan(withForce);
+  assert.equal(
+    fs.readFileSync(nodeTs, 'utf8'),
+    fs.readFileSync(path.join(root, 'stacks', 'node-ts.md'), 'utf8'),
+  );
+  assert.equal(fs.existsSync(`${nodeTs}.bak`), true);
+});
+
+test('buildUninstallPlan removes identical stack files', () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-install-stacks-uninstall-'));
+  const ctx = createContext(temp);
+
+  executePlan(buildPlan(['agents'], { scope: 'project', force: false }, ctx));
+  const nodeTs = path.join(temp, 'stacks', 'node-ts.md');
+  assert.equal(fs.existsSync(nodeTs), true);
+
+  const uninstallActions = buildUninstallPlan(['agents'], { scope: 'project' }, ctx);
+  const remove = uninstallActions.find((a) => a.host === 'stacks' && a.to === nodeTs);
+  assert.equal(remove.type, 'remove');
+  executePlan(uninstallActions);
+  assert.equal(fs.existsSync(nodeTs), false);
 });
 
 test('buildUninstallPlan removes lexis plugin from opencode.json', () => {

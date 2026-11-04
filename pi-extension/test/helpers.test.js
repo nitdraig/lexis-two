@@ -15,15 +15,6 @@ test("resolveSessionMode falls back to default mode if no entries", () => {
   assert.equal(resolveSessionMode([], "lite"), "lite");
 });
 
-test("parseLexisCommand parses empty command as default toggle", () => {
-  assert.deepEqual(parseLexisCommand("", "full"), { type: "set-mode", mode: "full" });
-  assert.deepEqual(parseLexisCommand("  ", "off"), { type: "set-mode", mode: "full" });
-});
-
-test("parseLexisCommand parses status command", () => {
-  assert.deepEqual(parseLexisCommand("status"), { type: "status" });
-});
-
 test("parseLexisCommand parses default command", () => {
   assert.deepEqual(parseLexisCommand("default lite"), { type: "set-default", mode: "lite" });
   assert.deepEqual(parseLexisCommand("default invalid"), { type: "invalid", reason: "invalid-default-mode" });

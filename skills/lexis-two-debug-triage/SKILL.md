@@ -21,4 +21,4 @@ Forbidden during triage:
 
 If the lazy fix is a one-liner, ship the one-liner. Mark intentional shortcuts with `// lexis:`.
 
-Output: Repro → Cause → Fix (with paths) → Verify. Respond in Spanish.
+Output: Repro → Cause → Fix (with paths) → Verify. Respond in the user's language unless the project's rules set one.

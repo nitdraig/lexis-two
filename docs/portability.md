@@ -112,8 +112,9 @@ Also `/lexis discx` / `/lexis discovery`.
 | ------- | ----- |
 | `/desx` / `/desx audit` (`/desx-audit`) | `skills/desx/` — read-only except `DESIGN-AUDIT.md` |
 | `/desx apply` (`/desx-apply`) | `skills/desx-apply/` — implementer applies fixes |
+| `/slopx` | `skills/slopx/` — read-only anti-generic gate (code, copy, look, plus the desx quality pass) |
 
-See [desx.md](./desx.md). Not a Specxis phase. This package does not ship a host agent named `design-auditor`; Lexis-One may add that mapping.
+See [desx.md](./desx.md) (design quality) and [slopx.md](./slopx.md) (anti-generic gate). Neither is a Specxis phase. This package does not ship a host agent named `design-auditor`; Lexis-One may add that mapping.
 
 Adapter files: Gemini `commands/*.toml`, OpenCode `.opencode/commands/*.md`, pi `pi-extension/index.js`.
 
@@ -137,6 +138,7 @@ Adapter files: Gemini `commands/*.toml`, OpenCode `.opencode/commands/*.md`, pi 
 | `skills/discovery/` | Discovery MVP framing (`/discx`) |
 | `skills/desx/` | Design-auditor (`/desx audit`) |
 | `skills/desx-apply/` | Apply `DESIGN-AUDIT.md` (`/desx apply`) |
+| `skills/slopx/` | Anti-generic gate (`/slopx`) |
 
 Adapt skill shell commands for other stacks — see README **Adapting Lexis-Two to Any Stack**.
 
@@ -221,4 +223,15 @@ Default mode resolution (hooks + pi + OpenCode plugin):
 2. Config file: `~/.config/lexis-two/config.json` (Windows: `%APPDATA%\lexis-two\config.json`) with `{ "defaultMode": "full" }`
 3. Fallback: `full`
 
-Active mode flag (Claude Code): `~/.claude/.lexis-two-active`. OpenCode: `~/.config/opencode/.lexis-two-active`.
+Reply language (optional; unset means the user's own language), same hosts:
+
+1. `LEXIS_TWO_LANGUAGE` env var (a plain language name: letters, spaces, hyphens, up to 40 characters)
+2. `"language"` in the same config file
+
+Invalid values are ignored. Static rule hosts (Cursor, Windsurf, Cline, Kiro, `AGENTS.md`) have no runtime: add the line to your project rules. See [setup.md](./setup.md#language).
+
+Active mode flag (Claude Code): `~/.claude/.lexis-two-active` (or `$CLAUDE_CONFIG_DIR`). OpenCode: `~/.config/opencode/.lexis-two-active` (or `$OPENCODE_CONFIG_DIR`). Codex and Copilot keep it in their plugin data folder. Only `/lexis <level>` writes it; see [modes.md](./modes.md).
+
+Installer state: `.lexis-two/manifest.json` in the project (global installs: `~/.config/lexis-two/manifest.json`) records the files the installer wrote and their hashes, so upgrades and uninstalls leave your edits alone. See [setup.md](./setup.md).
+
+slopx: `.slopx.json` (and an uncommitted `.slopx.local.json`) hold ignores that each need a reason. See [slopx.md](./slopx.md#waivers-and-config).

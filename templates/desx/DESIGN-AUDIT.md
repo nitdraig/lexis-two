@@ -1,26 +1,26 @@
 # Design audit
 
-Última corrida: (generated on first `/desx audit`)
+Last run: (generated on first `/desx audit`)
 
-## Contexto
-- Sistema de diseño detectado:
-- Componentes existentes relevantes:
+## Context
+- Design system:
+- Components:
 
-## Hallazgos
+## Findings
 
-### P0 — bloqueante
-- [ ] _(none)_ — no P0 issues in this run
+### P0 - blocking
+- [ ] _(none)_ - no P0 issues in this run
 
-### P1 — importante
-- [ ] _(none)_ — no P1 issues in this run
+### P1 - important
+- [ ] _(none)_ - no P1 issues in this run
 
-### P2 / P3 — pulido
-- [ ] _(none)_ — no P2/P3 issues in this run
+### P2 / P3 - polish
+- [ ] _(none)_ - no P2/P3 issues in this run
 
-## Plan de aplicación
-1. Resolver todos los P0 primero.
-2. Agrupar P1 por componente para minimizar diffs dispersos.
-3. P2/P3 son opcionales — si se posponen, marcar en el código con `// lexis: design-debt` y dejar el checkbox sin tildar aquí.
+## Apply plan
+1. Resolve all P0 first.
+2. Group P1 by component to keep diffs together.
+3. P2/P3 are optional. If postponed, mark the code with `// lexis: design-debt` and leave the checkbox unticked here.
 
-## Resueltos en corridas anteriores
+## Resolved in previous runs
 - _(none yet)_

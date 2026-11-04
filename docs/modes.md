@@ -11,8 +11,9 @@ See also: [portability.md](./portability.md) (config resolution), [setup.md](./s
 | **lite** | `/lexis lite` | Build what was asked; mention a lazier alternative in one line. Good when requirements are fixed and you only want a nudge. |
 | **full** | `/lexis full` or `/lexis` (default) | Enforce YAGNI → stdlib → native → one line → minimum code. Default for daily work. |
 | **ultra** | `/lexis ultra` | Deletion before addition; challenge the requirement; ship the smallest diff. Refactors, debt sprints, audits. |
-| **off** | `/lexis off` | Disable rules injection for the session. Also: say `stop lexis` or `normal mode` in chat (hooks). |
-| **review** | `/lexis review` | Special mode used by hooks when running review — not a persistence tier; see skill `lexis-two-review`. |
+| **off** | `/lexis off` | Disable rules injection for the session. Also: send `stop lexis` or `normal mode` as the whole message (a sentence that merely mentions them does nothing). |
+
+`/lexis review`, `plan`, `audit`, `debt`, `security`, `status` and `help` are not levels. They run once and never change the active level; see skill `lexis-two-review`.
 
 ### Quick examples
 
@@ -37,6 +38,10 @@ See also: [portability.md](./portability.md) (config resolution), [setup.md](./s
 
 Check active mode: `/lexis status`.
 
+Only `/lexis <lite|full|ultra|off>` writes the level. Resuming or compacting a session keeps the level you chose; a new session (or `/clear`) starts from the default. A mode change also gives the model that level's definition. State lives in `~/.claude/.lexis-two-active` (or `$CLAUDE_CONFIG_DIR`), `$OPENCODE_CONFIG_DIR/.lexis-two-active` for OpenCode (default `~/.config/opencode`), and the plugin data folder on Codex and Copilot. After `/lexis off` the flag is removed, so a later resume starts from the default again.
+
+Reply language is a separate setting: see [setup.md](./setup.md#language).
+
 ## Default mode (not session mode)
 
 Resolution order for **default** when a session starts:
@@ -44,6 +49,8 @@ Resolution order for **default** when a session starts:
 1. `LEXIS_TWO_DEFAULT_MODE` env (`off` \| `lite` \| `full` \| `ultra`)
 2. Config file `~/.config/lexis-two/config.json` (Windows: `%APPDATA%\lexis-two\config.json`) — `{ "defaultMode": "full" }`
 3. Fallback: `full`
+
+Reply language is configured separately: see [setup.md](./setup.md#language).
 
 Set default without changing current session: `/lexis default ultra` (pi/OpenCode where supported).
 

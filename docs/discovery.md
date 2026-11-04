@@ -35,7 +35,7 @@ docs/discovery/<slug>/
   06-post-mvp.md        # next stage after this MVP (scale cycle)
 ```
 
-Skeletons: `templates/discovery/` in this package. Chat: follow `AGENTS.md` (Spanish in this ecosystem). Doc bodies: **English**.
+Skeletons: `templates/discovery/` in this package. Chat: follow `AGENTS.md` (the user's language unless the project's rules set one). Doc bodies: **English**.
 
 ---
 
@@ -135,7 +135,7 @@ Next slug (from 06-post-mvp): … or none
 Open blockers: … or none
 Continue to Specxis with slug <slug>?
 Later: /discx <next-slug> after this cycle ships (scale).
-Optional after UI: /desx audit (not a Specxis phase).
+Optional after UI: /desx audit for design quality, /slopx for generic-looking output (neither is a Specxis phase).
 ```
 
 ### Step 5 — Gate (this cycle)

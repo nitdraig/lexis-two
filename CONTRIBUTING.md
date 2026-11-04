@@ -4,7 +4,7 @@ Thank you for helping extend the portable Lexis ecosystem. This project is part 
 
 **Philosophy:** Read [AGENTS.md](./AGENTS.md) first. Lazy means efficient, not careless. Adapters point; they do not reimplement behavior.
 
-**Style:** Code and comments in English. User-facing skill output may be Spanish where existing skills do.
+**Style:** Code and comments in English. User-facing skill output follows the user's language; do not hardcode one.
 
 ---
 
@@ -15,7 +15,7 @@ skills/                    ← source of truth (behavior, prompts, checklists)
 hooks/                     ← shared lifecycle (mode flags, instruction injection)
 commands/*.toml            ← thin Gemini / Claude dispatchers → skills/
 .opencode/commands/*.md     ← thin OpenCode dispatchers → skills/
-pi-extension/index.js      ← pi command router (/lexis, /discx, /specx, /desx, deprecated aliases)
+pi-extension/index.js      ← pi command router (/lexis, /discx, /specx, /desx, /slopx, deprecated aliases)
 instruction-tier copies    ← AGENTS.md mirrored into Cursor, Windsurf, Cline, Kiro
 plugin manifests           ← gemini-extension.json, .claude-plugin/, .codex-plugin/, .github/plugin/
 ```
@@ -48,7 +48,7 @@ Does the host load skills or hooks?
 
 1. Add a rule file under the host's convention (e.g. `.cursor/rules/lexis-two.mdc`).
 2. If it must stay identical to `AGENTS.md`, add the path to `scripts/check-rule-copies.js` `COPIES` array. Copilot repo instructions stay a short file: they must include the load-bearing phrases (`INVARIANT_ONLY`), not the full body.
-3. After adding a skill under `skills/<name>/SKILL.md`, copy it to `.cursor/skills/<name>/SKILL.md` (the integrity script compares them).
+3. After adding or editing a skill under `skills/<name>/SKILL.md`, run `node scripts/check-rule-copies.js --fix`. It copies the skill to `.cursor/skills/<name>/SKILL.md` and rewrites any drifted host rule copy, keeping that host's frontmatter. A plain run (no `--fix`) only checks.
 4. Register the host in `scripts/install.js` `RULE_HOSTS` (see `cursor`, `windsurf`, `cline`, `kiro`, `agents`, `copilot-repo`).
 5. Update the host table in [docs/portability.md](./docs/portability.md).
 6. Run `npm test` after any `AGENTS.md` or `skills/` edit.
@@ -115,7 +115,7 @@ description: Review current diff for over-engineering and Lexis-Two rule violati
 ---
 ```
 
-Calibration material: [examples/](./examples/) — reference in the skill body when teaching deletion over addition.
+A `description` that contains a colon must be quoted, or the frontmatter does not parse (`claude plugin validate .` reports it). Calibration material: [examples/](./examples/) — reference in the skill body when teaching deletion over addition.
 
 ### Registration (preferred)
 
@@ -153,6 +153,17 @@ Full guide: [docs/stacks.md](./docs/stacks.md).
 
 ---
 
+## Adding a `slopx` or `desx` rule
+
+Decide who owns it first. If the problem would be a defect even when a person made it (readability, accessibility, consistency with the project's own system), it is a `desx/*` rule. If it is a problem because it is what models emit by default, and a brand could choose it on purpose, it is a `slopx` rule (`code/*`, `copy/*` or `look/*`) and is advisory. See [docs/slopx.md](./docs/slopx.md).
+
+1. **A `slopx` rule:** add one `def(...)` row to `scripts/slopx-rules.js` (id, severity, tier, description, suggestion, handoff, the `applies` test and the `check` function). Add a case to `CASES` in `tests/slopx-audit.test.js` with a positive and a negative snippet.
+2. **A `desx` rule:** implement it in `scripts/desx-audit.js` with a `rule` id, add its `quality(...)` row to the registry in `scripts/slopx-rules.js`, and add a case to `QUALITY_CASES` in `tests/desx-audit.test.js`.
+3. Regenerate the rule table in `docs/slopx.md` with `UPDATE_DOCS=1 node --test tests/slopx-audit.test.js` (a test fails when the table is stale). If the plain or JSON output changed on purpose, regenerate the golden files with `UPDATE_GOLDEN=1`.
+4. Calibrate before you trust it: `node scripts/slopx-audit.js --base HEAD~20` and read every warning. A rule wrong more than one time in ten is tightened or made advisory. Waive intentional matches in a file with `slopx-disable-line <rule>: <reason>`; a repo-wide exception goes in `.slopx.json` with a reason.
+
+---
+
 ## Adding a command
 
 | Do | Don't |
@@ -183,7 +194,7 @@ Verify: `npm test` (includes `all versioned manifests share the same version`).
 - [ ] `npm test` passes (includes `scripts/check-rule-copies.js`)
 - [ ] If a host was added or changed: [docs/portability.md](./docs/portability.md) host table updated
 - [ ] If install paths changed: [docs/setup.md](./docs/setup.md) updated
-- [ ] If a skill/command was added: `/discx`, `/specx`, `/desx`, or `/lexis` family; adapter files for every `pi.registerCommand`
+- [ ] If a skill/command was added: `/discx`, `/specx`, `/desx`, `/slopx`, or `/lexis` family; adapter files for every `pi.registerCommand`
 - [ ] No duplicated logic across adapters — behavior belongs in `skills/` or `hooks/`
 - [ ] No new npm dependency unless unavoidable (justify in PR)
 

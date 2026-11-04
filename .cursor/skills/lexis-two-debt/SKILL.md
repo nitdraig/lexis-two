@@ -1,12 +1,12 @@
 ---
 name: lexis-two-debt
-description: Harvest all lexis: comments into a prioritized technical debt ledger
+description: "Harvest all lexis: comments into a prioritized technical debt ledger"
 ---
 
 Scan the codebase for `// lexis:` comments:
 
 ```bash
-grep -rn "lexis:" src --include="*.ts" --include="*.tsx" --include="*.js" --include="*.mjs"
+grep -rn "lexis:" . --include="*.ts" --include="*.tsx" --include="*.js" --include="*.mjs" --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist --exclude-dir=build
 ```
 
 For each entry: extract file/line, decision made, ceiling or upgrade path if mentioned.
@@ -19,4 +19,4 @@ Produce a prioritized ledger:
 
 Format: `[priority] file:line — Decision — Trigger (if stated)`
 
-Respond in Spanish.
+Respond in the user's language unless the project's rules set one.

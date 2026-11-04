@@ -154,7 +154,30 @@ const d = t.docs;
           </table>
         </div>
 
-        <h2 id="docs-section-5">{d.stacksTitle}</h2>
+        <h2 id="docs-section-5">{d.slopxTitle}</h2>
+        <p>{d.slopxSubtitle}</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>{d.colCommand}</th>
+                <th>{d.colWhat}</th>
+                <th>{d.colExample}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {d.slopxItems.map((item) => (
+                <tr>
+                  <td><code>{item.name}</code></td>
+                  <td>{item.desc}</td>
+                  <td><code>{item.example}</code></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="docs-section-6">{d.stacksTitle}</h2>
         <p>{d.stacksSubtitle}</p>
         <p>{d.stacksHow}</p>
         <div class="table-wrap">

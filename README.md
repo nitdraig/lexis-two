@@ -6,7 +6,7 @@
 
 <p align="center">
   <em>The simple way to obtain the best code.</em><br>
-  <small>Coding agents over-build. A portable ruleset that steers them: prove the feature, prefer the platform, ship the minimum. <code>/discx</code> → <code>/specx</code> → <code>/lexis</code>. After UI, <code>/desx</code> is a design pass beside the loop.</small>
+  <small>Coding agents over-build. A portable ruleset that steers them: prove the feature, prefer the platform, ship the minimum. <code>/discx</code> → <code>/specx</code> → <code>/lexis</code>. After an agent writes something, <code>/slopx</code> is the anti-generic gate and <code>/desx</code> the design-quality pass, both beside the loop.</small>
 </p>
 
 <p align="center">
@@ -50,7 +50,7 @@ It coordinates specialized agents — planning, implementation, review, refactor
 | `ui-architect`     | UX/UI architect      | Consults on design, never implements |
 | `refactor-agent`   | Refactor specialist  | Large-scale code restructuring       |
 | `security-auditor` | Security analyst     | Read-only, runs audit tools          |
-| `design-auditor`   | Visual slop + tokens | Read-only except `DESIGN-AUDIT.md`   |
+| `design-auditor`   | Design quality       | Read-only except `DESIGN-AUDIT.md`   |
 | `explorer`         | Codebase mapper      | Read-only, fast local model          |
 
 ### Principles
@@ -79,14 +79,15 @@ Before writing any code, stop at the first rung that holds:
 
 ---
 
-## Three-stage workflow
+## Three-stage workflow, plus two passes beside it
 
 1. **[/discx](./DISCOVERY.md)** (`/discovery`) — this MVP + `06-post-mvp.md`; later `/discx <next-slug>` to scale. Scaffold: `node scripts/discovery-init.js <slug>`
 2. **[/specx](./SPECXIS.md)** (`/specxis`) — agree proposal + tasks, implement one task at a time
 3. **`/lexis`** — keep intensity lean (review / debt / security)
-4. **[/desx](./DESX.md)** — optional pass after UI work: audit visual slop, then `/desx apply`
+4. **[/desx](./DESX.md)** — optional pass after UI work: audit design quality (consistency, hierarchy, accessibility), then `/desx apply`
+5. **[/slopx](./docs/slopx.md)** — the anti-generic gate after an agent writes something: code leftovers, generic copy and default-looking design, plus the `desx` quality pass
 
-Skip Discovery for clear bugs and one-line fixes. `/desx` is beside that loop, not a fourth SDD phase.
+Skip Discovery for clear bugs and one-line fixes. `/desx` and `/slopx` are beside that loop, not SDD phases.
 
 ---
 
@@ -131,6 +132,13 @@ Uninstall (removes only unchanged Lexis-Two files):
 ```bash
 npx @draig/lexis-two install --uninstall --host cursor,opencode --scope project --yes
 ```
+
+What to know about the installer:
+
+- **It needs `--yes` without a terminal.** In CI or a pipe, an install or uninstall that would write files stops with an error and writes nothing. `--dry-run` always works.
+- **Upgrades are safe.** It records what it wrote in `.lexis-two/manifest.json` (commit it). Running it again after a package upgrade updates the files you did not edit, uninstall removes them even after an upgrade, and files you edited are left alone and reported. Backups never overwrite each other (`.bak`, `.bak.1`, ...).
+- **`--scope global` never writes to the project.** Hosts with no global form are skipped with a visible line, and `stacks/` is project-only.
+- **Uninstalling one host keeps `stacks/`** while another host still needs it.
 
 ### OpenCode (Recommended via npm)
 
@@ -211,7 +219,7 @@ Manage Lexis senior dev mode, intensity levels, and quality/security tools under
 #### Subcommands in Detail:
 
 * **`/lexis status` (Shortcut: `/lexis`)**
-  * **What it does:** Reports the current active mode of the plugin (lite/full/ultra/off) and your configured default mode.
+  * **What it does:** Reports the current active mode of the plugin (lite/full/ultra/off) and your configured default mode. It never changes the level: only `/lexis <lite | full | ultra | off>` does.
   * **When to use:** Use this to verify which intensity level is currently guiding your AI agent.
 
 * **`/lexis <lite | full | ultra | off>`**
@@ -227,7 +235,7 @@ Manage Lexis senior dev mode, intensity levels, and quality/security tools under
   * **When to use:** Before any new feature so you agree the simplest path.
 
 * **`/lexis review` (Shortcut: `/lexis r`)**
-  * **What it does:** Analyzes your recent git changes (`git diff HEAD`) specifically for over-engineering, dead code, speculative features, reinvented standard libraries, or unnecessary abstractions.
+  * **What it does:** Analyzes your recent git changes (`git diff HEAD`) specifically for over-engineering, dead code, speculative features, reinvented standard libraries, or unnecessary abstractions. It runs once; it does not become the active level.
   * **When to use:** Run this before committing or opening a Pull Request to ensure your code is as lean and maintainable as possible.
 
 * **`/lexis audit` (Shortcut: `/lexis a`)**
@@ -259,27 +267,27 @@ Manage the Specxis SDD lifecycle. Short command **`/specx`**. Same subcommands a
   * **When to use:** Use this as your central dashboard to see what features are currently in development and their progress.
 
 * **`/specx new <slug>`** (also `/specxis new`)
-  * **What it does:** Creates `.specxis/active/[slug]/proposal.md`. Lazy check plus **Discovery soft gate**: vague products without `docs/discovery/<slug>/01-mvp.md` are pointed at `/discx` first (`sin discovery` bypasses). Cites Discovery source when present.
+  * **What it does:** Creates `.specxis/active/[slug]/proposal.md`. Lazy check plus **Discovery soft gate**: vague products without `docs/discovery/<slug>/01-mvp.md` are pointed at `/discx` first (`no discovery` or `sin discovery` bypasses). Cites Discovery source when present.
   * **When to use:** Complex feature (3+ files) or UX/backend coordination — after Discovery when the idea was vague.
 
 * **`/specx plan <slug>`**
-  * **What it does:** Reads your `proposal.md`, applies the lazy decision hierarchy, and generates `spec.md` (MUST/SHOULD/MAY) and `tasks.md` (a technical task list, max 10 tasks, with each task mapping to exactly one file or function).
+  * **What it does:** Reads your `proposal.md`, applies the lazy decision hierarchy, and generates `spec.md` (MUST/SHOULD/MAY) and `tasks.md` (a technical task list, max 10 tasks, each task one concern with its own tests). The spec starts as `draft` and becomes `agreed` when you approve it. Re-running it keeps tasks that are already checked.
   * **When to use:** Run this once the initial proposal is aligned to generate a structured, actionable implementation plan.
 
 * **`/specx implement <slug>`**
-  * **What it does:** Finds the first unchecked task in your `tasks.md`, implements it following the `spec.md` MUST requirements and `AGENTS.md` rules, and marks the task as completed (`- [x]`). It implements exactly one task per run to ensure maximum control and quality.
+  * **What it does:** Refuses a spec that is not `agreed`. Records the base commit on the first run (status becomes `implementing`), finds the first unchecked task in your `tasks.md`, implements it following the `spec.md` MUST requirements and `AGENTS.md` rules, and marks the task as completed (`- [x]`). It implements exactly one task per run to ensure maximum control and quality.
   * **When to use:** Use this to guide the AI agent step-by-step through the implementation of your feature.
 
 * **`/specx review <slug>`**
-  * **What it does:** Runs a read-only evaluation of the current implementation against the requirements in `spec.md` and the rules of `AGENTS.md`. It writes its findings (Severity, Location, Issue, Fix) to `review.md`.
+  * **What it does:** Runs a read-only evaluation of the diff since the base commit (so checkpoint commits stay in the review) against the requirements in `spec.md` and the rules of `AGENTS.md`. It writes its findings as checkboxes (Severity, Location, Issue, Fix) to `review.md`.
   * **When to use:** Run this after implementing your tasks to verify that the feature is fully compliant and clean before closing.
 
 * **`/specx close <slug>`**
-  * **What it does:** Verifies that all tasks are completed and no Critical/High findings are open. It then moves the spec folder to `.specxis/archive/[slug]/`, harvests any `// lexis:` comments added during development, and appends them to your global `.specxis/debt.md` ledger.
+  * **What it does:** Verifies that all tasks are completed, `review.md` exists and no Critical/High finding is unticked. A criterion nobody can verify is closed only by a waiver you write in `review.md`. It then sets the status to `done`, moves the spec folder to `.specxis/archive/[slug]/`, and syncs the `// lexis:` comments into your global `.specxis/debt.md` ledger.
   * **When to use:** Run this when your feature is fully implemented, tested, and ready to be archived.
 
 * **`/specx debt`**
-  * **What it does:** Recursively scans the codebase for `// lexis:` comments and synchronizes them with `.specxis/debt.md` using a highly portable Node.js script.
+  * **What it does:** Recursively scans the codebase for `// lexis:` comments and synchronizes them with `.specxis/debt.md` using a highly portable Node.js script. It rewrites only its own block between `<!-- lexis-debt:start -->` and `<!-- lexis-debt:end -->`; your notes and ticked entries stay.
   * **When to use:** Run this to keep your technical debt ledger perfectly in sync with your codebase.
 
 ---
@@ -289,13 +297,28 @@ Beside the SDD loop (not a Specxis phase). Stack-agnostic detector + optional mo
 
 * **`/desx` / `/desx audit`** (also `/desx-audit`)
   * **What it does:** Role `design-auditor`. Runs `scripts/desx-audit.js` (no API key) and writes only `DESIGN-AUDIT.md`.
-  * **When to use:** After UI generation, before a commit, or when the UI looks like generic AI slop.
+  * **When to use:** After UI generation or before a commit, to check consistency with your design system, hierarchy, accessibility and readability. For output that merely looks generic, use `/slopx`.
 
 * **`/desx apply`** (also `/desx-apply`)
   * **What it does:** Implementer reads the audit file, applies P0→P1→P2/P3, ticks only what it fixed, re-runs the detector.
   * **When to use:** After you agree the findings. Not the auditor.
 
 More: [DESX.md](./DESX.md).
+
+### 5. `/slopx` — Anti-generic gate
+Beside the SDD loop. Keeps a change from looking or reading like default AI output. It always runs four passes: `code` (debug calls, TODOs, commented-out code, empty catches), `copy` (emojis, placeholder text, stock marketing words, invented data), `look` (side-stripe borders, gradient text, hard shadows, default palettes) and `quality` (the `desx` checks, run as a sub-skill). Findings come with a suggestion; taste rules are advisory and a brand can waive them.
+
+* **`/slopx`**
+  * **What it does:** Runs `scripts/slopx-audit.js` on what changed (added lines plus untracked files), reads the flagged lines, and reports in two groups: Generic and Design quality. Read-only: no files are written.
+  * **When to use:** After an agent wrote code, text or UI, and before you commit. `--all` scans the whole tree, `--base <ref>` reviews a branch, `--prose` includes Markdown prose.
+
+Optional: an opt-in hook that checks each edited file right after the agent edits it, and a `handoff` hint per finding that names the [Impeccable](https://github.com/pbakaus/impeccable) command that applies that kind of fix (Impeccable is not required). More: [docs/slopx.md](./docs/slopx.md).
+
+---
+
+## Reply language
+
+Lexis does not force a language: the agent answers in the language you write in. To pin one, set `LEXIS_TWO_LANGUAGE=Spanish` (or `{ "language": "Spanish" }` in `~/.config/lexis-two/config.json`). The value must be a plain language name; anything else is ignored, and code, comments and docs stay in English. Cursor, Windsurf, Cline, Kiro and `AGENTS.md` load a fixed copy of the rules, so add one line to your own project rules there. Details: [docs/setup.md](./docs/setup.md#language).
 
 ---
 
@@ -453,6 +476,20 @@ Core `AGENTS.md` stays stack-agnostic; conventions move to `stacks/<id>.md` and 
 - [x] Installer copies `stacks/` (skips existing files unless `--force`); `package.json` `files` include `stacks/`
 - [x] `lexis-two-security` and `lexis-two-audit` are profile-aware (generic checks when no profile)
 - [x] Landing: stack-profile welcome banner + "agnostic by design" section
+
+---
+
+### v1.5 — Quality gates ✅
+
+Broken install channels fixed, state made trustworthy, and a gate against generic output.
+
+- [x] Distribution: valid Claude plugin manifests, a postinstall that patches the OpenCode wrapper, installer hints that point to published files, configurable reply language
+- [x] Mode state: only `/lexis <level>` changes the level; resume and compaction keep it; `normal mode` switches off only as a whole prompt
+- [x] Specxis lifecycle: real status, approval gate, base commit, checkbox findings and waivers; a debt ledger that never overwrites your notes
+- [x] Desx: stable finding ids, `--git` that sees untracked files, `--json`/`--dry-run` that write nothing, fewer false positives; repositioned as design quality
+- [x] Installer: unique backups, shared `stacks/`, global scope that stays out of the project, `--yes` required without a TTY, manifest-based upgrades
+- [x] `/slopx`: the anti-generic gate (code, copy, look, plus the desx quality pass), with an opt-in hook and optional Impeccable handoff
+- [x] CI: syntax lint, Windows leg, site build job
 
 ---
 

@@ -4,7 +4,7 @@ description: "Discovery short alias (/discx). Same as /discovery."
 
 Run Discovery for: $ARGUMENTS
 
-Short name: `/discx`. Full name: `/discovery`. Same behavior. No product code. Chat: Spanish. Docs: English.
+Short name: `/discx`. Full name: `/discovery`. Same behavior. No product code. Chat: the user's language unless the project's rules set one. Docs: English.
 
 Treat `$ARGUMENTS` as a kebab-case slug, or propose one. Skip (say N/A) for bugs, typos, hotfixes, and one-file fixes.
 

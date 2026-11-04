@@ -21,4 +21,4 @@ Evaluate:
 - Architecture drift (files outside correct domain folder)
 
 Output by severity: Critical → High → Medium → Low/Debt → Clean.
-Respond in Spanish.
+Respond in the user's language unless the project's rules set one.

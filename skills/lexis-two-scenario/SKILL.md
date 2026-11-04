@@ -17,4 +17,4 @@ Then:
 
 No code unless the user already asked for implementation. No new dependencies in the plan.
 
-Respond in Spanish.
+Respond in the user's language unless the project's rules set one.

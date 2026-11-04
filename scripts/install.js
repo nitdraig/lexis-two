@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // lexis-two — interactive installer (phase A1–A4: rules, OpenCode, uninstall, hints)
 
+const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -64,7 +65,6 @@ const RULE_HOSTS = {
     src: 'AGENTS.md',
     projectDest: 'AGENTS.md',
     supportsGlobal: false,
-    neverOverwriteWithoutForce: true,
     detect() {
       return true;
     },
@@ -75,7 +75,6 @@ const RULE_HOSTS = {
     src: '.github/copilot-instructions.md',
     projectDest: '.github/copilot-instructions.md',
     supportsGlobal: false,
-    neverOverwriteWithoutForce: true,
     detect(ctx) {
       return dirExists(path.join(ctx.projectDir, '.github'));
     },
@@ -194,7 +193,6 @@ const STACK_HOSTS = [...Object.keys(RULE_HOSTS), ...Object.keys(PLUGIN_HOSTS)];
  * @property {string} projectDest
  * @property {(home: string) => string} [globalDest]
  * @property {boolean} supportsGlobal
- * @property {boolean} [neverOverwriteWithoutForce]
  * @property {(ctx: InstallContext) => boolean} detect
  */
 
@@ -288,7 +286,8 @@ function listOpencodeCommandFiles() {
         (name.startsWith('lexis') ||
           name.startsWith('specx') ||
           name.startsWith('disc') ||
-          name.startsWith('desx')),
+          name.startsWith('desx') ||
+          name.startsWith('slopx')),
     )
     .map((name) => ({
       name,
@@ -316,7 +315,7 @@ function listStackFiles() {
   }
   return fs
     .readdirSync(dir)
-    .filter((name) => name.endsWith('.md'))
+    .filter((name) => name.endsWith('.md') && !name.startsWith('_'))
     .map((name) => ({
       name,
       src: path.join(dir, name),
@@ -328,49 +327,19 @@ function cursorSkillDest(ctx, installScope, skillName) {
   return path.join(base, '.cursor', 'skills', skillName, 'SKILL.md');
 }
 
-function planCursorSkillCopies(options, ctx) {
-  const host = RULE_HOSTS.cursor;
-  const scopes = resolveScopes(options.scope, host);
-  /** @type {InstallAction[]} */
+// One planner for install and uninstall: the targets are the same, only the action differs.
+function planCursorSkills(options, ctx, uninstall) {
   const actions = [];
-
-  for (const installScope of scopes) {
+  for (const installScope of resolveScopes(options.scope, RULE_HOSTS.cursor)) {
     for (const skill of listPortableSkillDirs()) {
+      const dest = cursorSkillDest(ctx, installScope, skill.name);
       actions.push(
-        planFileCopy(
-          'cursor',
-          installScope,
-          skill.src,
-          cursorSkillDest(ctx, installScope, skill.name),
-          options,
-          false,
-        ),
+        uninstall
+          ? planFileRemove('cursor', installScope, dest, skill.src, options)
+          : planFileCopy('cursor', installScope, skill.src, dest, options),
       );
     }
   }
-
-  return actions;
-}
-
-function planCursorSkillRemoves(ctx, options) {
-  const host = RULE_HOSTS.cursor;
-  const scopes = resolveScopes(options.scope, host);
-  /** @type {InstallAction[]} */
-  const actions = [];
-
-  for (const installScope of scopes) {
-    for (const skill of listPortableSkillDirs()) {
-      actions.push(
-        planFileRemove(
-          'cursor',
-          installScope,
-          cursorSkillDest(ctx, installScope, skill.name),
-          skill.src,
-        ),
-      );
-    }
-  }
-
   return actions;
 }
 
@@ -406,8 +375,128 @@ function commandExists(cmd) {
   }
 }
 
+// First free name: .bak, then .bak.1, .bak.2, ... so a later run never overwrites an earlier backup.
 function backupPath(targetPath) {
-  return `${targetPath}.bak`;
+  let candidate = `${targetPath}.bak`;
+  for (let n = 1; fs.existsSync(candidate); n += 1) {
+    candidate = `${targetPath}.bak.${n}`;
+  }
+  return candidate;
+}
+
+// ---------------------------------------------------------------------------
+// Install manifest: every file the installer wrote, with the hash of what it wrote.
+// A file whose current hash still matches is ours (safe to update or remove); a
+// different hash means the user edited it and it is left alone.
+// ---------------------------------------------------------------------------
+const MANIFEST_VERSION = 1;
+
+// Line endings are ignored, so core.autocrlf does not read as a user edit.
+function hashText(text) {
+  return crypto.createHash('sha256').update(text.replace(/\r\n/g, '\n')).digest('hex');
+}
+
+const hashFile = (filePath) => hashText(fs.readFileSync(filePath, 'utf8'));
+
+function manifestLocation(ctx, scope) {
+  if (scope === 'project') {
+    return {
+      file: path.join(ctx.projectDir, '.lexis-two', 'manifest.json'),
+      base: ctx.projectDir, // project keys are relative, so the manifest can be committed
+      roots: [ctx.projectDir],
+    };
+  }
+  return {
+    file: path.join(ctx.home, '.config', 'lexis-two', 'manifest.json'),
+    base: null, // global keys are absolute
+    roots: [ctx.home, getOpencodeConfigDir(ctx.home)],
+  };
+}
+
+function isInside(abs, roots) {
+  return roots.some((root) => {
+    const relative = path.relative(root, abs);
+    return relative !== '' && !relative.startsWith('..') && !path.isAbsolute(relative);
+  });
+}
+
+// Missing file: empty manifest (an install from before manifests keeps working).
+// Corrupt file or a path outside the allowed directories: throws, before anything is written.
+function readManifest(ctx, scope) {
+  const location = manifestLocation(ctx, scope);
+  const entries = new Map();
+  if (!fs.existsSync(location.file)) return { location, entries, dirty: false };
+
+  const fail = (reason) => {
+    throw new Error(`Install manifest ${location.file} is ${reason}. Fix or delete it; nothing was changed.`);
+  };
+  let data;
+  try {
+    data = JSON.parse(fs.readFileSync(location.file, 'utf8'));
+  } catch {
+    fail('not valid JSON');
+  }
+  if (!data || data.version !== MANIFEST_VERSION || !data.files || typeof data.files !== 'object' || Array.isArray(data.files)) {
+    fail('not a version 1 manifest');
+  }
+  for (const [key, value] of Object.entries(data.files)) {
+    if (!value || typeof value.host !== 'string' || !/^[0-9a-f]{64}$/.test(String(value.sha256))) {
+      fail(`corrupt at "${key}"`);
+    }
+    if (!location.base && !path.isAbsolute(key)) fail(`corrupt at "${key}"`);
+    const abs = location.base ? path.resolve(location.base, key) : path.resolve(key);
+    if (!isInside(abs, location.roots)) fail(`pointing outside the allowed directory ("${key}")`);
+    entries.set(abs, { host: value.host, sha256: value.sha256 });
+  }
+  return { location, entries, dirty: false };
+}
+
+function writeManifest({ location, entries }) {
+  if (entries.size === 0) {
+    fs.rmSync(location.file, { force: true });
+    try {
+      fs.rmdirSync(path.dirname(location.file)); // only succeeds when empty
+    } catch {
+      // other files live there: leave the folder
+    }
+    return;
+  }
+  const files = {};
+  for (const [abs, entry] of [...entries].sort(([a], [b]) => (a < b ? -1 : 1))) {
+    const key = location.base ? path.relative(location.base, abs) : abs;
+    files[key.split(path.sep).join('/')] = entry;
+  }
+  fs.mkdirSync(path.dirname(location.file), { recursive: true });
+  fs.writeFileSync(location.file, `${JSON.stringify({ version: MANIFEST_VERSION, files }, null, 2)}\n`);
+}
+
+const loadManifests = (ctx) => ({ project: readManifest(ctx, 'project'), global: readManifest(ctx, 'global') });
+
+const manifestEntry = (options, scope, target) =>
+  options?.manifests?.[scope]?.entries.get(path.resolve(target));
+
+// Files the manifest lists for the given hosts that the plan no longer produces: the package stopped
+// shipping them. Unedited ones are removed; edited ones are left and reported.
+function planOrphanRemovals(owners, options, actions) {
+  const produced = new Set(actions.map((a) => path.resolve(a.to)));
+  const orphans = [];
+  for (const scope of ['project', 'global']) {
+    const manifest = options.manifests?.[scope];
+    if (!manifest) continue;
+    for (const [abs, entry] of manifest.entries) {
+      if (!owners.has(entry.host) || produced.has(abs)) continue;
+      if (!actions.some((a) => a.host === entry.host && a.scope === scope)) continue;
+      const action = { host: entry.host, scope, to: abs };
+      if (!fs.existsSync(abs)) {
+        orphans.push({ ...action, type: 'skip', reason: 'missing', forget: true });
+      } else if (hashFile(abs) !== entry.sha256) {
+        orphans.push({ ...action, type: 'skip', reason: 'edited, no longer shipped' });
+      } else {
+        orphans.push({ ...action, type: 'remove', reason: 'no longer shipped' });
+      }
+    }
+  }
+  return orphans;
 }
 
 function displayPath(absPath) {
@@ -565,7 +654,7 @@ function resolveScopes(scope, host) {
   return [scope];
 }
 
-function planFileCopy(hostId, installScope, from, to, options, neverOverwriteWithoutForce) {
+function planFileCopy(hostId, installScope, from, to, options) {
   const incoming = fs.readFileSync(from, 'utf8');
 
   /** @type {InstallAction} */
@@ -585,12 +674,19 @@ function planFileCopy(hostId, installScope, from, to, options, neverOverwriteWit
   if (existing === incoming) {
     action.type = 'skip';
     action.reason = 'identical';
+    action.adopt = true; // record it, so a later upgrade can update it
     return action;
   }
 
-  if (neverOverwriteWithoutForce && !options.force) {
+  // A file the manifest lists and the user has not touched is ours: update it without --force.
+  const owned = manifestEntry(options, installScope, to);
+  if (owned && hashText(existing) === owned.sha256) {
+    action.update = true;
+    return action;
+  }
+  if (owned && !options.force) {
     action.type = 'skip';
-    action.reason = 'exists';
+    action.reason = 'edited';
     return action;
   }
 
@@ -604,7 +700,7 @@ function planFileCopy(hostId, installScope, from, to, options, neverOverwriteWit
   return action;
 }
 
-function planFileRemove(hostId, installScope, targetPath, packageSrcAbs) {
+function planFileRemove(hostId, installScope, targetPath, packageSrcAbs, options) {
   /** @type {InstallAction} */
   const action = {
     type: 'remove',
@@ -620,6 +716,18 @@ function planFileRemove(hostId, installScope, targetPath, packageSrcAbs) {
   }
 
   const installed = fs.readFileSync(targetPath, 'utf8');
+
+  // The manifest decides when there is one: unedited means ours, even if the package changed since.
+  // The content is reproducible from the package, so no backup is made.
+  const owned = manifestEntry(options, installScope, targetPath);
+  if (owned) {
+    if (hashText(installed) !== owned.sha256) {
+      action.type = 'skip';
+      action.reason = 'modified';
+    }
+    return action;
+  }
+
   const expected = fs.readFileSync(packageSrcAbs, 'utf8');
   if (installed !== expected) {
     action.type = 'skip';
@@ -639,7 +747,6 @@ function planCopyAction(host, installScope, destPath, options) {
     from,
     destPath,
     options,
-    host.neverOverwriteWithoutForce === true,
   );
 }
 
@@ -649,18 +756,56 @@ function stackDest(ctx, name) {
 
 function planStackCopies(ctx, options) {
   return listStackFiles().map((file) =>
-    planFileCopy('stacks', 'project', file.src, stackDest(ctx, file.name), options, true),
+    planFileCopy('stacks', 'project', file.src, stackDest(ctx, file.name), options),
   );
 }
 
 function planStackRemoves(ctx, options) {
   return listStackFiles().map((file) =>
-    planFileRemove('stacks', 'project', stackDest(ctx, file.name), file.src),
+    planFileRemove('stacks', 'project', stackDest(ctx, file.name), file.src, options),
   );
 }
 
 function shouldCopyStacks(hostIds) {
   return hostIds.some((id) => STACK_HOSTS.includes(id));
+}
+
+const hostDefinition = (hostId) => RULE_HOSTS[hostId] || PLUGIN_HOSTS[hostId];
+
+// Ids of stack-using hosts that stay installed in the project after this plan runs.
+// A file counts as staying when it exists and the plan does not remove or rewrite it.
+function hostsStillUsingStacks(actions, ctx) {
+  const leaving = new Set(
+    actions.filter((a) => a.type === 'remove' || a.type === 'merge').map((a) => a.to),
+  );
+  const staying = [];
+  for (const id of STACK_HOSTS) {
+    if (id === 'opencode') {
+      const configPath = path.join(ctx.projectDir, 'opencode.json');
+      let configured = false;
+      try {
+        const plugins = readJsonConfig(configPath).plugin;
+        configured = Array.isArray(plugins) && plugins.some(isLexisPluginEntry);
+      } catch {
+        configured = false;
+      }
+      if (configured && !leaving.has(configPath)) staying.push(id);
+      continue;
+    }
+    const file = path.join(ctx.projectDir, RULE_HOSTS[id].projectDest);
+    if (fs.existsSync(file) && !leaving.has(file)) staying.push(id);
+  }
+  return staying;
+}
+
+function unsupportedScopeAction(host, options) {
+  return {
+    type: 'skip',
+    host: host.id,
+    scope: options.scope,
+    to: host.label,
+    reason: `${host.label} does not support --scope ${options.scope}; nothing installed for it`,
+  };
 }
 
 function planOpencodeConfigMerge(configPath, installScope, options) {
@@ -685,12 +830,6 @@ function planOpencodeConfigMerge(configPath, installScope, options) {
   plugins.push(OPENCODE_PLUGIN_ENTRY);
   const nextConfig = { ...config, plugin: plugins };
   action.content = `${JSON.stringify(nextConfig, null, 2)}\n`;
-
-  if (fs.existsSync(configPath) && fs.readFileSync(configPath, 'utf8') === action.content) {
-    action.type = 'skip';
-    action.reason = 'identical';
-    return action;
-  }
 
   if (fs.existsSync(configPath)) {
     action.backup = backupPath(configPath);
@@ -738,83 +877,32 @@ function planOpencodeConfigUninstall(configPath, installScope) {
 
   action.content = `${JSON.stringify(nextConfig, null, 2)}\n`;
 
-  if (fs.readFileSync(configPath, 'utf8') === action.content) {
-    action.type = 'skip';
-    action.reason = 'identical';
-    return action;
-  }
-
   action.backup = backupPath(configPath);
   return action;
 }
 
-function planOpencodeActions(options, ctx) {
-  const host = PLUGIN_HOSTS.opencode;
-  const scopes = resolveScopes(options.scope, host);
-  /** @type {InstallAction[]} */
+function planOpencode(options, ctx, uninstall) {
   const actions = [];
+  for (const installScope of resolveScopes(options.scope, PLUGIN_HOSTS.opencode)) {
+    const project = installScope === 'project';
+    const configDir = project ? ctx.projectDir : getOpencodeConfigDir(ctx.home);
+    const configPath = path.join(configDir, 'opencode.json');
+    const commandDir = project ? path.join(ctx.projectDir, '.opencode', 'commands') : path.join(configDir, 'commands');
 
-  for (const installScope of scopes) {
-    const configPath =
-      installScope === 'project'
-        ? path.join(ctx.projectDir, 'opencode.json')
-        : path.join(getOpencodeConfigDir(ctx.home), 'opencode.json');
-
-    actions.push(planOpencodeConfigMerge(configPath, installScope, options));
-
-    const commandDir =
-      installScope === 'project'
-        ? path.join(ctx.projectDir, '.opencode', 'commands')
-        : path.join(getOpencodeConfigDir(ctx.home), 'commands');
-
+    actions.push(
+      uninstall
+        ? planOpencodeConfigUninstall(configPath, installScope)
+        : planOpencodeConfigMerge(configPath, installScope, options),
+    );
     for (const file of listOpencodeCommandFiles()) {
+      const dest = path.join(commandDir, file.name);
       actions.push(
-        planFileCopy(
-          'opencode',
-          installScope,
-          file.src,
-          path.join(commandDir, file.name),
-          options,
-          false,
-        ),
+        uninstall
+          ? planFileRemove('opencode', installScope, dest, file.src, options)
+          : planFileCopy('opencode', installScope, file.src, dest, options),
       );
     }
   }
-
-  return actions;
-}
-
-function planOpencodeUninstallActions(options, ctx) {
-  const host = PLUGIN_HOSTS.opencode;
-  const scopes = resolveScopes(options.scope, host);
-  /** @type {InstallAction[]} */
-  const actions = [];
-
-  for (const installScope of scopes) {
-    const configPath =
-      installScope === 'project'
-        ? path.join(ctx.projectDir, 'opencode.json')
-        : path.join(getOpencodeConfigDir(ctx.home), 'opencode.json');
-
-    actions.push(planOpencodeConfigUninstall(configPath, installScope));
-
-    const commandDir =
-      installScope === 'project'
-        ? path.join(ctx.projectDir, '.opencode', 'commands')
-        : path.join(getOpencodeConfigDir(ctx.home), 'commands');
-
-    for (const file of listOpencodeCommandFiles()) {
-      actions.push(
-        planFileRemove(
-          'opencode',
-          installScope,
-          path.join(commandDir, file.name),
-          file.src,
-        ),
-      );
-    }
-  }
-
   return actions;
 }
 
@@ -831,20 +919,32 @@ function buildHintActions(hostIds, ctx) {
   });
 }
 
-function buildUninstallPlan(hostIds, options, ctx) {
+function buildUninstallPlan(hostIds, rawOptions, ctx) {
   validateHostIds(hostIds);
+  const options = { ...rawOptions, manifests: rawOptions.manifests || loadManifests(ctx) };
 
   /** @type {InstallAction[]} */
   const actions = [];
 
+  let projectStackHost = false;
+  let removesStacks = false;
+
   for (const hostId of hostIds) {
+    const definition = hostDefinition(hostId);
+    const hostScopes = resolveScopes(options.scope, definition);
+    if (hostScopes.length === 0) {
+      actions.push(unsupportedScopeAction(definition, options));
+      continue;
+    }
+    if (hostScopes.includes('project') && STACK_HOSTS.includes(hostId)) projectStackHost = true;
+
     if (hostId === 'opencode') {
-      actions.push(...planOpencodeUninstallActions(options, ctx));
+      actions.push(...planOpencode(options, ctx, true));
       continue;
     }
 
     const host = RULE_HOSTS[hostId];
-    const scopes = resolveScopes(options.scope, host);
+    const scopes = hostScopes;
     const packageSrc = path.join(PACKAGE_ROOT, host.src);
 
     for (const installScope of scopes) {
@@ -853,35 +953,68 @@ function buildUninstallPlan(hostIds, options, ctx) {
           ? path.join(ctx.projectDir, host.projectDest)
           : host.globalDest(ctx.home);
 
-      actions.push(planFileRemove(host.id, installScope, targetPath, packageSrc));
+      actions.push(planFileRemove(host.id, installScope, targetPath, packageSrc, options));
     }
 
     if (hostId === 'cursor') {
-      actions.push(...planCursorSkillRemoves(ctx, options));
+      actions.push(...planCursorSkills(options, ctx, true));
     }
   }
 
-  if (shouldCopyStacks(hostIds)) {
-    actions.push(...planStackRemoves(ctx, options));
+  if (projectStackHost) {
+    // stacks/ is shared by every rule host: remove it only when none of them is left
+    const staying = hostsStillUsingStacks(actions, ctx);
+    if (staying.length === 0) {
+      actions.push(...planStackRemoves(ctx, options));
+      removesStacks = true;
+    } else {
+      actions.push({
+        type: 'skip',
+        host: 'stacks',
+        scope: 'project',
+        to: path.join(ctx.projectDir, 'stacks'),
+        reason: `still used by ${staying.join(', ')}`,
+      });
+    }
   }
+
+  // Files the manifest lists for these hosts that the package no longer ships go too, when unedited.
+  const owners = new Set(hostIds);
+  if (removesStacks) owners.add('stacks');
+  actions.push(...planOrphanRemovals(owners, options, actions));
 
   return actions;
 }
 
-function buildPlan(hostIds, options, ctx) {
+function buildPlan(hostIds, rawOptions, ctx) {
   validateHostIds(hostIds);
+  const options = { ...rawOptions, manifests: rawOptions.manifests || loadManifests(ctx) };
 
   /** @type {InstallAction[]} */
   const actions = [];
 
+  let projectStackHost = false;
+  let globalStackHost = false;
+
   for (const hostId of hostIds) {
+    const definition = hostDefinition(hostId);
+    const hostScopes = resolveScopes(options.scope, definition);
+    if (hostScopes.length === 0) {
+      actions.push(unsupportedScopeAction(definition, options));
+      continue;
+    }
+    if (STACK_HOSTS.includes(hostId)) {
+      if (hostScopes.includes('project')) projectStackHost = true;
+      else globalStackHost = true;
+    }
+
     if (hostId === 'opencode') {
-      actions.push(...planOpencodeActions(options, ctx));
+      actions.push(...planOpencode(options, ctx, false));
       continue;
     }
 
     const host = RULE_HOSTS[hostId];
-    const scopes = resolveScopes(options.scope, host);
+    const scopes = hostScopes;
 
     for (const installScope of scopes) {
       const destPath =
@@ -893,13 +1026,30 @@ function buildPlan(hostIds, options, ctx) {
     }
 
     if (hostId === 'cursor') {
-      actions.push(...planCursorSkillCopies(options, ctx));
+      actions.push(...planCursorSkills(options, ctx, false));
     }
   }
 
-  if (shouldCopyStacks(hostIds)) {
+  if (projectStackHost) {
     actions.push(...planStackCopies(ctx, options));
+  } else if (globalStackHost) {
+    // lexis: global rules cannot reach ./stacks/ of a project, so nothing is written to the project
+    actions.push({
+      type: 'hint',
+      host: 'stacks',
+      scope: 'global',
+      to: 'stacks/',
+      lines: [
+        'Global rules cannot load ./stacks/ profiles: those live in each project.',
+        'Run again with --scope project (or both) inside a project to get stacks/.',
+      ],
+    });
   }
+
+  // An upgrade: files an earlier version installed that this one no longer ships are removed when unedited.
+  const owners = new Set(hostIds);
+  if (projectStackHost) owners.add('stacks');
+  actions.push(...planOrphanRemovals(owners, options, actions));
 
   return actions;
 }
@@ -916,9 +1066,11 @@ function formatAction(action) {
     return `merge ${action.host} (${action.scope}) → ${action.to}${backup}`;
   }
   if (action.type === 'remove') {
-    return `remove ${action.host} (${action.scope}) → ${action.to}${backup}`;
+    const why = action.reason ? ` [${action.reason}]` : '';
+    return `remove ${action.host} (${action.scope}) → ${action.to}${backup}${why}`;
   }
-  return `copy  ${action.host} (${action.scope}) → ${action.to}${backup}`;
+  const update = action.update ? ' (update)' : '';
+  return `copy  ${action.host} (${action.scope}) → ${action.to}${update}${backup}`;
 }
 
 function printPlan(actions, options) {
@@ -940,13 +1092,32 @@ function printPlan(actions, options) {
   }
 }
 
-function executePlan(actions) {
+// With ctx, the install manifest is updated too: written files are recorded, removed ones forgotten.
+function executePlan(actions, ctx) {
   let applied = 0;
   let skipped = 0;
+  const manifests = {};
+  const manifestFor = (scope) => (manifests[scope] ||= readManifest(ctx, scope));
+  const record = (action) => {
+    if (!ctx || (action.scope !== 'project' && action.scope !== 'global')) return;
+    const manifest = manifestFor(action.scope);
+    const key = path.resolve(action.to);
+    if (action.type === 'remove' || action.forget) {
+      manifest.dirty = manifest.entries.delete(key) || manifest.dirty;
+      return;
+    }
+    const sha256 = hashFile(action.to);
+    const known = manifest.entries.get(key);
+    if (!known || known.sha256 !== sha256 || known.host !== action.host) {
+      manifest.entries.set(key, { host: action.host, sha256 });
+      manifest.dirty = true;
+    }
+  };
 
   for (const action of actions) {
     if (action.type === 'skip' || action.type === 'hint') {
       skipped += 1;
+      if (action.adopt || action.forget) record(action);
       continue;
     }
 
@@ -964,7 +1135,12 @@ function executePlan(actions) {
       fs.copyFileSync(action.from, action.to);
     }
 
+    if (action.type !== 'merge') record(action);
     applied += 1;
+  }
+
+  for (const manifest of Object.values(manifests)) {
+    if (manifest.dirty) writeManifest(manifest);
   }
 
   return { applied, skipped };
@@ -991,7 +1167,13 @@ Options:
 
 Safety:
   Uninstall only removes files identical to the package (skips modified files).
-  Overwrites and uninstalls create a .bak backup first when the target exists.
+  Overwrites and uninstalls create a backup first when the target exists (.bak, then .bak.1, .bak.2, ...;
+  an earlier backup is never overwritten).
+  A manifest (.lexis-two/manifest.json, or ~/.config/lexis-two/manifest.json for global installs) records
+  what was written. Reinstalling updates files you did not edit, uninstall removes them even after a
+  package upgrade, and files you edited are left alone and reported.
+  Without a TTY, a plan that writes needs --yes; --dry-run always works.
+  Global scope never writes to the project and does not install stacks/.
 
 Examples:
   npx @draig/lexis-two install --host cursor,agents --scope project --yes
@@ -1048,9 +1230,18 @@ async function resolveHosts(options, ctx) {
   return [...new Set(splitList(answer))];
 }
 
-async function confirmPlan(options) {
-  if (options.yes || options.dryRun || !options.interactive) {
+const writesFiles = (actions) =>
+  actions.some((a) => a.type === 'copy' || a.type === 'merge' || a.type === 'remove');
+
+async function confirmPlan(options, actions) {
+  if (options.yes || options.dryRun) {
     return true;
+  }
+  if (!options.interactive) {
+    if (!writesFiles(actions)) return true;
+    throw new Error(
+      'Refusing to write without confirmation: no TTY and no --yes. Re-run with --yes, or add --dry-run to preview.',
+    );
   }
 
   const answer = await question(
@@ -1109,7 +1300,7 @@ async function runInstall(rawArgv) {
       ];
   printPlan(actions, options);
 
-  const confirmed = await confirmPlan(options);
+  const confirmed = await confirmPlan(options, actions);
   if (!confirmed) {
     console.log(options.uninstall ? 'Uninstall cancelled.' : 'Install cancelled.');
     return 0;
@@ -1119,7 +1310,7 @@ async function runInstall(rawArgv) {
     return 0;
   }
 
-  const result = executePlan(actions);
+  const result = executePlan(actions, ctx);
   const verb = options.uninstall ? 'Uninstalled' : 'Installed';
   console.log(`${verb}: ${result.applied} file(s), skipped: ${result.skipped}.`);
 

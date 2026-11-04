@@ -1,6 +1,6 @@
 # Desx — design audit (beside the loop)
 
-`/desx` detects visual “AI slop” and drift from the **existing** design system. It is **not** a fourth phase of `discover → spec → implement`. Like `security-auditor`, it is a side pass: after UI changes, before a commit, or on demand.
+`/desx` improves design quality: consistency with the project's **existing** design system, hierarchy, accessibility and readability. Keeping output from looking generic is a different job, done by [`/slopx`](./docs/slopx.md). `/desx` is **not** a fourth phase of `discover → spec → implement`. Like `security-auditor`, it is a side pass: after UI changes, before a commit, or on demand.
 
 Process: [docs/desx.md](./docs/desx.md). Detector (no model): `node scripts/desx-audit.js`.
 
@@ -33,6 +33,6 @@ This npm package does **not** register a host agent named `design-auditor`. Lexi
 
 `DESIGN-AUDIT.md` at repo root, or `docs/DESIGN-AUDIT.md` if `docs/` already exists.
 
-Categories (deterministic): contrast (WCAG), spacing scale, radius scale, heading/type hierarchy, nested card/panel/tile, indistinguishable enabled/disabled controls.
+Categories (deterministic): contrast (WCAG), spacing scale, radius scale, heading/type hierarchy, nested card/panel/tile, indistinguishable enabled/disabled controls, missing `alt`, and legibility (tight tracking and line height, tiny text, justified or all-caps body text, gray text on color).
 
-v1 has **no** post-save hook. The report updates only on explicit `/desx audit`.
+v1 has **no** post-save hook. The report updates only on explicit `/desx audit`. `--json` and `--dry-run` write nothing; `--git` scans only changed UI files. Details and limits (what is not analyzed): [docs/desx.md](./docs/desx.md).

@@ -103,7 +103,7 @@
         { name: "ui-architect", perm: "read", desc: "Asesora sobre diseño. No implementa." },
         { name: "refactor-agent", perm: "write", desc: "Reestructuración a gran escala, dentro de una tarea acotada." },
         { name: "security-auditor", perm: "read", desc: "Corre auditorías. Reporta, no corrige." },
-        { name: "design-auditor", perm: "read", desc: "Detecta desliz visual de IA genérica. Solo puede escribir DESIGN-AUDIT.md." },
+        { name: "design-auditor", perm: "read", desc: "Audita la calidad de diseño: consistencia, jerarquía, accesibilidad. Solo puede escribir DESIGN-AUDIT.md." },
       ],
       permWrite: "escribe",
       permRead: "solo lectura",
@@ -207,12 +207,13 @@
     },
     commandsExplained: {
       eyebrow: "Comandos explicados",
-      title: "/lexis, /specx y /desx no son lo mismo.",
+      title: "/lexis, /specx, /desx y /slopx no son lo mismo.",
       copy: "Cada comando controla una capa distinta del flujo.",
       items: [
         { command: "/lexis", name: "Intensidad", desc: "Cambia qué tan agresivamente el ruleset frena al agente. Para trabajo diario lean, refactors o apagar reglas." },
         { command: "/specx", name: "Specs", desc: "Ciclo dirigido por specs para features de 3+ archivos: propuesta, plan, implementar una tarea por vez, revisar, cerrar." },
-        { command: "/desx", name: "Diseño", desc: "Auditoría de diseño de solo lectura después de UI. Detecta slop visual y deriva de tokens, y aplica fixes fuera del loop de specs." },
+        { command: "/desx", name: "Diseño", desc: "Auditoría de calidad de diseño de solo lectura después de UI: consistencia con tu sistema, jerarquía y accesibilidad. Aplica fixes fuera del loop de specs. Para salida de aspecto genérico, /slopx." },
+        { command: "/slopx", name: "Anti-genérico", desc: "Una compuerta de solo lectura después de que un agente escribe algo. Revisa restos de código, texto genérico y diseño de aspecto por defecto, y corre la pasada de calidad de /desx. Cada hallazgo trae una sugerencia." },
       ],
     },
     install: {
@@ -255,13 +256,13 @@
   commands: {
     title: "Slash commands",
     subtitle:
-      "Loop de tres pasos: /discx (producto), /specx (specs), /lexis (intensidad). /desx es una pasada de diseño después de UI, no una cuarta fase.",
+      "Loop de tres pasos: /discx (producto), /specx (specs), /lexis (intensidad). /desx revisa la calidad de diseño y /slopx evita que la salida se vea genérica; ambos van al costado del loop, no son fases.",
     guideLink: "Docs completos",
     filterAll: "Todos",
     filterLexis: "Código",
     filterDiscovery: "Producto",
     filterSpecxis: "Specs",
-    filterDesx: "Diseño",
+    filterDesx: "Diseño y slop",
     results: "{count} comandos",
     items: [
       { name: "/lexis status", desc: "Muestra el estado actual del plugin, nivel de intensidad activo y configuración por defecto." },
@@ -273,7 +274,8 @@
       { name: "/lexis security (o /lexis s)", desc: "Realiza una auditoría de seguridad enfocada. Usa el audit del stack si existe perfil; si no, checks genéricos." },
       { name: "/lexis help (o /lexis h)", desc: "Despliega la tarjeta de referencia rápida con los comandos públicos y niveles." },
       { name: "/discx <slug>", desc: "Discovery: MVP, prioridades, mapa y 06-post-mvp.md. Sin código de producto. Alias: /discovery." },
-      { name: "/desx audit", desc: "Auditoría de diseño de solo lectura: slop visual y deriva de tokens. Solo escribe DESIGN-AUDIT.md. Alias: /desx." },
+      { name: "/desx audit", desc: "Auditoría de calidad de diseño de solo lectura: consistencia, jerarquía y accesibilidad. Solo escribe DESIGN-AUDIT.md. Alias: /desx." },
+      { name: "/slopx", desc: "Compuerta anti-genérico después de que un agente escribe algo: restos de código, texto genérico y diseño de aspecto por defecto, más la pasada de calidad de desx. Solo lectura." },
       { name: "/desx apply", desc: "El implementador aplica DESIGN-AUDIT.md (P0 y luego P1). No es design-auditor." },
       { name: "/specx", desc: "Alias corto de /specxis — el mismo ciclo de Spec-Driven Development." },
       { name: "/specxis status", desc: "Monitorea el estado, progreso de tareas y deuda técnica de las especificaciones activas. Alias: /specx." },
@@ -294,7 +296,7 @@
     tabOpencodeNpm: "OpenCode (npm)",
     tabCursor: "Cursor",
     tabClone: "Clonar",
-    npxHint: "Detecta Cursor, Windsurf, Cline, Kiro, OpenCode y AGENTS.md. Se puede re-ejecutar sin riesgo.",
+    npxHint: "Detecta Cursor, Windsurf, Cline, Kiro, OpenCode y AGENTS.md. Se puede re-ejecutar sin riesgo: actualiza los archivos que no editaste y deja los tuyos.",
   },
   adapt: {
     title: "Agregá un stack",
@@ -380,12 +382,12 @@
   docs: {
     title: "Documentación",
     subtitle:
-      "Qué hace cada comando, cuándo usarlo y un ejemplo para copiar. Loop de tres pasos más una pasada de diseño después de UI.",
+      "Qué hace cada comando, cuándo usarlo y un ejemplo para copiar. Loop de tres pasos más dos pasadas al costado: calidad de diseño y la compuerta anti-genérico.",
     summary:
-      "Loop: /discx define este MVP y la siguiente etapa, /specx lo convierte en spec y tareas, /lexis mantiene al agente lean. Después de UI, /desx es una pasada de diseño al costado del loop — no una fase de Specxis. Bugs: salta Discovery, usa /lexis plan.",
+      "Loop: /discx define este MVP y la siguiente etapa, /specx lo convierte en spec y tareas, /lexis mantiene al agente lean. Al costado del loop: /desx revisa la calidad de diseño después de UI y /slopx es la compuerta que evita que la salida se vea genérica. Ninguno es una fase de Specxis. Bugs: salta Discovery, usa /lexis plan.",
     availability:
       "Disponibles en los hosts con adaptador de comandos: OpenCode, Gemini CLI, pi, Claude Code y GitHub Copilot.",
-    toc: ["Niveles de intensidad", "Comandos /lexis", "El ciclo /discx", "El ciclo /specx", "La pasada /desx", "Perfiles de stack"],
+    toc: ["Niveles de intensidad", "Comandos /lexis", "El ciclo /discx", "El ciclo /specx", "La pasada /desx", "La compuerta /slopx", "Perfiles de stack"],
     levelsTitle: "Niveles de intensidad",
     levelsSubtitle:
       "/lexis <modo> cambia la agresividad con la que las reglas frenan a tu agente. El nivel activo se inyecta en cada system prompt hasta que lo cambies.",
@@ -423,18 +425,26 @@
       "Desarrollo dirigido por specs para features que tocan 3+ archivos. Comando corto /specx (completo /specxis). La spec vive en .specxis/active/<slug>/ como Markdown plano.",
     specxisItems: [
       { name: "/specx new <slug>", desc: "Crea .specxis/active/<slug>/proposal.md. Puerta blanda: si la idea es un producto vago y falta docs/discovery/<slug>/01-mvp.md, sugiere /discx primero.", example: "/specx new csv-export" },
-      { name: "/specx plan <slug>", desc: "Convierte la propuesta en spec.md (MUST / SHOULD / MAY) y tasks.md -- máximo 10 tareas, cada una mapeada a un solo archivo o función.", example: "/specx plan csv-export" },
-      { name: "/specx implement <slug>", desc: "Implementa exactamente una tarea pendiente por corrida, siguiendo los MUST de spec.md y las reglas de tu AGENTS.md.", example: "/specx implement csv-export" },
-      { name: "/specx review <slug>", desc: "Evaluación de solo lectura contra la spec; los hallazgos (severidad, ubicación, problema, fix) se escriben en review.md.", example: "/specx review csv-export" },
-      { name: "/specx close <slug>", desc: "Verifica que todas las tareas estén hechas y no queden hallazgos Critical/High, archiva la spec y lleva los comentarios // lexis: al registro de deuda.", example: "/specx close csv-export" },
-      { name: "/specx debt", desc: "Sincroniza cada comentario // lexis: del codigo con .specxis/debt.md mediante un script Node portable.", example: "/specx debt" },
+      { name: "/specx plan <slug>", desc: "Convierte la propuesta en spec.md (MUST / SHOULD / MAY, estado draft) y tasks.md -- máximo 10 tareas, cada una una sola preocupación con sus propios tests. Pide aprobación; un sí pasa el estado a agreed.", example: "/specx plan csv-export" },
+      { name: "/specx implement <slug>", desc: "Se niega si la spec no está aprobada. Registra el commit base e implementa exactamente una tarea pendiente por corrida, siguiendo los MUST de spec.md y las reglas de tu AGENTS.md.", example: "/specx implement csv-export" },
+      { name: "/specx review <slug>", desc: "Evaluación de solo lectura del diff desde el commit base contra la spec; los hallazgos (severidad, ubicación, problema, fix) son checkboxes en review.md.", example: "/specx review csv-export" },
+      { name: "/specx close <slug>", desc: "Exige un review y ningún hallazgo Critical/High abierto (un criterio que nadie puede verificar necesita una exención escrita). Pasa el estado a done, archiva la spec y sincroniza los comentarios // lexis: con el registro de deuda.", example: "/specx close csv-export" },
+      { name: "/specx debt", desc: "Sincroniza cada comentario // lexis: del código en su propio bloque de .specxis/debt.md mediante un script Node portable. Tus notas y entradas tildadas se conservan.", example: "/specx debt" },
     ],
     desxTitle: "La pasada /desx",
     desxSubtitle:
-      "Al costado del loop, como security-auditor. Después de UI: detectar slop y luego aplicar. No es una fase de Specxis.",
+      "Al costado del loop, como security-auditor. Después de UI: auditar la calidad de diseño y luego aplicar. No es una fase de Specxis.",
     desxItems: [
       { name: "/desx audit", desc: "design-auditor. Detector sin modelo y pulido opcional. Solo escribe DESIGN-AUDIT.md.", example: "/desx audit" },
       { name: "/desx apply", desc: "El implementador aplica P0 y luego P1, tilda solo lo resuelto y vuelve a correr el detector.", example: "/desx apply" },
+    ],
+    slopxTitle: "La compuerta /slopx",
+    slopxSubtitle:
+      "Al costado del loop, como security-auditor y /desx. Después de que un agente escribe algo: revisar código, texto y aspecto, más la pasada de calidad de desx. Solo lectura: imprime hallazgos y sugerencias y no escribe ningún archivo.",
+    slopxItems: [
+      { name: "/slopx", desc: "Corre cuatro pasadas sobre lo que cambió: restos de código, texto genérico, diseño de aspecto por defecto y los chequeos de calidad de desx. Las reglas de gusto son advisory y se pueden eximir con un motivo.", example: "/slopx" },
+      { name: "/slopx --all", desc: "Escanea todos los archivos elegibles en lugar de solo los cambios. --base <ref> revisa una rama; --prose suma la prosa de Markdown.", example: "/slopx --all" },
+      { name: "slopx-disable-line <regla>: <motivo>", desc: "Exime una regla en una línea, dejando el motivo registrado. .slopx.json guarda ignores por archivo, regla y valor; todo ignore necesita un motivo.", example: "// slopx-disable-line copy/emoji: marca de la casa" },
     ],
     stacksTitle: "Perfiles de stack",
     stacksSubtitle: "La filosofía sigue agnóstica; las convenciones viven en stacks/<id>.md y se detectan por tarea.",
@@ -450,7 +460,7 @@
     ],
     stacksAdd: "Agregá un perfil: copiá stacks/_template.md → stacks/<id>.md, sumá una fila a la tabla de detección de AGENTS.md y corré npm test.",
     sddHint:
-      "Loop: /discx para producto vago y escala; /specx para coordinación de 3+ archivos; /lexis para intensidad. Después de UI, /desx es una pasada de diseño. Salta Discovery en bugs y cambios de un archivo.",
+      "Loop: /discx para producto vago y escala; /specx para coordinación de 3+ archivos; /lexis para intensidad. Después de UI, /desx audita la calidad de diseño y /slopx evita que la salida se vea genérica. Salta Discovery en bugs y cambios de un archivo.",
     backHome: "Volver al inicio",
   },
 } as const;

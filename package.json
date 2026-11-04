@@ -1,9 +1,21 @@
 {
   "name": "@draig/lexis-two",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "The simple way to obtain the best code. A portable ruleset that steers coding agents: prove the feature, prefer the platform, ship the minimum.",
+  "author": "Agustin Avellaneda (https://github.com/nitdraig)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nitdraig/lexis-two.git"
+  },
+  "homepage": "https://lexis-two.excelso.xyz",
+  "bugs": {
+    "url": "https://github.com/nitdraig/lexis-two/issues"
+  },
+  "engines": {
+    "node": ">=22"
+  },
   "bin": {
-    "lexis-two": "bin/lexis-two.js"
+    "lexis-two": "scripts/install.js"
   },
   "main": "./.opencode/plugins/lexis-two.mjs",
   "exports": {
@@ -22,6 +34,7 @@
     "SPECXIS.md",
     "docs/discovery.md",
     "docs/desx.md",
+    "docs/slopx.md",
     "docs/specxis.md",
     "docs/commandcode.md",
     "docs/stacks.md",
@@ -30,6 +43,9 @@
     ".clinerules/lexis-two.md",
     ".kiro/steering/lexis-two.md",
     ".github/copilot-instructions.md",
+    ".github/plugin/",
+    ".claude-plugin/",
+    "gemini-extension.json",
     ".opencode/plugins/lexis-two.mjs",
     ".opencode/plugins/lexis-two-tui.mjs",
     ".opencode/commands/",
@@ -39,8 +55,8 @@
     "stacks/",
     "templates/",
     "scripts/",
-    "bin/",
-    "pi-extension/index.js"
+    "pi-extension/index.js",
+    "pi-extension/package.json"
   ],
   "keywords": [
     "pi-package",
@@ -49,10 +65,8 @@
     "lexis-two"
   ],
   "license": "MIT",
-  "devDependencies": {
-    "@draig/lexis-two": "file:."
-  },
   "scripts": {
+    "lint": "node scripts/check-syntax.js",
     "postinstall": "node scripts/opencode-wrapper-postinstall.mjs",
     "lexis-two": "node scripts/install.js",
     "test": "node scripts/check-rule-copies.js && node --test tests/*.test.js && npm test --prefix pi-extension",

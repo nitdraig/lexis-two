@@ -1,0 +1,22 @@
+slopx: 5 findings (3 warnings, 2 advisory) in 3 files, scope: changes
+  code       2
+  copy       1
+  look       1
+  quality    1
+
+Generic (slopx)
+  warning:
+    src/a.js:1  code/marker  Work marker or placeholder left in the code (TODO-style words, "rest of the code")
+        suggestion: Finish it or delete it; open an issue for real follow-ups
+    src/a.js:2  code/debug-leftover  Debug call left in the code (debugger, console.log in a file that does not log)
+        suggestion: Remove it, or use the logger the project already has
+  advisory:
+    src/a.css:1  look/side-tab  Thick colored border on one side of a card (the "alert" stripe)
+        suggestion: Drop the stripe; separate with spacing or a full border  [handoff: distill]
+    src/a.tsx:1  copy/stock-vocabulary  Stock marketing vocabulary (seamless, robust, elevate, empower, ...)
+        suggestion: Say what it does in plain words, with a concrete fact  [handoff: clarify]
+
+Design quality (desx)
+  warning:
+    src/a.css:2  desx/contrast  Text color against its background is below the WCAG ratio
+        suggestion: Use a pair with at least 4.5:1 for body text, 3:1 for large text  [handoff: colorize]

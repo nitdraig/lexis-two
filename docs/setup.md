@@ -91,7 +91,7 @@ In `cmd`: `/import opencode` then `/import cursor`, then `/reload`. Use `/lexis 
 | `--scope <scope>` | `project` (default), `global`, `both` |
 | `--project-dir <path>` | Target project (default: current directory) |
 | `--dry-run` | Print planned file operations only |
-| `--yes` | Skip confirmation |
+| `--yes` | Skip confirmation. Required when there is no TTY (CI, pipes) and the plan writes files |
 | `--force` | Overwrite existing files (`AGENTS.md` requires this) |
 | `--non-interactive` | No prompts; use with `--host` and `--yes` |
 
@@ -101,11 +101,22 @@ In `cmd`: `/import opencode` then `/import cursor`, then `/reload`. Use `/lexis 
 - `stacks/` files are copied beside `AGENTS.md` and are **skipped if they exist** unless you pass `--force` (same contract as `AGENTS.md`).
 - On uninstall, only `stacks/` files identical to the package are removed; modified files are skipped.
 - Re-running the installer is **idempotent**: identical files are skipped.
-- With `--force`, existing targets are backed up to `*.bak` before overwrite.
+- With `--force`, existing targets are backed up before overwrite: `*.bak`, then `*.bak.1`, `*.bak.2`, and so on. An earlier backup is never overwritten, so your original content survives repeated runs.
+- Uninstalling one host keeps `stacks/` while another installed rule host (or an OpenCode project install) still needs it. The plan shows a `skip stacks` line naming who uses it.
+- `--scope global` writes nothing to the project, and does not install `stacks/` (global rules cannot load a project's `./stacks/`). Hosts that have no global form (Windsurf, Cline, Kiro, `agents`, `copilot-repo`) are skipped with a visible line. Run again with `--scope project` inside a project to get `stacks/`.
+- Without a TTY and without `--yes`, an install or uninstall that would write files exits with an error and writes nothing. `--dry-run` always works, and plans that only print hints (Claude Code, Gemini, Copilot IDE, pi) need no `--yes`.
+- **Upgrades.** The installer records what it wrote in `.lexis-two/manifest.json` (global installs: `~/.config/lexis-two/manifest.json`): each path and a hash of its content. Commit the project manifest so teammates share the state.
+  - Re-running the installer after a package upgrade **updates** files you did not edit, without `--force` and without a backup. A file you edited is left alone and shown as `skip ... [edited]`.
+  - `--uninstall` removes files whose content still matches the manifest, even if the package changed since. Edited files are left alone and shown as `[modified]`. No backup is made for files that match, since the package can reproduce them.
+  - Files an earlier version installed that the new package no longer ships are removed on reinstall (when unedited) and shown as `remove ... [no longer shipped]`.
+  - Line endings are ignored when comparing, so `core.autocrlf` does not count as an edit.
+  - Installs from before manifests keep working with the old rules (compare to the package, back up first). The next install adds them to the manifest.
+  - A manifest that is corrupt, or that lists a path outside the project (global: outside your home and OpenCode config directories), stops the run before anything is written.
+- Files starting with `_` in `stacks/` (such as `_template.md`) are for contributors and are not copied to user projects.
 
 ---
 
-## OpenCode (plugin — automated in A2)
+## OpenCode (plugin — automated in A2) {#opencode}
 
 ```bash
 npx @draig/lexis-two install --host opencode --scope project --yes
@@ -114,6 +125,8 @@ npx @draig/lexis-two install --host opencode --scope project --yes
 This merges `opencode.json` (appends `@draig/lexis-two` to `plugin` without removing existing entries) and copies slash commands to `.opencode/commands/`.
 
 **Plugin ≠ slash commands.** The npm plugin injects rules only. Commands are separate markdown files — install copies them, or OpenCode will not list `/lexis` in the picker.
+
+**Local models are skipped.** The plugin does not inject the ruleset when the model id contains `lmstudio`, `ollama`, `local` or `127.0.0.1`, to keep small local contexts free. It logs `lexis-two ruleset not injected for local model <id>` once per model through OpenCode's log. If you want the rules on a local model, put them in `AGENTS.md` (`--host agents`) instead.
 
 For every project you use OpenCode in:
 
@@ -143,6 +156,7 @@ cp node_modules/@draig/lexis-two/.opencode/commands/lexis*.md ~/.config/opencode
 cp node_modules/@draig/lexis-two/.opencode/commands/specx*.md ~/.config/opencode/commands/
 cp node_modules/@draig/lexis-two/.opencode/commands/disc*.md ~/.config/opencode/commands/
 cp node_modules/@draig/lexis-two/.opencode/commands/desx*.md ~/.config/opencode/commands/
+cp node_modules/@draig/lexis-two/.opencode/commands/slopx*.md ~/.config/opencode/commands/
 ```
 
 ---
@@ -215,6 +229,19 @@ npm install -g @draig/lexis-two
 ```
 
 The package declares `"pi"` extensions and skills in `package.json`.
+
+---
+
+## Reply language {#language}
+
+Lexis does not force a language: the agent replies in the language you write in. To pin one, set it in either place (the environment variable wins):
+
+1. `LEXIS_TWO_LANGUAGE` env, for example `LEXIS_TWO_LANGUAGE=Spanish`
+2. Config file `~/.config/lexis-two/config.json` (Windows: `%APPDATA%\lexis-two\config.json`, or `$XDG_CONFIG_HOME/lexis-two/config.json` if set) with `{ "language": "Spanish" }`
+
+The value must be a plain language name: letters, spaces and hyphens, up to 40 characters. Anything else is ignored. Code, comments and JSDoc stay in English.
+
+This applies to hosts that run the hooks, plugin or extension (Claude Code, Codex, Copilot, OpenCode, pi). Static rule hosts (Cursor, Windsurf, Cline, Kiro, `AGENTS.md`) load a fixed copy, so add one line to your own project rules instead, for example `Respond in Spanish.`
 
 ---
 

@@ -1,0 +1,97 @@
+{
+  "passes": [
+    {
+      "pass": "code",
+      "owner": "slopx",
+      "findings": 2
+    },
+    {
+      "pass": "copy",
+      "owner": "slopx",
+      "findings": 1
+    },
+    {
+      "pass": "look",
+      "owner": "slopx",
+      "findings": 1
+    },
+    {
+      "pass": "quality",
+      "owner": "desx",
+      "findings": 1
+    }
+  ],
+  "findings": [
+    {
+      "id": "look/side-tab",
+      "name": "side-tab",
+      "description": "Thick colored border on one side of a card (the \"alert\" stripe)",
+      "severity": "advisory",
+      "pass": "look",
+      "category": "slop",
+      "owner": "slopx",
+      "file": "src/a.css",
+      "line": 1,
+      "fileLevel": false,
+      "suggestion": "Drop the stripe; separate with spacing or a full border",
+      "handoff": "distill"
+    },
+    {
+      "id": "desx/contrast",
+      "name": "contrast",
+      "description": "Text color against its background is below the WCAG ratio",
+      "severity": "warning",
+      "pass": "quality",
+      "category": "quality",
+      "owner": "desx",
+      "file": "src/a.css",
+      "line": 2,
+      "fileLevel": false,
+      "suggestion": "Use a pair with at least 4.5:1 for body text, 3:1 for large text",
+      "handoff": "colorize"
+    },
+    {
+      "id": "code/marker",
+      "name": "marker",
+      "description": "Work marker or placeholder left in the code (TODO-style words, \"rest of the code\")",
+      "severity": "warning",
+      "pass": "code",
+      "category": "slop",
+      "owner": "slopx",
+      "file": "src/a.js",
+      "line": 1,
+      "fileLevel": false,
+      "suggestion": "Finish it or delete it; open an issue for real follow-ups",
+      "handoff": null
+    },
+    {
+      "id": "code/debug-leftover",
+      "name": "debug-leftover",
+      "description": "Debug call left in the code (debugger, console.log in a file that does not log)",
+      "severity": "warning",
+      "pass": "code",
+      "category": "slop",
+      "owner": "slopx",
+      "file": "src/a.js",
+      "line": 2,
+      "fileLevel": false,
+      "suggestion": "Remove it, or use the logger the project already has",
+      "handoff": null
+    },
+    {
+      "id": "copy/stock-vocabulary",
+      "name": "stock-vocabulary",
+      "description": "Stock marketing vocabulary (seamless, robust, elevate, empower, ...)",
+      "severity": "advisory",
+      "pass": "copy",
+      "category": "slop",
+      "owner": "slopx",
+      "file": "src/a.tsx",
+      "line": 1,
+      "fileLevel": false,
+      "suggestion": "Say what it does in plain words, with a concrete fact",
+      "handoff": "clarify",
+      "ignoreValue": "seamless"
+    }
+  ]
+}

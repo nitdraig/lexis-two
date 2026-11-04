@@ -1,4 +1,5 @@
-$Flag = Join-Path $HOME ".claude/.lexis-two-active"
+$Base = if ($env:CLAUDE_CONFIG_DIR) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $HOME ".claude" }
+$Flag = Join-Path $Base ".lexis-two-active"
 if (-not (Test-Path $Flag)) {
     exit 0
 }

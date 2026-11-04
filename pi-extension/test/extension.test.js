@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import lexisExtension from "../index.js";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import lexisExtension, { LEXIS_SKILL_ROUTES, LEXIS_COMPAT_ROUTES } from "../index.js";
 
 class MockPi {
   constructor() {
@@ -47,6 +50,7 @@ test("lexisExtension registers commands and listeners", () => {
   assert.ok(pi.commands["desx"]);
   assert.ok(pi.commands["desx-audit"]);
   assert.ok(pi.commands["desx-apply"]);
+  assert.ok(pi.commands["slopx"]);
 
   assert.ok(pi.listeners["input"]);
   assert.ok(pi.listeners["session_start"]);
@@ -109,6 +113,9 @@ test("lexisExtension command handlers trigger correctly", async () => {
 
   pi.commands["lexis-two-review"].handler("", ctx);
   assert.equal(pi.userMessages[10].text, "/skill:lexis-two-review");
+
+  await pi.commands["slopx"].handler("--all", ctx);
+  assert.equal(pi.userMessages[11].text, "/skill:slopx --all");
 });
 
 test("lexisExtension input listener detects deactivation", async () => {
@@ -128,7 +135,63 @@ test("lexisExtension input listener detects deactivation", async () => {
   await pi.commands["lexis-two"].handler("full", ctx);
   assert.equal(pi.entries[0].data.mode, "full");
 
-  // Send input "stop lexis"
+  // A sentence that merely mentions the phrase does not switch Lexis off
   await pi.listeners["input"]({ text: "Please stop lexis now" });
+  await pi.listeners["input"]({ text: 'why does "normal mode" print this?' });
+  assert.equal(pi.entries.length, 1);
+
+  // The whole prompt being the phrase does
+  await pi.listeners["input"]({ text: "stop lexis" });
   assert.equal(pi.entries[1].data.mode, "off");
+
+  await pi.commands["lexis-two"].handler("lite", ctx);
+  await pi.listeners["input"]({ text: "  Normal mode.  " });
+  assert.equal(pi.entries[3].data.mode, "off");
+});
+
+test("/lexis-two works without pi.commands", async () => {
+  // A host whose API has no `commands` registry: the handlers live in a private map.
+  const registered = new Map();
+  const pi = {
+    registerCommand: (name, config) => registered.set(name, config),
+    on: () => {},
+    appendEntry: (type, data) => entries.push({ type, data }),
+    sendUserMessage: (text) => messages.push(text),
+  };
+  const entries = [];
+  const messages = [];
+  assert.equal(pi.commands, undefined);
+  lexisExtension(pi);
+
+  await registered.get("lexis-two").handler("ultra", {});
+  assert.equal(entries[0].data.mode, "ultra");
+  await registered.get("lexis-two").handler("plan", {});
+  assert.equal(messages[0], "/skill:lexis-two-plan");
+});
+
+test("every skill a pi command routes to exists", () => {
+  const skillsDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "skills");
+  const ids = new Set([
+    ...Object.values(LEXIS_SKILL_ROUTES),
+    ...Object.values(LEXIS_COMPAT_ROUTES).map((r) => r.skillId),
+    "specxis",
+    "discovery",
+    "desx",
+    "desx-apply",
+  ]);
+
+  // Also every /skill:<id> the extension sends from its own commands
+  const pi = new MockPi();
+  lexisExtension(pi);
+  for (const name of Object.keys(pi.commands)) {
+    pi.commands[name].handler("", {});
+  }
+  for (const { text } of pi.userMessages) {
+    const match = text.match(/^\/skill:([\w-]+)/);
+    if (match) ids.add(match[1]);
+  }
+
+  for (const id of ids) {
+    assert.ok(fs.existsSync(path.join(skillsDir, id, "SKILL.md")), `skills/${id}/SKILL.md is missing`);
+  }
 });

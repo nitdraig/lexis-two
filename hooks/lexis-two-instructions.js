@@ -9,7 +9,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { normalizePersistedMode, getDefaultMode } = require('./lexis-two-config');
+const { normalizeMode, getDefaultMode, getLanguage } = require('./lexis-two-config');
 
 const LEVELS = {
   lite: `
@@ -73,7 +73,7 @@ const SKILL_PATH = path.join(__dirname, '..', 'skills', 'lexis-two', 'SKILL.md')
  * @returns {string}
  */
 function filterSkillBodyForMode(body, mode) {
-  const effectiveMode = normalizePersistedMode(mode) || getDefaultMode();
+  const effectiveMode = normalizeMode(mode) || getDefaultMode();
   const withoutFrontmatter = String(body || '').replace(/^---[\s\S]*?---\s*/, '');
 
   return withoutFrontmatter
@@ -81,13 +81,13 @@ function filterSkillBodyForMode(body, mode) {
     .filter((line) => {
       const tableLabel = line.match(/^\|\s*\*\*(.+?)\*\*\s*\|/);
       if (tableLabel) {
-        const labelMode = normalizePersistedMode(tableLabel[1].trim());
+        const labelMode = normalizeMode(tableLabel[1]);
         if (labelMode) return labelMode === effectiveMode;
       }
 
       const exampleLabel = line.match(/^-\s*([^:]+):\s*/);
       if (exampleLabel) {
-        const labelMode = normalizePersistedMode(exampleLabel[1].trim());
+        const labelMode = normalizeMode(exampleLabel[1]);
         if (labelMode) return labelMode === effectiveMode;
       }
 
@@ -102,13 +102,20 @@ function filterSkillBodyForMode(body, mode) {
  * @returns {string}
  */
 function getLexisInstructions(mode) {
-  const configuredMode = normalizePersistedMode(mode) || getDefaultMode();
+  const instructions = buildInstructions(mode);
+  const language = getLanguage();
+  return language
+    ? instructions + '\n\nRespond to the user in ' + language + '. Code, comments and JSDoc stay in English.'
+    : instructions;
+}
 
-  if (INDEPENDENT_MODES.has(configuredMode)) {
-    return 'LEXIS-TWO MODE ACTIVE — level: ' + configuredMode + '. Behavior defined by /lexis-two-' + configuredMode + ' skill.';
+function buildInstructions(mode) {
+  // A configured default of `review` is the only way to reach an independent mode.
+  const effectiveMode = normalizeMode(mode) || getDefaultMode();
+
+  if (INDEPENDENT_MODES.has(effectiveMode)) {
+    return 'LEXIS-TWO MODE ACTIVE — level: ' + effectiveMode + '. Behavior defined by /lexis-two-' + effectiveMode + ' skill.';
   }
-
-  const effectiveMode = normalizePersistedMode(configuredMode) || getDefaultMode();
 
   try {
     return 'LEXIS-TWO MODE ACTIVE — level: ' + effectiveMode + '\n\n' +
@@ -120,7 +127,7 @@ function getLexisInstructions(mode) {
 
 module.exports = {
   getLexisInstructions,
-  normalizePersistedMode,
+  normalizeMode,
   getDefaultMode,
   filterSkillBodyForMode,
 };

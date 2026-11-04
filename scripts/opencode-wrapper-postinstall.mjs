@@ -41,7 +41,8 @@ function patchWrapperPackageJson(wrapperDir, packageName) {
 
 try {
   const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, "utf8"));
-  const wrapperDir = path.resolve(pkgRoot, "../..");
+  // pkgRoot is <wrapper>/node_modules/@scope/pkg
+  const wrapperDir = path.resolve(pkgRoot, "../../..");
   if (!isOpenCodeWrapperDir(wrapperDir)) process.exit(0);
   patchWrapperPackageJson(wrapperDir, pkg.name);
 } catch {

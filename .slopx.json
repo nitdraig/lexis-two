@@ -1,0 +1,7 @@
+{
+  "ignoreFiles": [
+    { "glob": "scripts/slopx-rules.js", "reason": "holds the pattern lists the rules look for, so it matches its own patterns" },
+    { "glob": "tests/slopx-*.test.js", "reason": "fixtures contain the slop the tests assert on" },
+    { "glob": "docs/slopx.md", "reason": "documents the patterns it detects" }
+  ]
+}

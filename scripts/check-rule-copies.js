@@ -11,11 +11,14 @@
 //   3. The canonical AGENTS.md itself contains the load-bearing Lexis-Two rules.
 //   4. Each skills/*/SKILL.md matches .cursor/skills/<name>/SKILL.md byte-for-byte.
 //   5. Copilot's shorter repo instructions still carry the load-bearing phrases.
+//
+// `--fix` rewrites drifted copies instead of failing (each host keeps its own frontmatter).
 
 const fs = require('fs');
 const path = require('path');
 
 const root = path.join(__dirname, '..');
+const FIX = process.argv.includes('--fix');
 
 // Canonical source of truth
 const SOURCE_FILE = 'AGENTS.md';
@@ -76,7 +79,11 @@ for (const copyPath of COPIES) {
   const copyContent = read(copyPath);
   const copyBody = stripFrontmatter(copyContent).trim();
 
-  if (copyBody !== canonicalBody) {
+  if (copyBody !== canonicalBody && FIX) {
+    const frontmatter = copyContent.match(/^---[\s\S]*?---\s*/);
+    fs.writeFileSync(path.join(root, copyPath), (frontmatter ? frontmatter[0] : '') + canonicalBody + '\n');
+    console.log(`Fixed ${copyPath}`);
+  } else if (copyBody !== canonicalBody) {
     console.error(`Drift detected: ${copyPath} does not match ${SOURCE_FILE}`);
     failed = true;
   }
@@ -96,21 +103,20 @@ const skillNames = fs.readdirSync(skillsRoot, { withFileTypes: true })
 for (const name of skillNames) {
   const srcRel = `skills/${name}/SKILL.md`;
   const copyRel = `.cursor/skills/${name}/SKILL.md`;
-  if (!fs.existsSync(path.join(root, copyRel))) {
-    console.error(`Drift detected: missing Cursor skill copy ${copyRel}`);
-    failed = true;
-    continue;
-  }
-  if (read(srcRel) !== read(copyRel)) {
-    console.error(`Drift detected: ${copyRel} does not match ${srcRel}`);
+  const missing = !fs.existsSync(path.join(root, copyRel));
+  if ((missing || read(srcRel) !== read(copyRel)) && FIX) {
+    fs.mkdirSync(path.dirname(path.join(root, copyRel)), { recursive: true });
+    fs.copyFileSync(path.join(root, srcRel), path.join(root, copyRel));
+    console.log(`Fixed ${copyRel}`);
+  } else if (missing || read(srcRel) !== read(copyRel)) {
+    console.error(`Drift detected: ${copyRel} ${missing ? 'is missing' : `does not match ${srcRel}`}`);
     failed = true;
   }
 }
 
 if (failed) {
   console.error('\nIntegrity check FAILED. Rule or skill copies have drifted.');
-  console.error('To fix, copy AGENTS.md into drifted rule files (keep host frontmatter).');
-  console.error('Copy skills/<name>/SKILL.md into .cursor/skills/<name>/SKILL.md.');
+  console.error('Run: node scripts/check-rule-copies.js --fix');
   process.exit(1);
 }
 

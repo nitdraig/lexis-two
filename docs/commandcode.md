@@ -67,6 +67,7 @@ cp node_modules/@draig/lexis-two/.opencode/commands/specxis.md .commandcode/comm
 cp node_modules/@draig/lexis-two/.opencode/commands/desx.md .commandcode/commands/
 cp node_modules/@draig/lexis-two/.opencode/commands/desx-audit.md .commandcode/commands/
 cp node_modules/@draig/lexis-two/.opencode/commands/desx-apply.md .commandcode/commands/
+cp node_modules/@draig/lexis-two/.opencode/commands/slopx.md .commandcode/commands/
 ```
 
 **User (all projects)** — same files under `~/.commandcode/skills/` and `~/.commandcode/commands/` (Windows: `%USERPROFILE%\.commandcode\`). Optional user memory: `~/.commandcode/AGENTS.md`.
@@ -88,7 +89,8 @@ Command Code also auto-discovers `.agents/skills/` and `~/.agents/skills/`. `.co
 | Intensity rules every turn | Project `AGENTS.md` (installer `--host agents`) |
 | Discovery | `/discx <slug>` (custom command) or `/skill:discovery` |
 | Specxis | `/specx` / `/specxis` |
-| Design audit | `/desx` / `/desx audit` / `/desx apply` (or `/skill:desx`, `/skill:desx-apply`) |
+| Design quality audit | `/desx` / `/desx audit` / `/desx apply` (or `/skill:desx`, `/skill:desx-apply`) |
+| Anti-generic gate | `/slopx` (or `/skill:slopx`) |
 | Lexis quality loop | `/lexis plan`, `/lexis review`, `/lexis audit`, `/lexis debt`, `/lexis security`, `/lexis help` |
 | Skill by folder name | `/lexis-two-plan`, `/discovery`, … or `/skill:<name>` if a built-in shadowed it |
 
@@ -105,7 +107,7 @@ Do **not** create `.commandcode/commands/plan.md` or `review.md`. Command Code a
 
 ## Verify
 
-1. `cmd skills list` — expect `discovery`, `specxis`, `desx`, `desx-apply`, `lexis-two-plan`, …
+1. `cmd skills list` — expect `discovery`, `specxis`, `desx`, `desx-apply`, `slopx`, `lexis-two-plan`, …
 2. `/discx demo-slug` in a throwaway folder — should scaffold or ask B1–B8, no product code.
 3. `/lexis help` — public verb card, not Command Code’s `/help`.
 4. `/desx audit` — writes `DESIGN-AUDIT.md` only (detector needs no API key).

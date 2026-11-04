@@ -31,7 +31,7 @@ another stack's habits. Never read `node_modules/@draig/lexis-two/stacks/` as a 
 - Deletion over addition. Boring over clever. Fewest files possible
 - Question complex requests: "Do you actually need X, or does Y cover it?"
 - Mark intentional simplifications: // lexis: reason
-- All user-facing responses in Spanish. All code, comments, JSDoc in English
+- Respond in the user's language unless the project's rules set one. All code, comments, JSDoc in English
 - Never rewrite entire files when a targeted edit is sufficient
 
 ## Never Lazy About

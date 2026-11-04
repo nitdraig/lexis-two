@@ -1,6 +1,7 @@
 # Spec: [feature-slug]
 
-> Status: draft | agreed | implementing | done
+> Status: draft
+> Lifecycle: draft -> agreed -> implementing -> done. Written by /specx, not by hand.
 
 ## Requirements
 
@@ -14,11 +15,12 @@
 - [ ] 
 
 ## Constraints
+Fill from the matching profile in `stacks/<id>.md` and the repo's own tooling. Delete lines that do not apply.
 - Performance:
 - Security:
 - Accessibility:
-- TypeScript: strict — no any, as, or ! without // lexis: explanation
+- Language / types:
 
 ## Acceptance Criteria
-How do we know this is done?
+How do we know this is done? A criterion that cannot be verified here (for example a real host session) is closed only with a waiver line in review.md.
 - [ ] 

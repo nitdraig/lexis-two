@@ -15,31 +15,25 @@ import path from "path";
 // The shared instruction builder is CommonJS; bridge to it from this ES module.
 const require = createRequire(import.meta.url);
 
-let lexisInstructionsModule;
-try {
-  lexisInstructionsModule = require("../../hooks/lexis-two-instructions");
-} catch (e) {
-  try {
-    lexisInstructionsModule = require("@draig/lexis-two/hooks/lexis-two-instructions");
-  } catch (err) {
-    throw new Error("Failed to load lexis-two-instructions: " + err.message);
-  }
-}
+// lexis: a fallback to "@draig/lexis-two/hooks/..." is not possible: package "exports" does not expose it
+const lexisInstructionsModule = require("../../hooks/lexis-two-instructions");
 
-const { getLexisInstructions, getDefaultMode, normalizePersistedMode } =
+const { getLexisInstructions, getDefaultMode, normalizeMode } =
   lexisInstructionsModule;
 
 // OpenCode has no flag-file convention of its own; keep mode beside its config.
-const statePath = path.join(
-  process.env.XDG_CONFIG_HOME || path.join(os.homedir(), ".config"),
-  "opencode",
-  ".lexis-two-active",
-);
+// Same lookup order as the installer: OPENCODE_CONFIG_DIR, then XDG_CONFIG_HOME/opencode, then ~/.config/opencode.
+function getStatePath() {
+  const dir =
+    process.env.OPENCODE_CONFIG_DIR ||
+    path.join(process.env.XDG_CONFIG_HOME || path.join(os.homedir(), ".config"), "opencode");
+  return path.join(dir, ".lexis-two-active");
+}
 
 function readMode() {
   try {
     return (
-      normalizePersistedMode(fs.readFileSync(statePath, "utf8").trim()) ||
+      normalizeMode(fs.readFileSync(getStatePath(), "utf8").trim()) ||
       getDefaultMode()
     );
   } catch (e) {
@@ -48,6 +42,7 @@ function readMode() {
 }
 
 function writeMode(mode) {
+  const statePath = getStatePath();
   fs.mkdirSync(path.dirname(statePath), { recursive: true });
   fs.writeFileSync(statePath, mode);
 }
@@ -61,13 +56,16 @@ function createServerHooks({ client } = {}) {
     } catch (e) {}
   };
 
+  const skippedModels = new Set();
+
   return {
     // Persist /lexis <mode> switches. Subcommands (plan, review, help, ...)
     // keep the current mode - only a valid intensity argument writes the flag.
     "command.execute.before": async (input) => {
       if (!input || (input.command !== "lexis" && input.command !== "lexis-two"))
         return;
-      const mode = normalizePersistedMode((input.arguments || "").trim());
+      // lexis: first word only and runtime intensities only, so "/lexis review" or "/lexis plan x" never write the flag
+      const mode = normalizeMode((input.arguments || "").trim().split(/\s+/)[0]);
       if (!mode) return;
       writeMode(mode);
       log("info", "lexis-two " + mode);
@@ -84,7 +82,14 @@ function createServerHooks({ client } = {}) {
           model.includes("ollama") ||
           model.includes("local") ||
           model.includes("127.0.0.1"));
-      if (isLocal) return;
+      if (isLocal) {
+        // Say so once per model: a silent skip looks like Lexis is broken.
+        if (!skippedModels.has(model)) {
+          skippedModels.add(model);
+          log("info", "lexis-two ruleset not injected for local model " + model + " (see docs/setup.md#opencode)");
+        }
+        return;
+      }
 
       output.system.push(getLexisInstructions(mode));
     },

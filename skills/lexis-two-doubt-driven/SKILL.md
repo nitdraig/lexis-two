@@ -23,4 +23,4 @@ Output format:
 - **Questions:** numbered 1–3
 - **Lazy default if no answer:** one line
 
-No code, no file edits, no new dependencies. Respond in Spanish.
+No code, no file edits, no new dependencies. Respond in the user's language unless the project's rules set one.

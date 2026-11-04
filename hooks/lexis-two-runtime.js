@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { getClaudeDir } = require('./lexis-two-config');
+const { getClaudeDir, normalizeMode } = require('./lexis-two-config');
 
 const STATE_FILE = '.lexis-two-active';
 const isCopilot = Boolean(process.env.COPILOT_PLUGIN_DATA);
@@ -15,6 +15,15 @@ const statePath = path.join(stateDir, STATE_FILE);
 function setMode(mode) {
   fs.mkdirSync(path.dirname(statePath), { recursive: true });
   fs.writeFileSync(statePath, mode);
+}
+
+// Current intensity from the flag file, or null when missing or not a runtime intensity.
+function readMode() {
+  try {
+    return normalizeMode(fs.readFileSync(statePath, 'utf8').trim());
+  } catch (e) {
+    return null;
+  }
 }
 
 function clearMode() {
@@ -45,6 +54,7 @@ module.exports = {
   clearMode,
   isCodex,
   isCopilot,
+  readMode,
   setMode,
   writeHookOutput,
 };

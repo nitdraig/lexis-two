@@ -13,17 +13,5 @@
       "source": "./",
       "category": "productivity"
     }
-  ],
-  "suggestions": [
-    {
-      "name": "my-cursor-skills",
-      "url": "https://github.com/nitdraig/my-cursor-skills",
-      "description": "Cursor skills collection to review for complementary features"
-    },
-    {
-      "name": "ponytail",
-      "url": "https://github.com/DietrichGebert/ponytail",
-      "description": "Base project from which lexis-two was forked and extended"
-    }
   ]
 }

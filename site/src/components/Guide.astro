@@ -140,6 +140,24 @@ const homeHref = locale === "es" ? "/es" : "/";
           ))
         }
       </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>{guide.slopxTitle}</h2>
+        <p>{guide.slopxSubtitle}</p>
+      </div>
+      <div class="guide-grid">
+        {
+          guide.slopxItems.map((item) => (
+            <article class="guide-card">
+              <code>{item.name}</code>
+              <p>{item.desc}</p>
+              <pre><code>{item.example}</code></pre>
+            </article>
+          ))
+        }
+      </div>
       <p class="sdd-hint">{guide.sddHint}</p>
     </section>
   </div>

@@ -10,12 +10,12 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 
 // Point the plugin's mode-flag at a temp config home BEFORE it loads — the
-// plugin resolves its state path once at load (as it does under a real OpenCode
-// process, where XDG_CONFIG_HOME is already set). The dynamic import below runs
-// after this assignment, so the ordering holds.
+// plugin resolves its state path from the environment on every call, so these
+// variables only need to be set before the hooks run.
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-two-opencode-'));
 process.env.XDG_CONFIG_HOME = tmp;
 delete process.env.LEXIS_TWO_DEFAULT_MODE;
+delete process.env.OPENCODE_CONFIG_DIR;
 const statePath = path.join(tmp, 'opencode', '.lexis-two-active');
 
 let loadServer;
@@ -68,6 +68,65 @@ test('unrelated commands do not touch the flag', async () => {
   const hooks = await loadServer({});
   await hooks['command.execute.before']({ command: 'commit', arguments: 'x', sessionID: 's' });
   assert.equal(fs.existsSync(statePath), false);
+});
+
+test('/lexis review and other subcommands never write the flag', async () => {
+  try { fs.unlinkSync(statePath); } catch (e) {}
+  const hooks = await loadServer({});
+  for (const args of ['review', 'r', 'plan add a cache', 'status', 'help', 'default ultra', 'sssultra', '']) {
+    await hooks['command.execute.before']({ command: 'lexis', arguments: args, sessionID: 's' });
+    assert.equal(fs.existsSync(statePath), false, args);
+  }
+});
+
+test('the first word decides the level: "/lexis lite for this task" persists lite', async () => {
+  const hooks = await loadServer({});
+  await hooks['command.execute.before']({ command: 'lexis', arguments: 'lite for this task', sessionID: 's' });
+  assert.equal(fs.readFileSync(statePath, 'utf8'), 'lite');
+  fs.unlinkSync(statePath);
+});
+
+test('a stale review flag falls back to the default mode', async () => {
+  fs.mkdirSync(path.dirname(statePath), { recursive: true });
+  fs.writeFileSync(statePath, 'review');
+  const hooks = await loadServer({});
+  const system = await transform(hooks);
+  assert.match(system[0], /LEXIS-TWO MODE ACTIVE — level: full/);
+  fs.unlinkSync(statePath);
+});
+
+test('OPENCODE_CONFIG_DIR decides where the flag lives', async () => {
+  const custom = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-two-opencode-cfg-'));
+  process.env.OPENCODE_CONFIG_DIR = custom;
+  try {
+    const hooks = await loadServer({});
+    await hooks['command.execute.before']({ command: 'lexis', arguments: 'lite', sessionID: 's' });
+    assert.equal(fs.readFileSync(path.join(custom, '.lexis-two-active'), 'utf8'), 'lite');
+    assert.match((await transform(hooks))[0], /level: lite/);
+  } finally {
+    delete process.env.OPENCODE_CONFIG_DIR;
+    fs.rmSync(custom, { recursive: true, force: true });
+  }
+});
+
+test('local models are skipped and the skip is logged once per model', async () => {
+  const logs = [];
+  const client = { app: { log: ({ body }) => logs.push(body) } };
+  const hooks = await loadServer({ client });
+  const run = async (model) => {
+    const output = { system: [] };
+    await hooks['experimental.chat.system.transform']({ model }, output);
+    return output.system;
+  };
+
+  assert.deepEqual(await run({ id: 'ollama/llama3' }), []);
+  assert.deepEqual(await run({ id: 'ollama/llama3' }), []);
+  assert.deepEqual(await run({ id: 'lmstudio/qwen' }), []);
+  assert.equal((await run({ id: 'anthropic/claude' })).length, 1);
+
+  const skipped = logs.filter((l) => /not injected for local model/.test(l.message));
+  assert.equal(skipped.length, 2, 'one log line per local model, not per turn');
+  assert.match(skipped[0].message, /ollama\/llama3/);
 });
 
 test.after(() => fs.rmSync(tmp, { recursive: true, force: true }));

@@ -8,4 +8,4 @@ If empty or `audit`: follow `skills/desx/SKILL.md` (`design-auditor`). Run `scri
 
 If `apply`: follow `skills/desx-apply/SKILL.md`. You are the implementer, not `design-auditor`. Read the audit file, apply P0→P1→P2/P3, tick only what you fixed, re-run the detector.
 
-Chat: Spanish. Docs: English.
+Chat: the user's language unless the project's rules set one. Docs: English.

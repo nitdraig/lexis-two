@@ -20,4 +20,4 @@ Then evaluate: Injection, Auth/Authz, Secrets, Input validation, Rate limiting, 
 Per finding: Severity (Critical/High/Medium/Low) · Location (file:line) · Scenario · Fix
 
 Never modify files. Read-only analysis only.
-Respond in Spanish.
+Respond in the user's language unless the project's rules set one.

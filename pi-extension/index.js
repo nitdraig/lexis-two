@@ -6,7 +6,6 @@ const {
   getDefaultMode,
   normalizeMode,
   normalizeConfigMode,
-  normalizePersistedMode,
   writeDefaultMode,
 } = require("../hooks/lexis-two-config.js");
 const { getLexisInstructions, filterSkillBodyForMode } = require("../hooks/lexis-two-instructions.js");
@@ -15,31 +14,23 @@ export { filterSkillBodyForMode };
 export const readDefaultMode = getDefaultMode;
 
 export function resolveSessionMode(entries, fallbackMode = DEFAULT_MODE) {
-  const fallback = normalizePersistedMode(fallbackMode) || DEFAULT_MODE;
+  const fallback = normalizeMode(fallbackMode) || DEFAULT_MODE;
   if (!Array.isArray(entries)) return fallback;
 
   for (let i = entries.length - 1; i >= 0; i -= 1) {
     const entry = entries[i];
     if (entry?.type !== "custom" || entry?.customType !== "lexis-two-mode") continue;
 
-    const mode = normalizePersistedMode(entry?.data?.mode);
+    const mode = normalizeMode(entry?.data?.mode);
     if (mode) return mode;
   }
 
   return fallback;
 }
 
-export function parseLexisCommand(text, defaultMode = DEFAULT_MODE) {
-  const fallback = normalizePersistedMode(defaultMode) || DEFAULT_MODE;
-  const normalizedText = String(text || "").trim().toLowerCase();
-
-  if (!normalizedText) {
-    return { type: "set-mode", mode: fallback === "off" ? "full" : fallback };
-  }
-
-  const [primary, secondary] = normalizedText.split(/\s+/);
-
-  if (primary === "status") return { type: "status" };
+// The /lexis handler answers empty input (help) and "status" before it gets here.
+export function parseLexisCommand(text) {
+  const [primary, secondary] = String(text || "").trim().toLowerCase().split(/\s+/);
 
   if (primary === "default") {
     const mode = normalizeConfigMode(secondary);
@@ -53,7 +44,7 @@ export function parseLexisCommand(text, defaultMode = DEFAULT_MODE) {
 export { writeDefaultMode };
 
 /** @type {Record<string, string>} Public /lexis subcommand (and short alias) → skill id */
-const LEXIS_SKILL_ROUTES = {
+export const LEXIS_SKILL_ROUTES = {
   plan: "lexis-two-plan",
   p: "lexis-two-plan",
   review: "lexis-two-review",
@@ -69,18 +60,11 @@ const LEXIS_SKILL_ROUTES = {
 };
 
 /** @type {Record<string, { skillId: string, prefer: string }>} Old names — warn and redirect */
-const LEXIS_COMPAT_ROUTES = {
-  doubt: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
-  incremental: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
-  inc: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
-  debug: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
-  triage: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
-  source: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
-  src: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
-  predict: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
-  scenario: { skillId: "lexis-two-plan", prefer: "/lexis plan" },
-  discovery: { skillId: "discovery", prefer: "/discx" },
-  discx: { skillId: "discovery", prefer: "/discx" },
+const toPlan = { skillId: "lexis-two-plan", prefer: "/lexis plan" };
+const toDiscx = { skillId: "discovery", prefer: "/discx" };
+export const LEXIS_COMPAT_ROUTES = {
+  ...Object.fromEntries(["doubt", "incremental", "inc", "debug", "triage", "source", "src", "predict", "scenario"].map((name) => [name, toPlan])),
+  ...Object.fromEntries(["discovery", "discx"].map((name) => [name, toDiscx])),
 };
 
 /** @type {Array<{ command: string, lexisSubcommand: string }>} */
@@ -98,7 +82,7 @@ export default function lexisExtension(pi) {
   let configuredDefaultMode = getDefaultMode();
 
   const setMode = (mode, ctx) => {
-    const normalized = normalizePersistedMode(mode);
+    const normalized = normalizeMode(mode);
     if (!normalized) return;
 
     currentMode = normalized;
@@ -119,9 +103,7 @@ export default function lexisExtension(pi) {
     pi.sendUserMessage(message);
   };
 
-  pi.registerCommand("lexis", {
-    description: "Manage Lexis senior dev mode, intensity levels, and quality/security tools",
-    handler: async (args, ctx) => {
+  const handleLexis = async (args, ctx) => {
       const parsedArgs = String(args || "").trim();
       if (!parsedArgs) {
         ctx?.ui?.notify?.(`Lexis: current ${currentMode} • default ${configuredDefaultMode}`, "info");
@@ -150,7 +132,7 @@ export default function lexisExtension(pi) {
         return;
       }
 
-      const parsed = parseLexisCommand(parsedArgs, configuredDefaultMode);
+      const parsed = parseLexisCommand(parsedArgs);
 
       if (parsed.type === "set-default") {
         const written = writeDefaultMode(parsed.mode);
@@ -170,7 +152,11 @@ export default function lexisExtension(pi) {
       }
 
       ctx?.ui?.notify?.(`Unknown /lexis subcommand or mode: ${subcommand}. Type '/lexis help' for options.`, "warning");
-    },
+  };
+
+  pi.registerCommand("lexis", {
+    description: "Manage Lexis senior dev mode, intensity levels, and quality/security tools",
+    handler: handleLexis,
   });
 
   pi.registerCommand("lexis-two", {
@@ -193,8 +179,7 @@ export default function lexisExtension(pi) {
         ctx?.ui?.notify?.(`[Deprecated] Use '/lexis ${parsedArgs}' instead.`, "warning");
       }
       
-      // Delegate to handleLexis logic via registering command
-      return pi.commands["lexis"].handler(args, ctx);
+      return handleLexis(args, ctx);
     },
   });
 
@@ -234,7 +219,7 @@ export default function lexisExtension(pi) {
   };
 
   pi.registerCommand("desx", {
-    description: "Design audit: visual slop + design-system drift. Subcommands: audit, apply",
+    description: "Design quality audit: consistency, hierarchy, accessibility. Subcommands: audit, apply",
     handler: (args, ctx) => sendDesx(args, ctx),
   });
 
@@ -246,6 +231,11 @@ export default function lexisExtension(pi) {
   pi.registerCommand("desx-apply", {
     description: "Apply DESIGN-AUDIT.md fixes (implementer, not design-auditor)",
     handler: (args, ctx) => sendAlias("/skill:desx-apply", args, ctx),
+  });
+
+  pi.registerCommand("slopx", {
+    description: "Anti-generic gate: code, copy and look checks plus desx design quality. Read-only",
+    handler: (args, ctx) => sendAlias("/skill:slopx", args, ctx),
   });
 
   const makeDeprecatedHandler = (lexisSubcommand, skillCommand) => {
@@ -266,7 +256,8 @@ export default function lexisExtension(pi) {
     if (event?.source === "extension") return;
 
     const text = String(event?.text || "");
-    if (currentMode !== "off" && /\b(stop lexis|normal mode)\b/i.test(text)) {
+    // Only the whole prompt counts, so a sentence that mentions the phrase does not switch Lexis off.
+    if (currentMode !== "off" && /^\s*(stop lexis|normal mode)[.!]?\s*$/i.test(text)) {
       setMode("off");
     }
   });

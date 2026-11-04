@@ -24,4 +24,4 @@ Output:
 - **Deferred:** …
 - **Ship when:** one acceptance check for slice 1
 
-Respond in Spanish.
+Respond in the user's language unless the project's rules set one.

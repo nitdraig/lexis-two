@@ -7,6 +7,10 @@
 //      - ~/.config/lexis-two/config.json (macOS / Linux fallback)
 //      - %APPDATA%\lexis-two\config.json (Windows fallback)
 //   3. 'full'
+//
+// Resolution order for reply language (optional; unset = the user's own language):
+//   1. LEXIS_TWO_LANGUAGE environment variable
+//   2. Config file language field
 
 const fs = require('fs');
 const path = require('path');
@@ -26,10 +30,6 @@ function normalizeConfigMode(mode) {
   if (typeof mode !== 'string') return null;
   const normalized = mode.trim().toLowerCase();
   return VALID_MODES.includes(normalized) ? normalized : null;
-}
-
-function normalizePersistedMode(mode) {
-  return normalizeMode(mode) || normalizeConfigMode(mode);
 }
 
 function getConfigDir() {
@@ -54,26 +54,38 @@ function getClaudeDir() {
   return process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude');
 }
 
+// Returns the parsed config object, or {} when the file is missing or invalid.
+function readConfig() {
+  try {
+    const config = JSON.parse(fs.readFileSync(getConfigPath(), 'utf8'));
+    return config && typeof config === 'object' && !Array.isArray(config) ? config : {};
+  } catch (e) {
+    return {};
+  }
+}
+
 function getDefaultMode() {
   // 1. Environment variable (highest priority)
-  const envMode = process.env.LEXIS_TWO_DEFAULT_MODE;
-  if (envMode && VALID_MODES.includes(envMode.toLowerCase())) {
-    return envMode.toLowerCase();
-  }
+  // 2. Config file, 3. Default
+  return (
+    normalizeConfigMode(process.env.LEXIS_TWO_DEFAULT_MODE) ||
+    normalizeConfigMode(readConfig().defaultMode) ||
+    DEFAULT_MODE
+  );
+}
 
-  // 2. Config file
-  try {
-    const configPath = getConfigPath();
-    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    if (config.defaultMode && VALID_MODES.includes(config.defaultMode.toLowerCase())) {
-      return config.defaultMode.toLowerCase();
-    }
-  } catch (e) {
-    // Config file doesn't exist or is invalid — fall through
-  }
+// lexis: the value is injected into the model prompt, so only a short plain
+// language name is accepted (letters, spaces, hyphens) — no free-form text.
+function normalizeLanguage(value) {
+  if (typeof value !== 'string') return null;
+  const normalized = value.trim();
+  return /^\p{L}[\p{L} -]{0,39}$/u.test(normalized) ? normalized : null;
+}
 
-  // 3. Default
-  return DEFAULT_MODE;
+// Preferred reply language, or null to follow the user's own language.
+// Resolution: LEXIS_TWO_LANGUAGE env, then config file `language`. Invalid values are ignored.
+function getLanguage() {
+  return normalizeLanguage(process.env.LEXIS_TWO_LANGUAGE) || normalizeLanguage(readConfig().language);
 }
 
 function writeDefaultMode(mode) {
@@ -82,7 +94,8 @@ function writeDefaultMode(mode) {
 
   const configPath = getConfigPath();
   fs.mkdirSync(path.dirname(configPath), { recursive: true });
-  fs.writeFileSync(configPath, JSON.stringify({ defaultMode: normalized }, null, 2), 'utf8');
+  // Keep other keys (e.g. `language`) when updating the mode.
+  fs.writeFileSync(configPath, JSON.stringify({ ...readConfig(), defaultMode: normalized }, null, 2), 'utf8');
   return normalized;
 }
 
@@ -91,11 +104,12 @@ module.exports = {
   VALID_MODES,
   RUNTIME_MODES,
   getDefaultMode,
+  getLanguage,
+  normalizeLanguage,
   getConfigDir,
   getConfigPath,
   getClaudeDir,
   normalizeMode,
   normalizeConfigMode,
-  normalizePersistedMode,
   writeDefaultMode,
 };

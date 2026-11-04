@@ -63,7 +63,7 @@ Ask once per session, in memory only. Do not write the answer to disk. Unambiguo
 - Deletion over addition. Boring over clever. Fewest files possible.
 - Question complex requests: _"Do you actually need X, or does Y cover it?"_
 - Mark intentional simplifications with a `// lexis:` comment explaining why.
-- All user-facing responses in Spanish. All code, comments, and JSDoc in English.
+- Respond in the user's language unless the project's rules set one. All code, comments, and JSDoc in English.
 - Never rewrite entire files when a targeted edit is sufficient.
 - Apply SOLID and KISS at module/service level — not obsessively at component level.
 
@@ -109,7 +109,7 @@ Running `/lexis debt` (or `/lexis d`) will scan the codebase and surface all `le
 
 ## Discovery and Specxis
 
-Vague product or the next stage after an MVP: `/discx` (full `/discovery`) — see DISCOVERY.md. Specs: `/specx` (full `/specxis`). Intensity: `/lexis`. Visual slop / design-system drift after UI work: `/desx` — see DESX.md. Skip Discovery for bugs and one-file fixes.
+Vague product or the next stage after an MVP: `/discx` (full `/discovery`) — see [DISCOVERY.md](https://github.com/nitdraig/lexis-two/blob/main/DISCOVERY.md). Specs: `/specx` (full `/specxis`). Intensity: `/lexis`. Design quality (consistency, hierarchy, accessibility) after UI work: `/desx` — see [DESX.md](https://github.com/nitdraig/lexis-two/blob/main/DESX.md). Output that looks or reads like default AI output, in code, copy and UI: `/slopx` — see [docs/slopx.md](https://github.com/nitdraig/lexis-two/blob/main/docs/slopx.md). Skip Discovery for bugs and one-file fixes.
 
 Public `/lexis` verbs: intensity (`lite|full|ultra|off`), `status`, `plan`, `review`, `audit`, `debt`, `security`, `help`. `/lexis plan` already clarifies (max 3 questions), grounds in repo/docs, compares proposed vs lazy, and walks happy/edge/failure. Implement the smallest vertical slice; bugs: repro then smallest fix, no drive-by refactors. Old names (`doubt`, `incremental`, `debug`, `source`, `predict`, `scenario`) redirect to `/lexis plan`. Product framing is `/discx`.
 
@@ -118,7 +118,7 @@ Public `/lexis` verbs: intensity (`lite|full|ultra|off`), `status`, `plan`, `rev
 ## Agent Ecosystem
 
 This npm package ships rules, skills, and host adapters — not those agents.
-The names below are Lexis ecosystem roles (some private; see docs/portability.md).
+The names below are Lexis ecosystem roles (some private; see [docs/portability.md](https://github.com/nitdraig/lexis-two/blob/main/docs/portability.md)).
 This ruleset still applies when those agents load it.
 
 | Agent              | Scope                                            |
@@ -128,7 +128,7 @@ This ruleset still applies when those agents load it.
 | `ui-architect`     | UX/UI decisions — consults, never implements     |
 | `refactor-agent`   | Large-scale refactors — rewrites, not greenfield |
 | `security-auditor` | Security analysis — read-only, runs audit tools  |
-| `design-auditor`   | Visual slop + design-system drift — read-only except `DESIGN-AUDIT.md` |
+| `design-auditor`   | Design quality (consistency, hierarchy, accessibility) — read-only except `DESIGN-AUDIT.md` |
 | `explorer`         | Codebase mapping — read-only, local model        |
 
 When in doubt about scope: ask, don't assume.

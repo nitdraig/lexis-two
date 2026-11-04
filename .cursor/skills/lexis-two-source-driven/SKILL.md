@@ -19,4 +19,4 @@ Output:
 
 If official docs contradict the request, say so and offer the lazy compliant path.
 
-Respond in Spanish.
+Respond in the user's language unless the project's rules set one.

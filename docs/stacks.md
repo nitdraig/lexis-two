@@ -45,7 +45,7 @@ npm test
 ## Customize an existing profile
 
 Edit `stacks/<id>.md` directly. Keep the `Detection` block in sync with the row in `AGENTS.md`.
-Re-installing without `--force` preserves your local edits (the installer skips existing `stacks/` files).
+Re-installing without `--force` preserves your local edits. After a package upgrade, the installer updates the `stacks/` files you did not edit and reports the ones you did. Files that start with `_` (such as `_template.md`) are for contributors and are never copied to a project.
 
 ## Security and audit
 

@@ -21,4 +21,4 @@ Removed as slash (redirect to `/lexis plan` or `/discx`): `doubt`, `incremental`
 
 Ship one vertical slice. Bugs: smallest fix, no drive-by refactors.
 
-Deactivate: `stop lexis`, `normal mode`, or `/lexis off`. Default mode: `LEXIS_TWO_DEFAULT_MODE` or `~/.config/lexis-two/config.json`.
+Deactivate: send `stop lexis` or `normal mode` as the whole message, or `/lexis off`. Default mode: `LEXIS_TWO_DEFAULT_MODE` or `~/.config/lexis-two/config.json`.

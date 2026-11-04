@@ -33,4 +33,4 @@ Plan structure:
 - **Slice 1 / deferred**: if the feature is larger than one shippable step
 
 Do not write any code. Plan only. Ask if unclear.
-Respond in Spanish.
+Respond in the user's language unless the project's rules set one.

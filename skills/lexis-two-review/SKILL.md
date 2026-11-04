@@ -23,4 +23,4 @@ Output:
 
 **Calibration:** compare against [examples/](https://github.com/nitdraig/lexis-two/tree/main/examples) before flagging over-engineering — especially native platform wins (`<dialog>`, `<input type="date">`, stdlib sort).
 
-Respond in Spanish.
+Respond in the user's language unless the project's rules set one.

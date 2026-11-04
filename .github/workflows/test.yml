@@ -5,9 +5,17 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
 
@@ -22,8 +30,29 @@ jobs:
       - name: Install Python deps for correctness checks
         run: pip install pandas==2.2.2
 
-      - name: Check rule copies
-        run: node scripts/check-rule-copies.js
+      - name: Lint (syntax of every JS source file)
+        run: npm run lint
 
+      # `npm test` already runs scripts/check-rule-copies.js first.
       - name: Run tests
         run: npm test
+
+  # The site is built in deploy-site.yml only after merge; build it here so a broken page fails the PR.
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: site
+        run: npm ci
+
+      - name: Build Astro site
+        working-directory: site
+        run: npm run build

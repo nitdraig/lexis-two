@@ -1,51 +1,62 @@
 // scripts/specxis-debt.js
-// Portable Node.js script to scan the codebase for "// lexis:" comments
-// and sync them with .specxis/debt.md.
+// Scans the codebase for "// lexis:" comments and syncs them into the managed
+// block of .specxis/debt.md. Everything outside the block is left untouched.
 // Works on Windows, macOS, and Linux.
 
 const fs = require('fs');
 const path = require('path');
 
-const DEBT_FILE = '.specxis/debt.md';
+const DEBT_FILE = path.join('.specxis', 'debt.md');
+const BLOCK_START = '<!-- lexis-debt:start -->';
+const BLOCK_END = '<!-- lexis-debt:end -->';
 
-// Recursive directory scan
+const SKIP_DIRS = new Set([
+  'node_modules', '.git', '.specxis', '.astro', '.next', '.cache', 'dist', 'build', 'coverage', 'out',
+]);
+const CODE_EXT = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']);
+
+// lexis: keyword buckets on whole words only. Ambiguous words ("block", "pain" inside
+// "painless") were dropped because they misfiled comments such as "not a blocker".
+const IMMEDIATE = /\b(immediate|critical|urgent|pain)\b/i;
+const NEXT_SPRINT = /\b(sprint|soon|ceiling)\b/i;
+const PERMANENT = /\b(permanent|intentional|no action)\b/i;
+
 function scanDir(dir, fileList = []) {
-  if (!fs.existsSync(dir)) return fileList;
-  const files = fs.readdirSync(dir);
-  for (const file of files) {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
-    if (stat.isDirectory()) {
-      // Skip common ignore folders
-      if (['node_modules', '.git', '.specxis', '.astro', 'dist', 'build', '.cache'].includes(file)) continue;
-      scanDir(filePath, fileList);
-    } else {
-      // Only scan relevant code files
-      if (['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'].includes(path.extname(file))) {
-        fileList.push(filePath);
-      }
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return fileList;
+  }
+  for (const entry of entries) {
+    if (entry.isSymbolicLink()) continue;
+    const filePath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (!SKIP_DIRS.has(entry.name)) scanDir(filePath, fileList);
+    } else if (entry.isFile() && CODE_EXT.has(path.extname(entry.name))) {
+      fileList.push(filePath);
     }
   }
   return fileList;
 }
 
-function findLexisComments() {
-  const files = scanDir('.');
+function findLexisComments(root = '.') {
   const comments = [];
-  const regex = /\/\/\s*lexis:\s*(.*)/gi;
-
-  for (const file of files) {
-    const content = fs.readFileSync(file, 'utf8');
-    const lines = content.split(/\r?\n/);
-    lines.forEach((line, index) => {
-      let match;
-      // Reset regex lastIndex
-      regex.lastIndex = 0;
-      while ((match = regex.exec(line)) !== null) {
+  const regex = /\/\/\s*lexis:\s*(.*)/i;
+  for (const file of scanDir(root)) {
+    let content;
+    try {
+      content = fs.readFileSync(file, 'utf8');
+    } catch {
+      continue; // unreadable file: skip it, never abort the sync
+    }
+    content.split(/\r?\n/).forEach((line, index) => {
+      const match = regex.exec(line);
+      if (match) {
         comments.push({
-          file: file.replace(/\\/g, '/'), // normalize to forward slashes
+          file: path.relative(root, file).replace(/\\/g, '/'),
           line: index + 1,
-          comment: match[1].trim()
+          comment: match[1].trim(),
         });
       }
     });
@@ -53,69 +64,100 @@ function findLexisComments() {
   return comments;
 }
 
-function syncDebt() {
-  if (!fs.existsSync(DEBT_FILE)) {
-    console.error(`Error: ${DEBT_FILE} does not exist. Run specxis-init first.`);
-    process.exit(1);
-  }
+function classify(comment) {
+  if (IMMEDIATE.test(comment)) return 'immediate';
+  if (NEXT_SPRINT.test(comment)) return 'nextSprint';
+  if (PERMANENT.test(comment)) return 'permanent';
+  return 'backlog';
+}
 
-  const found = findLexisComments();
-  console.log(`Found ${found.length} '// lexis:' comments in codebase.`);
+const entryKey = (file, comment) => `${file}\u0000${comment}`;
 
-  let debtContent = fs.readFileSync(DEBT_FILE, 'utf8');
+// Ticked entries in the existing block, keyed by file + comment text so a moved line keeps its tick.
+function readTicked(block) {
+  const ticked = new Set();
+  const re = /^- \[x\] \*\*(.+?):\d+\*\*: (.*)$/gim;
+  let m;
+  while ((m = re.exec(block))) ticked.add(entryKey(m[1], m[2].trim()));
+  return ticked;
+}
 
-  // We want to reconstruct or append to .specxis/debt.md.
-  // Let's create a prioritized ledger as described in SPECXIS.md.
-  // Categories:
-  // - Immediate: shortcuts causing pain or blocking features
-  // - Next sprint: shortcuts with a known ceiling approaching
-  // - Backlog: fine for now, revisit at scale
-  // - Permanent: intentional, no action needed
-  
-  const immediate = [];
-  const nextSprint = [];
-  const backlog = [];
-  const permanent = [];
-
-  found.forEach(item => {
-    const text = item.comment.toLowerCase();
-    const entry = `- [ ] **${item.file}:${item.line}**: ${item.comment}`;
-
-    if (text.includes('immediate') || text.includes('critical') || text.includes('pain') || text.includes('block')) {
-      immediate.push(entry);
-    } else if (text.includes('sprint') || text.includes('soon') || text.includes('ceiling')) {
-      nextSprint.push(entry);
-    } else if (text.includes('permanent') || text.includes('intentional') || text.includes('no action')) {
-      permanent.push(`- **${item.file}:${item.line}**: ${item.comment} (Permanent)`);
+function renderBlock(found, ticked) {
+  const buckets = { immediate: [], nextSprint: [], backlog: [], permanent: [] };
+  for (const item of found) {
+    const kind = classify(item.comment);
+    const loc = `**${item.file}:${item.line}**: ${item.comment}`;
+    if (kind === 'permanent') {
+      buckets.permanent.push(`- ${loc} (Permanent)`);
     } else {
-      backlog.push(entry);
+      const box = ticked.has(entryKey(item.file, item.comment)) ? 'x' : ' ';
+      buckets[kind].push(`- [${box}] ${loc}`);
     }
-  });
-
-  const header = `# Specxis Debt Ledger
-
-Consolidated // lexis: comments across all features.
-Updated automatically by /specxis-debt and /specxis-close.
-
----
-
+  }
+  const list = (items, empty) => (items.length ? items.join('\n') : empty);
+  return `${BLOCK_START}
 ## Prioritized Ledger
 
 ### Immediate (shortcuts causing pain or blocking features)
-${immediate.length > 0 ? immediate.join('\n') : '*No immediate debt found.*'}
+${list(buckets.immediate, '*No immediate debt found.*')}
 
 ### Next Sprint (shortcuts with a known ceiling approaching)
-${nextSprint.length > 0 ? nextSprint.join('\n') : '*No next sprint debt found.*'}
+${list(buckets.nextSprint, '*No next sprint debt found.*')}
 
 ### Backlog (fine for now, revisit at scale)
-${backlog.length > 0 ? backlog.join('\n') : '*No backlog debt found.*'}
+${list(buckets.backlog, '*No backlog debt found.*')}
 
 ### Permanent (intentional, no action needed)
-${permanent.length > 0 ? permanent.join('\n') : '*No permanent debt found.*'}
-`;
-
-  fs.writeFileSync(DEBT_FILE, header);
-  console.log(`Updated ${DEBT_FILE} with prioritized ledger.`);
+${list(buckets.permanent, '*No permanent debt found.*')}
+${BLOCK_END}`;
 }
 
-syncDebt();
+// Returns the new file content; never touches text outside the managed block.
+function mergeDebt(existing, found) {
+  const start = existing.indexOf(BLOCK_START);
+  const end = existing.indexOf(BLOCK_END);
+  if (start !== -1 && end > start) {
+    const oldBlock = existing.slice(start, end + BLOCK_END.length);
+    const block = renderBlock(found, readTicked(oldBlock));
+    return existing.slice(0, start) + block + existing.slice(end + BLOCK_END.length);
+  }
+  // No managed block yet (new file or a ledger written by an older version): append, lose nothing.
+  const separator = existing.length === 0 || existing.endsWith('\n\n') ? '' : existing.endsWith('\n') ? '\n' : '\n\n';
+  return existing + separator + renderBlock(found, new Set()) + '\n';
+}
+
+function syncDebt(root = '.') {
+  const debtPath = path.join(root, DEBT_FILE);
+  if (!fs.existsSync(debtPath)) {
+    throw new Error(`${DEBT_FILE} does not exist. Run specxis-init first.`);
+  }
+  const found = findLexisComments(root); // scan completes before anything is written
+  const next = mergeDebt(fs.readFileSync(debtPath, 'utf8'), found);
+  fs.writeFileSync(debtPath, next);
+  return { count: found.length, debtPath };
+}
+
+function main() {
+  try {
+    const { count, debtPath } = syncDebt(process.cwd());
+    console.log(`Found ${count} '// lexis:' comments in codebase.`);
+    console.log(`Updated ${path.relative(process.cwd(), debtPath).replace(/\\/g, '/')}.`);
+  } catch (e) {
+    console.error(`Error: ${e.message}`);
+    process.exit(1);
+  }
+}
+
+module.exports = {
+  BLOCK_START,
+  BLOCK_END,
+  scanDir,
+  findLexisComments,
+  classify,
+  mergeDebt,
+  syncDebt,
+};
+
+if (require.main === module) {
+  main();
+}

@@ -4,6 +4,48 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-11-04
+
+### Changed
+
+- Specxis: `spec.md` now carries a real status (`draft`, `agreed`, `implementing`, `done`) written by `/specx`. `/specx implement` refuses an unapproved spec and records a base commit; `/specx review` and `/specx close` diff against it, so checkpoint commits no longer empty the review. Review findings are checkboxes and `/specx close` refuses open High or Critical findings (unverifiable criteria need a waiver line).
+- Specxis tasks: the rule is now one concern per task, with its tests inside it (cap of 10 unchanged; no minimum).
+- Specxis templates no longer fix a language (`TypeScript: strict`) and use current command names.
+- `desx` is repositioned from "visual slop + design-system drift" to design quality (consistency with your system, hierarchy, accessibility, readability). Keeping output from looking generic is now `/slopx`. Wording only: `desx` behavior and its exit code are unchanged apart from the new quality rules above.
+
+### Added
+
+- `/slopx`: the anti-generic gate. It keeps a change from looking or reading like default AI output and always runs four passes: `code` (debug calls, markers, commented-out code, empty catches), `copy` (emojis, placeholder text, stock marketing words, invented data), `look` (side-stripe borders, gradient text, hard shadows, default palettes, bounce easing) and `quality` (the `desx` checks, run as a sub-skill). Stable rule ids and `--list-rules`; waivers (`slopx-disable`, `-line`, `-next-line`) and `.slopx.json` ignores that require a reason; `--json`, `--github`, `--quiet`, exit codes 0/1/2; a suggestion on every finding, with an optional `handoff` that names the [Impeccable](https://github.com/pbakaus/impeccable) command that applies that kind of fix (Impeccable is not required); an opt-in PostToolUse hook for Claude Code. Read-only: it writes no file. See `docs/slopx.md`.
+- `desx` quality rules: missing `alt`, crushed letter spacing, gray text on color, tiny text, tight line height, justified text, all-caps body text and wide body tracking.
+- Installer upgrades: installs are recorded in `.lexis-two/manifest.json` (global: `~/.config/lexis-two/manifest.json`). Re-running install after a package upgrade updates unedited files without `--force`, uninstall removes unedited files even after an upgrade, files the package stopped shipping are cleaned up, and edited files are always left alone and reported. A corrupt manifest or one pointing outside the project stops the run before writing.
+- CI: `npm run lint` (syntax of every JS source file, one `node --check` per file), a Windows leg in the test matrix, a `site` build job, and least-privilege `permissions`. `package.json` gained `repository`, `homepage`, `bugs`, `author` and `engines` (`node >=22`), and now publishes `pi-extension/package.json`.
+- OpenCode: the local-model skip is logged once per model and documented in `docs/setup.md`.
+
+### Changed (internal)
+
+- The `lexis-two` command now runs `scripts/install.js` directly; the `bin/lexis-two.js` shim is no longer published. Checked with a packed global install on Windows (cmd and POSIX shims).
+- Removed dead code with no behavior change: the unreachable `@draig/lexis-two/...` fallback in the OpenCode plugin, the self-referencing devDependency (and its lockfile entry), `neverOverwriteWithoutForce`, two unreachable "identical" branches in the OpenCode config planner, `normalizePersistedMode` (use `normalizeMode`), unreachable `/lexis` parser cases in the pi extension, and dead constants in `desx-audit`. Install and uninstall planning for Cursor skills and OpenCode now share one function each.
+- `node scripts/check-rule-copies.js --fix` rewrites drifted host rule copies and Cursor skill copies, keeping each host's frontmatter.
+
+### Breaking
+
+- The installer now fails when it has no TTY and no `--yes` and the plan would write files, as its help always promised. Before, it wrote anyway. Scripts and CI that relied on that need `--yes`. `--dry-run` and hint-only hosts are unaffected.
+
+### Fixed
+
+- Mode state: only `/lexis <lite|full|ultra|off>` writes the active level. Bare `/lexis`, `status`, `plan`, `help`, `audit`, `debt`, `security` and `review` leave it alone (`/lexis review` runs once and no longer sticks), on Claude Code, Codex, Copilot, OpenCode and pi. A mode change also hands the model that level's definition.
+- Session resume and compaction keep the chosen level; startup and clear apply the default. The activate hook no longer waits on a stdin the host keeps open.
+- `normal mode` and `stop lexis` switch Lexis off only when they are the whole prompt, not when a sentence mentions them.
+- Copilot no longer receives the Claude statusline setup nudge. The statusline scripts honor `CLAUDE_CONFIG_DIR`, and the OpenCode plugin honors `OPENCODE_CONFIG_DIR`.
+- pi: `/lexis` and `/lexis help` now resolve to an existing skill (`lexis-two-help` was missing), and `/lexis-two` no longer depends on the undocumented `pi.commands`.
+- Installer: a second `--force` no longer overwrites the first backup (`.bak`, `.bak.1`, ...). Uninstalling one host keeps `stacks/` while another host needs it. `--scope global` writes nothing to the project, skips hosts without a global form with a visible line, and does not install `stacks/`. `stacks/_template.md` is no longer copied to user projects.
+- `desx-audit`: `--json` and the new `--dry-run` no longer write the report; unknown flags, missing values, a missing `--cwd` and an `--out` outside `--cwd` now exit 2 without writing; `--fail-on P0` exits 1 on a P0 finding.
+- `desx-audit --git` scans staged, unstaged and untracked UI files, works from a subdirectory and in a repo with no commits, never falls back to a full scan, and never marks the findings of unscanned files as resolved.
+- `desx-audit` detectors: sibling cards are no longer reported as nested (tag depth is tracked); disabled buttons are not reported when a stylesheet styles `:disabled` or when `disabled={x}` is dynamic; contrast pairs the `color` and `background` of one rule and no longer reads selectors such as `a[href="#abc"]` as colors; `calc()`, hairlines and pill radii are ignored by the scale checks.
+- `desx-audit` reports use a stable finding id instead of the line number, so editing lines above a finding no longer moves it to Resolved and re-adds it. The report is in English, lists coverage per category (including "no data"), and still reads 1.4.0 reports.
+- `specxis-debt` no longer overwrites `.specxis/debt.md`: it rewrites only its managed block, keeps ticked entries when lines move, matches whole words, and survives broken symlinks.
+- `specxis-init` is idempotent and no longer edits `.gitignore`. Both scripts can be imported without running and have tests.
+
 ## [1.4.0] - 2026-09-18
 
 ### Added

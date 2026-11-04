@@ -5,9 +5,9 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { pathToFileURL } = require('url');
+const { spawnSync } = require('child_process');
 
-test('postinstall patches OpenCode @latest wrapper package.json', async () => {
+test('postinstall patches OpenCode @latest wrapper package.json', () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lexis-two-wrapper-'));
   const wrapperDir = path.join(tmp, 'packages', '@draig', 'lexis-two@latest');
   const pkgDir = path.join(wrapperDir, 'node_modules', '@draig', 'lexis-two');
@@ -27,8 +27,13 @@ test('postinstall patches OpenCode @latest wrapper package.json', async () => {
     path.join(pkgDir, 'scripts', 'opencode-wrapper-postinstall.mjs'),
   );
 
-  const scriptUrl = pathToFileURL(path.join(pkgDir, 'scripts', 'opencode-wrapper-postinstall.mjs'));
-  await import(scriptUrl);
+  // lexis: child process — the script calls process.exit, which would end this runner with success
+  const result = spawnSync(
+    process.execPath,
+    [path.join(pkgDir, 'scripts', 'opencode-wrapper-postinstall.mjs')],
+    { encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr);
 
   const wrapper = JSON.parse(fs.readFileSync(path.join(wrapperDir, 'package.json'), 'utf8'));
   assert.equal(

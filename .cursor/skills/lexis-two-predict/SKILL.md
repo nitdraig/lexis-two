@@ -20,4 +20,4 @@ End with:
 - **Pick:** proposed or lazy — one sentence why
 - **Kill condition:** when to revisit (e.g. "third endpoint needs same DTO")
 
-Keep the table compact. No essays. Respond in Spanish.
+Keep the table compact. No essays. Respond in the user's language unless the project's rules set one.

@@ -21,4 +21,4 @@ Compat (redirect, then run the public skill):
 
 Legacy `lexis-two-*` slash names still work but are deprecated.
 
-Respond in Spanish.
+Respond in the user's language unless the project's rules set one.

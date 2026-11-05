@@ -20,7 +20,7 @@ Slash commands: **`/lexis`** is canonical (subcommands below). Skill folders and
 
 | Host | Files | Level |
 | ---- | ----- | ----- |
-| OpenCode | `.opencode/plugins/lexis-two.mjs`, `.opencode/commands/`, `hooks/`, `skills/` | Full — plugin + mode switches + commands |
+| OpenCode | `.opencode/plugins/lexis-two.mjs`, `.opencode/commands/`, `hooks/`, `skills/` | Full — plugin + mode switches + commands. Local models get the compact ruleset ([setup.md](./setup.md#opencode)) |
 | Claude Code | `.claude-plugin/`, `hooks/hooks.json`, `commands/`, `skills/` | Full — plugin + mode switches + commands |
 | GitHub Copilot (IDE plugin) | `.github/plugin/plugin.json`, `hooks/copilot-hooks.json`, `commands/`, `skills/` | Full — plugin + mode switches + commands |
 | Gemini CLI | `gemini-extension.json`, `AGENTS.md`, `commands/`, `skills/` | Full — extension manifest + commands |

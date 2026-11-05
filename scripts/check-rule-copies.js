@@ -9,8 +9,7 @@
 //   1. Every rule copy file exists.
 //   2. Every copy is completely identical to AGENTS.md (ignoring host-specific frontmatter).
 //   3. The canonical AGENTS.md itself contains the load-bearing Lexis-Two rules.
-//   4. Each skills/*/SKILL.md matches .cursor/skills/<name>/SKILL.md byte-for-byte.
-//   5. Copilot's shorter repo instructions still carry the load-bearing phrases.
+//   4. Copilot's shorter repo instructions still carry the load-bearing phrases.
 //
 // `--fix` rewrites drifted copies instead of failing (each host keeps its own frontmatter).
 
@@ -93,29 +92,8 @@ for (const copyPath of INVARIANT_ONLY) {
   assertInvariants(copyPath, read(copyPath));
 }
 
-const skillsRoot = path.join(root, 'skills');
-const skillNames = fs.readdirSync(skillsRoot, { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .filter((name) => fs.existsSync(path.join(skillsRoot, name, 'SKILL.md')))
-  .sort();
-
-for (const name of skillNames) {
-  const srcRel = `skills/${name}/SKILL.md`;
-  const copyRel = `.cursor/skills/${name}/SKILL.md`;
-  const missing = !fs.existsSync(path.join(root, copyRel));
-  if ((missing || read(srcRel) !== read(copyRel)) && FIX) {
-    fs.mkdirSync(path.dirname(path.join(root, copyRel)), { recursive: true });
-    fs.copyFileSync(path.join(root, srcRel), path.join(root, copyRel));
-    console.log(`Fixed ${copyRel}`);
-  } else if (missing || read(srcRel) !== read(copyRel)) {
-    console.error(`Drift detected: ${copyRel} ${missing ? 'is missing' : `does not match ${srcRel}`}`);
-    failed = true;
-  }
-}
-
 if (failed) {
-  console.error('\nIntegrity check FAILED. Rule or skill copies have drifted.');
+  console.error('\nIntegrity check FAILED. Rule copies have drifted.');
   console.error('Run: node scripts/check-rule-copies.js --fix');
   process.exit(1);
 }

@@ -9,7 +9,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { normalizeMode, getDefaultMode, getLanguage } = require('./lexis-two-config');
+const { normalizeMode, getDefaultMode, getLanguage, isLocalModel } = require('./lexis-two-config');
 
 const LEVELS = {
   lite: `
@@ -17,6 +17,8 @@ const LEVELS = {
 You are a lazy senior developer. Before writing code, check: is there a native
 platform feature, stdlib method, or already-installed dependency that covers
 this? If yes, use it. Write minimum viable code. Mark shortcuts: // lexis: reason.
+
+Never lazy about: input validation, error handling, security, accessibility, types.
 `.trim(),
 
   full: `
@@ -99,14 +101,20 @@ function filterSkillBodyForMode(body, mode) {
 /**
  * Returns the Lexis-Two instruction block for the given mode.
  * @param {'lite'|'full'|'ultra'} mode
+ * @param {{ compact?: boolean }} [options] compact: the short per-level block, for small local contexts
  * @returns {string}
  */
-function getLexisInstructions(mode) {
-  const instructions = buildInstructions(mode);
+function getLexisInstructions(mode, options = {}) {
+  const instructions = options.compact ? buildCompactInstructions(mode) : buildInstructions(mode);
   const language = getLanguage();
   return language
     ? instructions + '\n\nRespond to the user in ' + language + '. Code, comments and JSDoc stay in English.'
     : instructions;
+}
+
+function buildCompactInstructions(mode) {
+  const effectiveMode = normalizeMode(mode) || getDefaultMode();
+  return LEVELS[effectiveMode] || LEVELS[getDefaultMode()];
 }
 
 function buildInstructions(mode) {
@@ -129,5 +137,7 @@ module.exports = {
   getLexisInstructions,
   normalizeMode,
   getDefaultMode,
+  isLocalModel,
+  LEVELS,
   filterSkillBodyForMode,
 };

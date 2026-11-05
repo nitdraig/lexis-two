@@ -18,7 +18,7 @@ const require = createRequire(import.meta.url);
 // lexis: a fallback to "@draig/lexis-two/hooks/..." is not possible: package "exports" does not expose it
 const lexisInstructionsModule = require("../../hooks/lexis-two-instructions");
 
-const { getLexisInstructions, getDefaultMode, normalizeMode } =
+const { getLexisInstructions, getDefaultMode, normalizeMode, isLocalModel } =
   lexisInstructionsModule;
 
 // OpenCode has no flag-file convention of its own; keep mode beside its config.
@@ -56,7 +56,7 @@ function createServerHooks({ client } = {}) {
     } catch (e) {}
   };
 
-  const skippedModels = new Set();
+  const notedModels = new Set();
 
   return {
     // Persist /lexis <mode> switches. Subcommands (plan, review, help, ...)
@@ -76,22 +76,16 @@ function createServerHooks({ client } = {}) {
       if (mode === "off") return;
 
       const model = _input?.model?.id || _input?.model || "";
-      const isLocal =
-        typeof model === "string" &&
-        (model.includes("lmstudio") ||
-          model.includes("ollama") ||
-          model.includes("local") ||
-          model.includes("127.0.0.1"));
-      if (isLocal) {
-        // Say so once per model: a silent skip looks like Lexis is broken.
-        if (!skippedModels.has(model)) {
-          skippedModels.add(model);
-          log("info", "lexis-two ruleset not injected for local model " + model + " (see docs/setup.md#opencode)");
-        }
-        return;
+      // Local models get the short per-level block to keep small contexts free;
+      // LEXIS_TWO_LOCAL_FULL=1 sends them the full skill instead.
+      const compact = isLocalModel(model) && process.env.LEXIS_TWO_LOCAL_FULL !== "1";
+      if (compact && !notedModels.has(model)) {
+        // Say so once per model: a silent change in behavior looks like Lexis is broken.
+        notedModels.add(model);
+        log("info", "lexis-two sending the compact ruleset to local model " + model + " (see docs/setup.md#opencode)");
       }
 
-      output.system.push(getLexisInstructions(mode));
+      output.system.push(getLexisInstructions(mode, { compact }));
     },
   };
 }

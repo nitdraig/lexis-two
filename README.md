@@ -139,6 +139,7 @@ What to know about the installer:
 - **Upgrades are safe.** It records what it wrote in `.lexis-two/manifest.json` (commit it). Running it again after a package upgrade updates the files you did not edit, uninstall removes them even after an upgrade, and files you edited are left alone and reported. Backups never overwrite each other (`.bak`, `.bak.1`, ...).
 - **`--scope global` never writes to the project.** Hosts with no global form are skipped with a visible line, and `stacks/` is project-only.
 - **Uninstalling one host keeps `stacks/`** while another host still needs it.
+- **`status` and `--json` show what is installed.** `npx @draig/lexis-two status` lists detected and installed hosts; `install --json` prints the same as a read-only report. `status` and an interactive `install` also print one line when a newer version is on npm (turn off with `--no-update-check`). See [docs/setup.md](docs/setup.md#status).
 
 ### OpenCode (Recommended via npm)
 

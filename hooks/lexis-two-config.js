@@ -26,6 +26,15 @@ function normalizeMode(mode) {
   return RUNTIME_MODES.includes(normalized) ? normalized : null;
 }
 
+// Runtimes and hosts that mean "a model on this machine". Matched as whole id
+// segments so a cloud id that merely contains "local" (e.g. "localized") never counts.
+const LOCAL_MODEL_SEGMENTS = new Set(['ollama', 'lmstudio', 'llamacpp', 'localhost', '127.0.0.1']);
+
+function isLocalModel(id) {
+  if (typeof id !== 'string') return false;
+  return id.toLowerCase().split(/[\/:@\s]+/).some((segment) => LOCAL_MODEL_SEGMENTS.has(segment));
+}
+
 function normalizeConfigMode(mode) {
   if (typeof mode !== 'string') return null;
   const normalized = mode.trim().toLowerCase();
@@ -111,5 +120,6 @@ module.exports = {
   getClaudeDir,
   normalizeMode,
   normalizeConfigMode,
+  isLocalModel,
   writeDefaultMode,
 };

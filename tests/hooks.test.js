@@ -434,3 +434,38 @@ test('language setting is validated, configurable and kept across mode writes', 
     fs.rmSync(temp, { recursive: true, force: true });
   }
 });
+
+test('isLocalModel matches local runtimes by whole id segment', () => {
+  const { isLocalModel } = require('../hooks/lexis-two-config');
+  for (const id of ['ollama/llama3', 'lmstudio/qwen', 'llamacpp/x', 'localhost:11434/model', '127.0.0.1/model', 'OLLAMA/Llama3']) {
+    assert.equal(isLocalModel(id), true, id);
+  }
+  for (const id of ['anthropic/claude-sonnet', 'openai/gpt-5', 'anthropic/localized-x', 'local', '', undefined, null, { id: 'ollama' }]) {
+    assert.equal(isLocalModel(id), false, String(id));
+  }
+});
+
+test('compact instructions keep the safety line and stay inside the budget', () => {
+  const { getLexisInstructions, LEVELS } = require('../hooks/lexis-two-instructions');
+  for (const level of ['lite', 'full', 'ultra']) {
+    const compact = getLexisInstructions(level, { compact: true });
+    assert.ok(compact.includes('Never lazy about:'), level);
+    for (const word of ['validation', 'security', 'accessibility']) assert.ok(compact.includes(word), `${level}: ${word}`);
+    assert.ok(compact.length < 1500, `${level} compact block is ${compact.length} chars`);
+    assert.equal(compact, LEVELS[level]);
+    assert.notEqual(compact, getLexisInstructions(level), `${level}: the full skill differs from the compact block`);
+  }
+});
+
+test('getLexisInstructions without options is unchanged and compact still adds the language', () => {
+  const { getLexisInstructions } = require('../hooks/lexis-two-instructions');
+  const previous = process.env.LEXIS_TWO_LANGUAGE;
+  process.env.LEXIS_TWO_LANGUAGE = 'Spanish';
+  try {
+    assert.match(getLexisInstructions('full'), /^LEXIS-TWO MODE ACTIVE — level: full/);
+    assert.match(getLexisInstructions('full', { compact: true }), /Respond to the user in Spanish/);
+  } finally {
+    if (previous === undefined) delete process.env.LEXIS_TWO_LANGUAGE;
+    else process.env.LEXIS_TWO_LANGUAGE = previous;
+  }
+});

@@ -6,11 +6,14 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const readline = require('readline');
+const http = require('http');
+const https = require('https');
 const { spawnSync } = require('child_process');
 
 const PACKAGE_ROOT = path.resolve(__dirname, '..');
 const OPENCODE_PLUGIN_ENTRY = '@draig/lexis-two';
 const REPO_URL = 'https://github.com/nitdraig/lexis-two';
+const REGISTRY_LATEST_URL = 'https://registry.npmjs.org/@draig%2Flexis-two/latest';
 
 /** @type {Record<string, RuleHost>} */
 const RULE_HOSTS = {
@@ -531,12 +534,30 @@ function parseArgs(argv) {
     help: false,
     interactive: process.stdin.isTTY === true,
     projectDir: process.cwd(),
+    command: 'install',
+    json: false,
+    check: false,
+    noUpdateCheck: false,
+    scopeGiven: false,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
 
-    if (arg === 'install') {
+    if (arg === 'install' || arg === 'status') {
+      options.command = arg;
+      continue;
+    }
+    if (arg === '--json') {
+      options.json = true;
+      continue;
+    }
+    if (arg === '--check') {
+      options.check = true;
+      continue;
+    }
+    if (arg === '--no-update-check') {
+      options.noUpdateCheck = true;
       continue;
     }
     if (arg === '--help' || arg === '-h') {
@@ -576,12 +597,14 @@ function parseArgs(argv) {
     }
     if (arg.startsWith('--scope=')) {
       options.scope = parseScope(arg.slice('--scope='.length));
+      options.scopeGiven = true;
       continue;
     }
     if (arg === '--scope') {
       const next = argv[i + 1];
       if (!next) throw new Error('Missing value for --scope');
       options.scope = parseScope(next);
+      options.scopeGiven = true;
       i += 1;
       continue;
     }
@@ -601,6 +624,12 @@ function parseArgs(argv) {
   }
 
   options.hosts = [...new Set(options.hosts.map((host) => host.trim()).filter(Boolean))];
+  if (options.json && (options.hosts.length > 0 || options.uninstall)) {
+    throw new Error('--json prints a report; it cannot be combined with --host or --uninstall.');
+  }
+  if (options.check && options.command !== 'status') {
+    throw new Error('--check is only valid with the status command.');
+  }
   return options;
 }
 
@@ -1152,6 +1181,7 @@ function printHelp() {
 Usage:
   npx @draig/lexis-two install [options]
   lexis-two install [options]
+  lexis-two status [--scope <scope>] [--check]
 
 Options:
   --host <id[,id]>     Hosts: cursor, windsurf, cline, kiro, agents, opencode,
@@ -1163,6 +1193,9 @@ Options:
   --yes, -y            Skip confirmation prompt
   --force              Overwrite existing files (AGENTS.md requires this)
   --non-interactive    Do not prompt; requires --host and --yes
+  --json               Print a read-only JSON report (hosts, installed state, environment); writes nothing
+  --check              With status: check the npm registry for a newer version now
+  --no-update-check    Skip the automatic version check (or set LEXIS_TWO_NO_UPDATE_CHECK=1)
   --help, -h           Show this help
 
 Safety:
@@ -1197,6 +1230,184 @@ function question(prompt) {
   });
 }
 
+// ---- Read-only report: hosts, environment, installed state ------------------------------------------
+
+const hostKind = (hostId) => (RULE_HOSTS[hostId] ? 'rules' : PLUGIN_HOSTS[hostId] ? 'plugin' : 'hint');
+const hostDefinitionAny = (hostId) => RULE_HOSTS[hostId] || PLUGIN_HOSTS[hostId] || HINT_HOSTS[hostId];
+
+function localRuntimes() {
+  return [
+    ...(process.env.OLLAMA_HOST ? ['ollama'] : []),
+    ...(process.env.LMSTUDIO_HOST ? ['lmstudio'] : []),
+  ];
+}
+
+/**
+ * Which scopes have files written by this host, according to the manifests.
+ * @returns {'project'|'global'|'both'|'none'}
+ */
+function installedScope(hostId, manifests) {
+  const has = (scope) =>
+    Boolean(manifests[scope]) && [...manifests[scope].entries.values()].some((entry) => entry.host === hostId);
+  const project = has('project');
+  const global = has('global');
+  return project && global ? 'both' : project ? 'project' : global ? 'global' : 'none';
+}
+
+/**
+ * Read-only report. Reads only the manifests for the given scopes; a corrupt one throws.
+ * @param {InstallContext} ctx
+ * @param {Array<'project'|'global'>} [scopes]
+ */
+function buildReport(ctx, scopes = ['project', 'global']) {
+  const manifests = {};
+  for (const scope of scopes) manifests[scope] = readManifest(ctx, scope);
+  return {
+    environment: {
+      os: process.platform,
+      node: process.versions.node,
+      localRuntimes: localRuntimes(),
+    },
+    hosts: ALL_HOST_IDS.map((id) => {
+      const host = hostDefinitionAny(id);
+      return {
+        id,
+        label: host.label,
+        kind: hostKind(id),
+        detected: Boolean(host.detect(ctx)),
+        installed: installedScope(id, manifests),
+        supportsGlobal: Boolean(host.supportsGlobal),
+      };
+    }),
+  };
+}
+
+// The status view is derived from the report, so `status` and `--json` cannot disagree.
+function formatStatus(report) {
+  const rows = report.hosts.filter((host) => host.detected || host.installed !== 'none');
+  if (rows.length === 0) return 'No hosts detected or installed.';
+  return rows
+    .map((host) => `${host.id.padEnd(14)} detected: ${host.detected ? 'yes' : 'no '}  installed: ${host.installed}`)
+    .join('\n');
+}
+
+// "cursor (new)" / "cursor (installed)": what the host prompt shows next to each detected id.
+function promptLabels(detected, report) {
+  return detected.map((id) => {
+    const host = report.hosts.find((entry) => entry.id === id);
+    return `${id} (${host && host.installed !== 'none' ? 'installed' : 'new'})`;
+  });
+}
+
+function reportScopes(options) {
+  const scope = options.scopeGiven ? options.scope : 'both';
+  return scope === 'both' ? ['project', 'global'] : [scope];
+}
+
+function runStatus(options) {
+  const ctx = createContext(options.projectDir);
+  console.log(formatStatus(buildReport(ctx, reportScopes(options))));
+  return 0;
+}
+
+function runJsonReport(options) {
+  const ctx = createContext(options.projectDir);
+  console.log(JSON.stringify(buildReport(ctx, reportScopes(options)), null, 2));
+  return 0;
+}
+
+// ---- Version check ------------------------------------------------------------------------------------
+
+/**
+ * Latest published version, or null on any failure. One GET, no redirects, never throws.
+ * @param {{ timeoutMs?: number, registryUrl?: string }} [opts]
+ * @returns {Promise<string|null>}
+ */
+function latestVersion({ timeoutMs = 1500, registryUrl = REGISTRY_LATEST_URL } = {}) {
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (value) => {
+      if (!settled) {
+        settled = true;
+        resolve(value);
+      }
+    };
+    try {
+      const url = new URL(registryUrl);
+      const client = url.protocol === 'http:' ? http : https;
+      const req = client.get(url, { headers: { accept: 'application/json' } }, (res) => {
+        if (res.statusCode < 200 || res.statusCode >= 300) {
+          res.resume();
+          finish(null);
+          return;
+        }
+        let body = '';
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => {
+          body += chunk;
+          if (body.length > 1e6) {
+            req.destroy();
+            finish(null);
+          }
+        });
+        res.on('end', () => {
+          try {
+            const version = JSON.parse(body).version;
+            finish(typeof version === 'string' ? version : null);
+          } catch {
+            finish(null);
+          }
+        });
+        res.on('error', () => finish(null));
+      });
+      req.on('error', () => finish(null));
+      // One overall deadline: the socket idle timeout alone would not stop a slow trickle.
+      setTimeout(() => {
+        req.destroy();
+        finish(null);
+      }, timeoutMs).unref();
+    } catch {
+      finish(null);
+    }
+  });
+}
+
+const parseSemver = (value) => {
+  const match = /^([0-9]+)\.([0-9]+)\.([0-9]+)$/.exec(String(value).trim());
+  return match ? match.slice(1).map(Number) : null;
+};
+
+// Only plain major.minor.patch counts; a pre-release or malformed value is never "newer".
+function isNewer(latest, current) {
+  const a = parseSemver(latest);
+  const b = parseSemver(current);
+  if (!a || !b) return false;
+  for (let i = 0; i < 3; i += 1) {
+    if (a[i] !== b[i]) return a[i] > b[i];
+  }
+  return false;
+}
+
+function updateCheckSkipped(options, force) {
+  if (options.noUpdateCheck || process.env.LEXIS_TWO_NO_UPDATE_CHECK === '1') return true;
+  if (force) return false;
+  if (!process.stdout.isTTY || process.env.CI) return true;
+  if (options.json || options.dryRun || options.uninstall) return true;
+  // install only checks when it can talk to a person
+  return options.command === 'install' && !options.interactive;
+}
+
+async function notifyUpdate(options, { force = false } = {}) {
+  if (updateCheckSkipped(options, force)) return;
+  const current = require('../package.json').version;
+  const latest = await latestVersion({ registryUrl: process.env.LEXIS_TWO_REGISTRY_URL || undefined });
+  if (latest && isNewer(latest, current)) {
+    console.log(`lexis-two ${latest} is available (you have ${current}). Run: npx @draig/lexis-two@latest install`);
+  } else if (force) {
+    console.log(latest ? `lexis-two ${current} is up to date` : 'could not check for updates');
+  }
+}
+
 async function resolveHosts(options, ctx) {
   if (options.hosts.length > 0) {
     return options.hosts;
@@ -1216,8 +1427,9 @@ async function resolveHosts(options, ctx) {
   }
 
   const promptVerb = options.uninstall ? 'Uninstall' : 'Install';
+  const labelled = promptLabels(detected, buildReport(ctx));
   const answer = await question(
-    `${promptVerb} for [${detected.join(', ')}]? (Y/n or comma list): `,
+    `${promptVerb} for [${labelled.join(', ')}]? (Y/n or comma list): `,
   );
 
   if (!answer || answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes') {
@@ -1276,12 +1488,22 @@ function printNextSteps(hostIds) {
 
 async function runInstall(rawArgv) {
   const options = parseArgs(rawArgv);
-
   if (options.help) {
     printHelp();
     return 0;
   }
+  let code;
+  if (options.command === 'status') code = runStatus(options);
+  else if (options.json) code = runJsonReport(options);
+  else code = await runInstallCommand(options);
+  // After the command's own output; a skipped or failed check never changes the exit code.
+  if (code === 0 && !options.json) {
+    await notifyUpdate(options, { force: options.command === 'status' && options.check });
+  }
+  return code;
+}
 
+async function runInstallCommand(options) {
   const ctx = createContext(options.projectDir);
   const hostIds = await resolveHosts(options, ctx);
 
@@ -1341,6 +1563,12 @@ module.exports = {
   HINT_HOSTS,
   parseArgs,
   detectHosts,
+  buildReport,
+  formatStatus,
+  promptLabels,
+  latestVersion,
+  isNewer,
+  notifyUpdate,
   buildPlan,
   buildUninstallPlan,
   buildHintActions,

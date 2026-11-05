@@ -48,7 +48,7 @@ Does the host load skills or hooks?
 
 1. Add a rule file under the host's convention (e.g. `.cursor/rules/lexis-two.mdc`).
 2. If it must stay identical to `AGENTS.md`, add the path to `scripts/check-rule-copies.js` `COPIES` array. Copilot repo instructions stay a short file: they must include the load-bearing phrases (`INVARIANT_ONLY`), not the full body.
-3. After adding or editing a skill under `skills/<name>/SKILL.md`, run `node scripts/check-rule-copies.js --fix`. It copies the skill to `.cursor/skills/<name>/SKILL.md` and rewrites any drifted host rule copy, keeping that host's frontmatter. A plain run (no `--fix`) only checks.
+3. After editing `AGENTS.md`, run `node scripts/check-rule-copies.js --fix`. It rewrites any drifted host rule copy, keeping that host's frontmatter. A plain run (no `--fix`) only checks.
 4. Register the host in `scripts/install.js` `RULE_HOSTS` (see `cursor`, `windsurf`, `cline`, `kiro`, `agents`, `copilot-repo`).
 5. Update the host table in [docs/portability.md](./docs/portability.md).
 6. Run `npm test` after any `AGENTS.md` or `skills/` edit.

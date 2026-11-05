@@ -109,7 +109,7 @@ test('OPENCODE_CONFIG_DIR decides where the flag lives', async () => {
   }
 });
 
-test('local models are skipped and the skip is logged once per model', async () => {
+test('local models get the compact ruleset, logged once per model', async () => {
   const logs = [];
   const client = { app: { log: ({ body }) => logs.push(body) } };
   const hooks = await loadServer({ client });
@@ -119,14 +119,34 @@ test('local models are skipped and the skip is logged once per model', async () 
     return output.system;
   };
 
-  assert.deepEqual(await run({ id: 'ollama/llama3' }), []);
-  assert.deepEqual(await run({ id: 'ollama/llama3' }), []);
-  assert.deepEqual(await run({ id: 'lmstudio/qwen' }), []);
-  assert.equal((await run({ id: 'anthropic/claude' })).length, 1);
+  const [compact] = await run({ id: 'ollama/llama3' });
+  assert.ok(compact.startsWith('[LEXIS-TWO: '), compact.slice(0, 40));
+  assert.match(compact, /Never lazy about/);
+  await run({ id: 'ollama/llama3' });
+  await run({ id: 'lmstudio/qwen' });
+  const [full] = await run({ id: 'anthropic/claude' });
+  assert.match(full, /^LEXIS-TWO MODE ACTIVE/);
 
-  const skipped = logs.filter((l) => /not injected for local model/.test(l.message));
-  assert.equal(skipped.length, 2, 'one log line per local model, not per turn');
-  assert.match(skipped[0].message, /ollama\/llama3/);
+  const noted = logs.filter((l) => /compact ruleset to local model/.test(l.message));
+  assert.equal(noted.length, 2, 'one log line per local model, not per turn');
+  assert.ok(noted[0].message.includes('ollama/llama3'));
+});
+
+test('LEXIS_TWO_LOCAL_FULL=1 sends the full skill to a local model; other values do not', async () => {
+  const hooks = await loadServer({});
+  const run = async () => {
+    const output = { system: [] };
+    await hooks['experimental.chat.system.transform']({ model: { id: 'ollama/llama3' } }, output);
+    return output.system[0];
+  };
+  try {
+    process.env.LEXIS_TWO_LOCAL_FULL = '1';
+    assert.match(await run(), /^LEXIS-TWO MODE ACTIVE/);
+    process.env.LEXIS_TWO_LOCAL_FULL = 'true';
+    assert.ok((await run()).startsWith('[LEXIS-TWO: '));
+  } finally {
+    delete process.env.LEXIS_TWO_LOCAL_FULL;
+  }
 });
 
 test.after(() => fs.rmSync(tmp, { recursive: true, force: true }));

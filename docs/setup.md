@@ -94,6 +94,21 @@ In `cmd`: `/import opencode` then `/import cursor`, then `/reload`. Use `/lexis 
 | `--yes` | Skip confirmation. Required when there is no TTY (CI, pipes) and the plan writes files |
 | `--force` | Overwrite existing files (`AGENTS.md` requires this) |
 | `--non-interactive` | No prompts; use with `--host` and `--yes` |
+| `--json` | Print a read-only JSON report (see below) and write nothing. Cannot be combined with `--host` or `--uninstall` |
+| `--no-update-check` | Skip the automatic version check (also `LEXIS_TWO_NO_UPDATE_CHECK=1`) |
+
+### Report, status and updates {#status}
+
+`npx @draig/lexis-two install --json` prints which hosts it can see and which it already installed, without prompting and without writing. Fields:
+
+- `environment`: `os`, `node`, and `localRuntimes` (`ollama` / `lmstudio`, listed only when `OLLAMA_HOST` / `LMSTUDIO_HOST` is set).
+- `hosts[]`: `id`, `label`, `kind` (`rules`, `plugin` or `hint`), `detected`, `installed` (`project`, `global`, `both` or `none`) and `supportsGlobal`.
+
+`installed` comes from the install manifest, so files copied by hand before manifests existed show as `none`. A detected host that was never installed through this tool is `detected: true, installed: none`, which is normal.
+
+`npx @draig/lexis-two status [--scope project|global|both]` prints the same data as one line per host that is detected or installed. It is read-only.
+
+**Update check.** `status` and an interactive `install` ask the public npm registry (`registry.npmjs.org`, one GET of the package metadata, no data about you or the project) whether a newer version exists, wait at most 1.5 seconds, and print one line if there is one. It never installs anything and never changes the exit code; if the network is down it stays silent. It is skipped without a terminal, when `CI` is set, and with `--json`, `--dry-run` or `--uninstall`. Turn it off with `--no-update-check` or `LEXIS_TWO_NO_UPDATE_CHECK=1`. `status --check` runs it on demand and always says whether you are up to date, newer is available, or it could not check. `LEXIS_TWO_REGISTRY_URL` points it at a mirror.
 
 ### Safety rules
 
@@ -126,7 +141,7 @@ This merges `opencode.json` (appends `@draig/lexis-two` to `plugin` without remo
 
 **Plugin ≠ slash commands.** The npm plugin injects rules only. Commands are separate markdown files — install copies them, or OpenCode will not list `/lexis` in the picker.
 
-**Local models are skipped.** The plugin does not inject the ruleset when the model id contains `lmstudio`, `ollama`, `local` or `127.0.0.1`, to keep small local contexts free. It logs `lexis-two ruleset not injected for local model <id>` once per model through OpenCode's log. If you want the rules on a local model, put them in `AGENTS.md` (`--host agents`) instead.
+**Local models get a compact ruleset.** When the model id has a segment `ollama`, `lmstudio`, `llamacpp`, `localhost` or `127.0.0.1` (for example `ollama/llama3`), the plugin sends the short block for your level (under 1,500 characters: the decision ladder, the rules and "Never lazy about") instead of the full skill, so small contexts stay free. The level is still the one you set with `/lexis`. It logs `lexis-two sending the compact ruleset to local model <id>` once per model through OpenCode's log. On a local model with a large context, set `LEXIS_TWO_LOCAL_FULL=1` to send the full skill. Ids that only contain the letters "local" inside a longer word, and every cloud model, are unaffected.
 
 For every project you use OpenCode in:
 

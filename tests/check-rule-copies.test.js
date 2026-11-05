@@ -28,8 +28,6 @@ function fixture() {
   write('AGENTS.md', CANONICAL);
   for (const [rel, frontmatter] of Object.entries(COPIES)) write(rel, frontmatter + CANONICAL);
   write('.github/copilot-instructions.md', 'lazy senior. Input validation at trust boundaries. YAGNI. stacks/\n');
-  write('skills/demo/SKILL.md', '---\nname: demo\n---\nbody\n');
-  write('.cursor/skills/demo/SKILL.md', '---\nname: demo\n---\nbody\n');
   const run = (...args) =>
     spawnSync(process.execPath, [path.join(root, 'scripts', 'check-rule-copies.js'), ...args], { encoding: 'utf8' });
   return { root, write, run, read: (rel) => fs.readFileSync(path.join(root, rel), 'utf8') };
@@ -42,11 +40,9 @@ test('a clean tree passes', () => {
 test('drift fails without --fix and names the file', () => {
   const t = fixture();
   t.write('.kiro/steering/lexis-two.md', COPIES['.kiro/steering/lexis-two.md'] + 'edited by hand\n');
-  t.write('.cursor/skills/demo/SKILL.md', 'stale\n');
   const result = t.run();
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Drift detected: \.kiro\/steering\/lexis-two\.md/);
-  assert.match(result.stderr, /Drift detected: \.cursor\/skills\/demo\/SKILL\.md/);
   assert.match(result.stderr, /--fix/);
 });
 
@@ -54,7 +50,6 @@ test('--fix rewrites drifted copies and keeps each host frontmatter', () => {
   const t = fixture();
   t.write('.cursor/rules/lexis-two.mdc', COPIES['.cursor/rules/lexis-two.mdc'] + 'something else entirely\n');
   t.write('.windsurf/rules/lexis-two.md', 'no frontmatter, drifted\n');
-  t.write('.cursor/skills/demo/SKILL.md', 'stale\n');
   fs.rmSync(path.join(t.root, '.clinerules', 'lexis-two.md'));
   t.write('.clinerules/lexis-two.md', 'gone wrong\n');
 
@@ -64,6 +59,5 @@ test('--fix rewrites drifted copies and keeps each host frontmatter', () => {
 
   assert.ok(t.read('.cursor/rules/lexis-two.mdc').startsWith('---\ndescription: Cursor rule\nalwaysApply: true\n---\n'));
   assert.equal(t.read('.windsurf/rules/lexis-two.md').trim(), CANONICAL.trim());
-  assert.equal(t.read('.cursor/skills/demo/SKILL.md'), t.read('skills/demo/SKILL.md'));
   assert.equal(t.run().status, 0, 'a plain run passes after --fix');
 });

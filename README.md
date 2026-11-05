@@ -491,6 +491,7 @@ Broken install channels fixed, state made trustworthy, and a gate against generi
 - [x] Installer: unique backups, shared `stacks/`, global scope that stays out of the project, `--yes` required without a TTY, manifest-based upgrades
 - [x] `/slopx`: the anti-generic gate (code, copy, look, plus the desx quality pass), with an opt-in hook and optional Impeccable handoff
 - [x] CI: syntax lint, Windows leg, site build job
+- [x] 1.5.1: `install --json` and `status` report detected and installed hosts, a one-line "newer version" notice, and local models get a compact ruleset in the OpenCode plugin
 
 ---
 

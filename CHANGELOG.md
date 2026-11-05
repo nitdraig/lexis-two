@@ -4,11 +4,23 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 ## [Unreleased]
 
-## [1.5.0] - 2026-11-04
+## [1.5.1] - 2026-11-05
+
+### Added
+
+- Installer: `install --json` prints a read-only report of detected and installed hosts; `status` shows the same as a table; the host prompt marks each detected host as `new` or `installed`.
+- Installer: `status` and the interactive `install` print one line when a newer version is on npm (1.5 s limit, silent on failure, skipped without a TTY or with `CI`). Turn off with `--no-update-check` or `LEXIS_TWO_NO_UPDATE_CHECK=1`; `status --check` runs it on demand.
 
 ### Changed
 
 - OpenCode plugin: local models (`ollama`, `lmstudio`, `llamacpp`, `localhost`, `127.0.0.1`) now get the compact per-level ruleset instead of nothing. `LEXIS_TWO_LOCAL_FULL=1` sends them the full skill. Detection matches whole id segments, so a cloud id that merely contains "local" no longer counts. The compact `lite` block now carries the "Never lazy about" line.
+- The repository no longer carries its own `.cursor/skills/` copy; the installer still copies `skills/` into a project's `.cursor/skills/`, and `check-rule-copies.js` checks only the host rule files.
+- Removed the unused root `CNAME`, `.nojekyll`, `bin/lexis-two.js`, `plans/` and `site/public/redesing/`.
+
+## [1.5.0] - 2026-11-04
+
+### Changed
+
 - Specxis: `spec.md` now carries a real status (`draft`, `agreed`, `implementing`, `done`) written by `/specx`. `/specx implement` refuses an unapproved spec and records a base commit; `/specx review` and `/specx close` diff against it, so checkpoint commits no longer empty the review. Review findings are checkboxes and `/specx close` refuses open High or Critical findings (unverifiable criteria need a waiver line).
 - Specxis tasks: the rule is now one concern per task, with its tests inside it (cap of 10 unchanged; no minimum).
 - Specxis templates no longer fix a language (`TypeScript: strict`) and use current command names.
@@ -16,8 +28,6 @@ All notable changes to `@draig/lexis-two` are documented here. Format follows [K
 
 ### Added
 
-- Installer: `install --json` prints a read-only report of detected and installed hosts; `status` shows the same as a table; the host prompt marks each detected host as `new` or `installed`.
-- Installer: `status` and the interactive `install` print one line when a newer version is on npm (1.5 s limit, silent on failure, skipped without a TTY or with `CI`). Turn off with `--no-update-check` or `LEXIS_TWO_NO_UPDATE_CHECK=1`; `status --check` runs it on demand.
 - `/slopx`: the anti-generic gate. It keeps a change from looking or reading like default AI output and always runs four passes: `code` (debug calls, markers, commented-out code, empty catches), `copy` (emojis, placeholder text, stock marketing words, invented data), `look` (side-stripe borders, gradient text, hard shadows, default palettes, bounce easing) and `quality` (the `desx` checks, run as a sub-skill). Stable rule ids and `--list-rules`; waivers (`slopx-disable`, `-line`, `-next-line`) and `.slopx.json` ignores that require a reason; `--json`, `--github`, `--quiet`, exit codes 0/1/2; a suggestion on every finding, with an optional `handoff` that names the [Impeccable](https://github.com/pbakaus/impeccable) command that applies that kind of fix (Impeccable is not required); an opt-in PostToolUse hook for Claude Code. Read-only: it writes no file. See `docs/slopx.md`.
 - `desx` quality rules: missing `alt`, crushed letter spacing, gray text on color, tiny text, tight line height, justified text, all-caps body text and wide body tracking.
 - Installer upgrades: installs are recorded in `.lexis-two/manifest.json` (global: `~/.config/lexis-two/manifest.json`). Re-running install after a package upgrade updates unedited files without `--force`, uninstall removes unedited files even after an upgrade, files the package stopped shipping are cleaned up, and edited files are always left alone and reported. A corrupt manifest or one pointing outside the project stops the run before writing.
